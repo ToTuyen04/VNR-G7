@@ -1,37 +1,86 @@
+@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;500;600;700;800;900&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   * {
-    @apply box-border;
+    box-sizing: border-box;
   }
   
   body {
-    @apply m-0 p-0 bg-black text-white font-vietnam overflow-x-hidden;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    overflow-x: hidden;
   }
   
   html {
-    @apply scroll-smooth;
+    scroll-behavior: smooth;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-gold-500 to-gold-600 text-black font-bold py-3 px-8 rounded-lg hover:from-gold-600 hover:to-gold-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-gold-500/50;
+    background: linear-gradient(to right, #f59e0b, #d97706);
+    color: black;
+    font-weight: bold;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(to right, #d97706, #b45309);
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(217, 119, 6, 0.5);
   }
   
   .btn-secondary {
-    @apply bg-transparent border-2 border-gold-500 text-gold-500 font-bold py-3 px-8 rounded-lg hover:bg-gold-500 hover:text-black transition-all duration-300 transform hover:scale-105;
+    background-color: transparent;
+    border: 2px solid #f59e0b;
+    color: #f59e0b;
+    font-weight: bold;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #f59e0b;
+    color: black;
+    transform: scale(1.05);
   }
   
   .text-gradient {
-    @apply bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 bg-clip-text text-transparent;
+    background: linear-gradient(to right, #fbbf24, #f59e0b, #d97706);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   
   .section-title {
-    @apply text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-gradient mb-8;
+    font-size: 3rem;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    background: linear-gradient(to right, #fbbf24, #f59e0b, #d97706);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .section-title {
+      font-size: 4rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .section-title {
+      font-size: 5rem;
+    }
   }
 }
+

@@ -6,27 +6,27 @@ const HistoryPage = () => {
 
   const historySections = [
     {
-      title: 'CÁCH MẠNG THÁNG TÁM 1945',
-      date: 'Tháng 8 năm 1945',
-      content: 'Cách mạng tháng Tám là cuộc cách mạng giải phóng dân tộc do Đảng Cộng sản Đông Dương và Chủ tịch Hồ Chí Minh lãnh đạo, diễn ra trong tháng 8 năm 1945, lật đổ ách thống trị của thực dân Pháp và phát xít Nhật, giành chính quyền về tay nhân dân, thành lập nước Việt Nam Dân chủ Cộng hòa.',
+      title: 'ĐẠI HỘI ĐẠI BIỂU TOÀN QUỐC LẦN THỨ VI',
+      date: 'Tháng 12 năm 1986',
+      content: 'Đại hội VI của Đảng (12/1986) đánh dấu bước ngoặt lịch sử với đường lối đổi mới toàn diện. Khẳng định kinh tế là trung tâm, xây dựng Đảng là then chốt, văn hóa - xã hội là mục tiêu. Mở ra thời kỳ mới cho đất nước thoát khỏi khủng hoảng kinh tế - xã hội trầm trọng.',
       image: '/images/history-1.jpg'
     },
     {
-      title: 'TỔNG KHỞI NGHĨA',
-      date: '14-19 tháng 8 năm 1945',
-      content: 'Từ ngày 14 đến 19 tháng 8 năm 1945, phong trào Tổng khởi nghĩa nổ ra khắp cả nước với sức mạnh như vũ bão. Nhân dân ta từ Nam chí Bắc đồng loạt đứng lên giành chính quyền về tay mình.',
+      title: 'ĐỔI MỚI KINH TẾ - NÔNG NGHIỆP',
+      date: '1988 - 1990',
+      content: 'Nghị quyết 10 (4/1988) về đổi mới quản lý kinh tế nông nghiệp - giao đất, giao rừng cho nông dân, công nhận quyền tự chủ sản xuất kinh doanh. Việt Nam từ thiếu đói trở thành nước xuất khẩu gạo lớn thứ 2 thế giới. Đây là bước đột phá quan trọng đầu tiên của công cuộc đổi mới.',
       image: '/images/history-2.jpg'
     },
     {
-      title: 'CÁCH MẠNG THÀNH CÔNG',
-      date: '19 tháng 8 năm 1945',
-      content: 'Ngày 19 tháng 8 năm 1945, cách mạng Hà Nội thành công. Chính quyền cách mạng được thành lập ở thủ đô. Đây là sự kiện lịch sử có ý nghĩa quyết định, đánh dấu thắng lợi hoàn toàn của Cách mạng Tháng Tám trong cả nước.',
+      title: 'CHUYỂN ĐỔI CƠ CHẾ KINH TẾ',
+      date: '1989 - 1992',
+      content: 'Chuyển từ cơ chế kế hoạch hóa tập trung quan liêu bao cấp sang cơ chế thị trường có sự quản lý của Nhà nước theo định hướng xã hội chủ nghĩa. Thống nhất tỷ giá ngoại tệ, xóa bỏ cơ chế hai giá, khuyến khích phát triển kinh tế nhiều thành phần. Lạm phát giảm từ 400% xuống dưới 20%.',
       image: '/images/history-3.jpg'
     },
     {
-      title: 'TUYÊN NGÔN ĐỘC LẬP',
-      date: '2 tháng 9 năm 1945',
-      content: 'Ngày 2 tháng 9 năm 1945, tại Quảng trường Ba Đình - Hà Nội, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập, khai sinh ra nước Việt Nam Dân chủ Cộng hòa, nhà nước công nông đầu tiên ở Đông Nam Á.',
+      title: 'HỘI NHẬP VÀ PHÁT TRIỂN',
+      date: '1995 - 1996',
+      content: 'Việt Nam gia nhập ASEAN (7/1995), thiết lập quan hệ ngoại giao với Hoa Kỳ (1995), bình thường hóa quan hệ quốc tế. Đại hội VIII (1996) xác định tiếp tục đẩy mạnh công nghiệp hóa, hiện đại hóa. Kinh tế tăng trưởng bình quân 8-9%/năm, đời sống nhân dân được cải thiện rõ rệt.',
       image: '/images/history-4.jpg'
     }
   ];
@@ -41,7 +41,7 @@ const HistoryPage = () => {
             whileHover={{ scale: 1.05 }}
             onClick={() => window.location.href = '/'}
           >
-            SỬ THI 1945
+            CÔNG CUỘC ĐỔI MỚI
           </motion.h1>
           <nav className="flex gap-6">
             <a href="/" className="text-gold-300 hover:text-gold-400 transition-colors">Trang chủ</a>
@@ -54,7 +54,7 @@ const HistoryPage = () => {
       <div className="pt-20">
         {/* Timeline Navigation */}
         <div className="container mx-auto px-4 py-8">
-          <h2 className="section-title text-center mb-12">HÀNH TRÌNH LỊCH SỬ</h2>
+          <h2 className="section-title text-center mb-12">CÔNG CUỘC ĐỔI MỚI 1986-1996</h2>
           
           <div className="flex justify-center mb-12">
             <div className="flex items-center gap-4">
