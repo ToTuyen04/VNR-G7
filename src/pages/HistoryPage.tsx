@@ -363,7 +363,7 @@ const HistoryPage = () => {
                       transition={{ duration: 0.5 }}
                       className="relative"
                     >
-                      <div className="text-[120px] lg:text-[180px] font-black leading-none opacity-10 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent">
+                      <div className="text-[120px] lg:text-[180px] font-black leading-none opacity-40 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent" style={{ fontWeight: 900, WebkitTextStroke: '2px rgba(239, 68, 68, 0.3)' }}>
                         {event.year}
                       </div>
                       {/* Decorative circle */}
@@ -407,7 +407,9 @@ const HistoryPage = () => {
                               ? 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-black' 
                               : 'bg-red-900/80 text-red-100'
                           }`}>
-                            {event.dateLabel}
+                            {event.dateLabel.split(/(\d{4})/).map((part, i) => 
+                              /^\d{4}$/.test(part) ? <span key={i} className="font-extrabold">{part}</span> : part
+                            )}
                           </div>
                           {event.highlight && (
                             <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold animate-pulse">
