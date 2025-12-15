@@ -29,15 +29,24 @@ const GamesPage = () => {
       const GameComponent = game.component;
       return (
         <div className="min-h-screen bg-black">
-          <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gold-500/20">
+          <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-              <motion.h1
-                className="text-2xl font-cinzel font-bold text-gradient cursor-pointer"
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
+                  <span className="text-black text-xl">⭐</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
+                  <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+                </div>
+              </div>
+              <motion.button
+                className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all"
                 whileHover={{ scale: 1.05 }}
                 onClick={() => setSelectedGame(null)}
               >
                 ← Quay lại
-              </motion.h1>
+              </motion.button>
             </div>
           </header>
           <div className="pt-20">
@@ -51,20 +60,28 @@ const GamesPage = () => {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gold-500/20">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <motion.h1
-            className="text-2xl font-cinzel font-bold text-gradient cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            onClick={() => window.location.href = '/'}
-          >
-            SỬ THI 1945
-          </motion.h1>
-          <nav className="flex gap-6">
-            <a href="/" className="text-gold-300 hover:text-gold-400 transition-colors">Trang chủ</a>
-            <a href="/history" className="text-gold-300 hover:text-gold-400 transition-colors">Lịch sử</a>
-            <a href="/games" className="text-gold-300 hover:text-gold-400 transition-colors">Trò chơi</a>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
+              <span className="text-black text-xl">⭐</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+            </div>
+          </div>
+          <nav className="hidden md:flex gap-8">
+            <a href="/" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRANG CHỦ</a>
+            <a href="#history-section" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
+            <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
+            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
+            <a href="/games" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">GAME</a>
+            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
           </nav>
+          <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
+            🎓 Bắt đầu học
+          </button>
         </div>
       </header>
 

@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { useAudio } from '../../hooks/useAudio';
-import { useEffect } from 'react';
 
 interface AudioControllerProps {
   audioSrc?: string;
