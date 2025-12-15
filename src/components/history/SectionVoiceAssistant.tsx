@@ -36,8 +36,8 @@ const SectionVoiceAssistant = ({ content, title, position = 'right' }: SectionVo
           className="relative w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-green-700 shadow-xl flex items-center justify-center group overflow-hidden border-4 border-green-400"
         >
           {/* Character Image/Icon */}
-          <div className="text-4xl relative z-10">
-            🎖️
+          <div className="relative z-10 w-full h-full flex items-center justify-center">
+            <img src="/img/bodoi.webp" alt="Bộ Đội" className="w-12 h-12 object-contain" />
           </div>
 
           {/* Speaking Animation */}
