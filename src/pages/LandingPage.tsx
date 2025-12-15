@@ -125,31 +125,31 @@ const LandingPage = () => {
                 >
                   <button
                     onClick={scrollToHistory}
-                    className="bg-gray-900/50 border border-gray-800 hover:border-gold-500 text-white p-4 rounded-lg text-left transition-all group"
+                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 mb-2">📖</div>
-                    <div className="font-bold">Lộ trình lịch sử</div>
+                    <div className="text-red-500 text-3xl">📖</div>
+                    <div className="font-bold text-lg">Lộ trình lịch sử</div>
                   </button>
                   <button
                     onClick={scrollToHistory}
-                    className="bg-gray-900/50 border border-gray-800 hover:border-gold-500 text-white p-4 rounded-lg text-left transition-all group"
+                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 mb-2">🎯</div>
-                    <div className="font-bold">Trọng tâm 1939-1945</div>
+                    <div className="text-red-500 text-3xl">🎯</div>
+                    <div className="font-bold text-lg">Trọng tâm 1939–1945</div>
                   </button>
                   <button
                     onClick={scrollToHistory}
-                    className="bg-gray-900/50 border border-gray-800 hover:border-gold-500 text-white p-4 rounded-lg text-left transition-all group"
+                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 mb-2">🚩</div>
-                    <div className="font-bold">Tháng Tám 1945</div>
+                    <div className="text-red-500 text-3xl">🚩</div>
+                    <div className="font-bold text-lg">Tháng Tám 1945</div>
                   </button>
                   <button
                     onClick={() => navigate('/games')}
-                    className="bg-gray-900/50 border border-gray-800 hover:border-gold-500 text-white p-4 rounded-lg text-left transition-all group"
+                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 mb-2">🎮</div>
-                    <div className="font-bold">Game "Đường Dây Chỉ Huy"</div>
+                    <div className="text-red-500 text-3xl">🎮</div>
+                    <div className="font-bold text-lg">Game "Đường Dây Chỉ Huy"</div>
                   </button>
                 </motion.div>
               </>
@@ -191,10 +191,14 @@ const LandingPage = () => {
                   <div className="text-8xl">⭐</div>
                 </motion.div>
               </div>
-              <div className="absolute -bottom-8 -right-8 bg-gradient-to-br from-red-700 to-red-900 text-white px-8 py-4 rounded-lg border-4 border-gold-500">
+              <motion.div
+                className="absolute -bottom-8 -right-8 bg-gradient-to-br from-red-700 to-red-900 text-white px-8 py-4 rounded-lg border-4 border-gold-500"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
                 <div className="text-xs text-gold-300 tracking-wider">MỐC SƠN</div>
                 <div className="text-4xl font-bold text-gradient">1945</div>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -230,6 +234,7 @@ const LandingPage = () => {
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-gold-500 via-gold-400 to-gold-600"></div>
 
             {/* Timeline Items */}
+            {/* 1. Đại hội VI của Đảng (1986) */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -239,14 +244,20 @@ const LandingPage = () => {
               <div className="w-1/2 pr-8 text-right">
                 <div className="bg-gray-900 border-2 border-gray-700 hover:border-gold-500 p-6 rounded-lg transition-all">
                   <div className="inline-block bg-red-900/30 text-red-400 px-3 py-1 rounded text-sm mb-3">Tháng 12/1986</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Đại hội Đại biểu toàn quốc lần thứ VI</h3>
-                  <p className="text-gray-400">Đường lối đổi mới toàn diện - bước ngoặt lịch sử. Kinh tế là trung tâm, xây dựng Đảng là then chốt.</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">🏛️ Đại hội VI của Đảng</h3>
+                  <p className="text-gray-400 mb-3">Đường lối đổi mới toàn diện - bước ngoặt lịch sử của dân tộc.</p>
+                  <ul className="text-gray-400 text-sm space-y-2">
+                    <li>• Kinh tế là trung tâm, xây dựng Đảng là then chốt</li>
+                    <li>• Chuyển sang kinh tế thị trường có định hướng XHCN</li>
+                    <li>• Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"</li>
+                  </ul>
                 </div>
               </div>
               <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gold-500 rounded-full border-4 border-black z-10"></div>
               <div className="w-1/2"></div>
             </motion.div>
 
+            {/* 2. Nghị quyết 10 */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -258,29 +269,117 @@ const LandingPage = () => {
               <div className="w-1/2 pl-8">
                 <div className="bg-gray-900 border-2 border-gray-700 hover:border-blue-500 p-6 rounded-lg transition-all">
                   <div className="inline-block bg-blue-900/30 text-blue-400 px-3 py-1 rounded text-sm mb-3">Tháng 4/1988</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Nghị quyết 10 - Đổi mới nông nghiệp</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">🌾 Nghị quyết 10 - Đổi mới nông nghiệp</h3>
                   <p className="text-gray-400">Giao đất, giao rừng cho nông dân. Việt Nam từ thiếu đói thành nước xuất khẩu gạo lớn thứ 2 thế giới.</p>
                 </div>
               </div>
             </motion.div>
 
+            {/* 3. Đại hội VII của Đảng (1991) */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="relative mb-12 flex items-center"
+            >
+              <div className="w-1/2 pr-8 text-right">
+                <div className="bg-gray-900 border-2 border-gray-700 hover:border-green-500 p-6 rounded-lg transition-all">
+                  <div className="inline-block bg-green-900/30 text-green-400 px-3 py-1 rounded text-sm mb-3">Tháng 6/1991</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">🎯 Đại hội VII của Đảng</h3>
+                  <p className="text-gray-400 mb-3">Tiếp tục đẩy mạnh công cuộc đổi mới trong bối cảnh quốc tế biến động.</p>
+                  <ul className="text-gray-400 text-sm space-y-2">
+                    <li>• Khẳng định tiếp tục con đường XHCN</li>
+                    <li>• Phát triển kinh tế nhiều thành phần</li>
+                    <li>• Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full border-4 border-black z-10"></div>
+              <div className="w-1/2"></div>
+            </motion.div>
+
+            {/* 4. Hội nghị giữa nhiệm kỳ VII (1994) */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="relative mb-12 flex items-center"
             >
-              <div className="w-1/2 pr-8 text-right">
-                <div className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-2 border-red-600 p-6 rounded-lg">
-                  <div className="inline-block bg-red-700 text-white px-3 py-1 rounded text-sm mb-3">1989-1996</div>
-                  <h3 className="text-2xl font-bold text-gradient mb-2">Chuyển đổi cơ chế & Hội nhập</h3>
-                  <p className="text-gray-300">Từ kế hoạch hóa tập trung sang thị trường. Gia nhập ASEAN, bình thường hóa quan hệ quốc tế.</p>
+              <div className="w-1/2"></div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full border-4 border-black z-10"></div>
+              <div className="w-1/2 pl-8">
+                <div className="bg-gray-900 border-2 border-gray-700 hover:border-purple-500 p-6 rounded-lg transition-all">
+                  <div className="inline-block bg-purple-900/30 text-purple-400 px-3 py-1 rounded text-sm mb-3">Tháng 1/1994</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">📊 Hội nghị giữa nhiệm kỳ khóa VII</h3>
+                  <p className="text-gray-400 mb-3">Đánh giá và điều chỉnh chiến lược phát triển.</p>
+                  <ul className="text-gray-400 text-sm space-y-2">
+                    <li>• Hoàn thiện thể chế kinh tế thị trường</li>
+                    <li>• Tăng cường hội nhập kinh tế quốc tế</li>
+                    <li>• Đẩy mạnh công nghiệp hóa, hiện đại hóa</li>
+                  </ul>
                 </div>
               </div>
+            </motion.div>
+
+            {/* 5. Kết quả đổi mới 1986-1996 */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="relative mb-12 flex items-center"
+            >
+              <div className="w-1/2 pr-8 text-right">
+                <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-2 border-blue-500 p-6 rounded-lg">
+                  <div className="inline-block bg-blue-700 text-white px-3 py-1 rounded text-sm mb-3">1986-1996</div>
+                  <h3 className="text-2xl font-bold text-blue-300 mb-2">📈 Kết quả đổi mới giai đoạn 1986-1996</h3>
+                  <ul className="text-gray-300 text-sm space-y-2">
+                    <li>• GDP tăng trưởng bình quân 7-8%/năm</li>
+                    <li>• Từ nước thiếu lương thực → xuất khẩu gạo lớn thứ 2 thế giới</li>
+                    <li>• Lạm phát giảm từ 400% (1988) xuống dưới 10% (1995)</li>
+                    <li>• Gia nhập ASEAN (1995), bình thường hóa quan hệ với Mỹ (1995)</li>
+                    <li>• Đời sống nhân dân được cải thiện rõ rệt</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-blue-500 rounded-full border-4 border-black z-10"></div>
+              <div className="w-1/2"></div>
+            </motion.div>
+
+            {/* 6. Ý nghĩa và bài học kinh nghiệm */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="relative mb-12 flex items-center"
+            >
+              <div className="w-1/2"></div>
               <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full border-4 border-black z-10 flex items-center justify-center">
                 <span className="text-black text-sm">⭐</span>
               </div>
-              <div className="w-1/2"></div>
+              <div className="w-1/2 pl-8">
+                <div className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-2 border-red-600 p-6 rounded-lg">
+                  <div className="inline-block bg-red-700 text-white px-3 py-1 rounded text-sm mb-3">Ý nghĩa & Bài học</div>
+                  <h3 className="text-2xl font-bold text-gradient mb-3">💡 Ý nghĩa và bài học kinh nghiệm</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-gold-400 font-semibold mb-1">Ý nghĩa:</h4>
+                      <ul className="text-gray-300 text-sm space-y-1">
+                        <li>• Cứu đất nước thoát khỏi khủng hoảng kinh tế - xã hội</li>
+                        <li>• Khẳng định sức sống của chủ nghĩa xã hội</li>
+                        <li>• Mở ra con đường phát triển mới cho đất nước</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="text-gold-400 font-semibold mb-1">Bài học:</h4>
+                      <ul className="text-gray-300 text-sm space-y-1">
+                        <li>• Đổi mới phải toàn diện, đồng bộ và có trọng tâm</li>
+                        <li>• Kết hợp sức mạnh dân tộc với sức mạnh thời đại</li>
+                        <li>• Giữ vững định hướng XHCN, không dao động trước khó khăn</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
 
