@@ -91,7 +91,7 @@ const LandingPage = () => {
                   className="mb-6"
                 >
                   <div className="inline-block border border-gold-500 rounded-full px-6 py-2 mb-8">
-                    <span className="text-gold-400 text-sm tracking-widest">CHƯƠNG 3 - GIÁO TRÌNH ĐCSVN</span>
+                    <span className="text-gold-400 text-sm tracking-widest">CHƯƠNG 4 - CÔNG CUỘC ĐỔI MỚI</span>
                   </div>
                 </motion.div>
 
@@ -101,10 +101,10 @@ const LandingPage = () => {
                   transition={{ duration: 1 }}
                 >
                   <h1 className="text-5xl md:text-7xl font-cinzel font-black mb-4 leading-tight">
-                    <div className="text-white">ĐẢNG LÃNH ĐẠO</div>
-                    <div className="text-red-600">ĐẤU TRANH</div>
-                    <div className="text-red-600">GIÀNH</div>
-                    <div className="text-gradient">CHÍNH QUYỀN</div>
+                    <div className="text-white">CÔNG CUỘC</div>
+                    <div className="text-red-600">ĐỔI MỚI</div>
+                    <div className="text-red-600">ĐẤT NƯỚC</div>
+                    <div className="text-gradient">1986-1996</div>
                   </h1>
                 </motion.div>
 
@@ -115,10 +115,10 @@ const LandingPage = () => {
                   className="mt-6"
                 >
                   <p className="text-gray-400 text-lg mb-2">
-                    Giai đoạn <span className="text-white font-bold">1930 - 1945</span>. Từ những cao trào đấu tiên đến thắng lợi vĩ đại của Cách mạng Tháng Tám.
+                    Giai đoạn <span className="text-white font-bold">1986 - 1996</span>. Từ Đại hội VI đến 10 năm đổi mới vĩ đại của dân tộc.
                   </p>
                   <p className="text-gray-500 text-sm">
-                    Khám phá hành trình 15 năm đấu tranh anh dũng của dân tộc Việt Nam dưới sự lãnh đạo của Đảng, mở ra kỷ nguyên Độc lập - Tự do.
+                    Khám phá hành trình đổi mới đất nước từ khủng hoảng đến phát triển, mở ra kỷ nguyên mới của nền kinh tế thị trường định hướng xã hội chủ nghĩa.
                   </p>
                 </motion.div>
 
@@ -132,29 +132,29 @@ const LandingPage = () => {
                     onClick={scrollToHistory}
                     className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 text-3xl">📖</div>
-                    <div className="font-bold text-lg">Lộ trình lịch sử</div>
+                    <div className="text-red-500 text-3xl">🏛️</div>
+                    <div className="font-bold text-lg">Đại hội VI (1986)</div>
                   </button>
                   <button
                     onClick={scrollToHistory}
                     className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
                     <div className="text-red-500 text-3xl">🎯</div>
-                    <div className="font-bold text-lg">Trọng tâm 1939–1945</div>
+                    <div className="font-bold text-lg">Đại hội VII (1991)</div>
                   </button>
                   <button
                     onClick={scrollToHistory}
                     className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
-                    <div className="text-red-500 text-3xl">🚩</div>
-                    <div className="font-bold text-lg">Tháng Tám 1945</div>
+                    <div className="text-red-500 text-3xl">📊</div>
+                    <div className="font-bold text-lg">Kết quả Đổi mới</div>
                   </button>
                   <button
                     onClick={() => navigate('/games')}
                     className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
                   >
                     <div className="text-red-500 text-3xl">🎮</div>
-                    <div className="font-bold text-lg">Game "Đường Dây Chỉ Huy"</div>
+                    <div className="font-bold text-lg">Game Lịch sử</div>
                   </button>
                 </motion.div>
               </>
@@ -181,7 +181,7 @@ const LandingPage = () => {
                     </defs>
                     <text fill="#FFC107" fontSize="19" fontWeight="900" letterSpacing="4" style={{ textShadow: 'rgba(0, 0, 0, 0.5) 0px 2px 4px' }}>
                       <textPath href="#curve" startOffset="0%">
-                        5 • ĐỘC LẬP • TỰ DO • VIỆT NAM • 1945 • HÒA BÌNH • CỘNG HÒA
+                        ĐỔI MỚI • PHÁT TRIỂN • VIỆT NAM • 1986 • TƯ DUY MỚI • KINH TẾ MỚI
                       </textPath>
                     </text>
                   </svg>
@@ -201,8 +201,8 @@ const LandingPage = () => {
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="text-xs text-gold-300 tracking-wider">MỐC SƠN</div>
-                <div className="text-4xl font-bold text-gradient">1945</div>
+                <div className="text-xs text-gold-300 tracking-wider">ĐỔI MỚI</div>
+                <div className="text-4xl font-bold text-gradient">1986</div>
               </motion.div>
             </div>
           </motion.div>
