@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import HistoryChatBot from '../components/history/HistoryChatBot';
+import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
 const HistoryPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
@@ -381,6 +383,13 @@ const HistoryPage = () => {
                       {/* Glow effect */}
                       <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-900 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
                       
+                      {/* Voice Assistant Character */}
+                      <SectionVoiceAssistant
+                        title={event.title}
+                        content={`${event.description}${event.sections ? '. ' + event.sections.map(s => s.content.join('. ')).join('. ') : ''}`}
+                        position={index % 2 === 0 ? 'right' : 'left'}
+                      />
+                      
                       {/* Card */}
                       <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-gray-800 rounded-2xl p-8 overflow-hidden">
                         {/* Background pattern */}
@@ -751,6 +760,9 @@ const HistoryPage = () => {
           </p>
         </div>
       </footer>
+
+      {/* ChatBot */}
+      <HistoryChatBot />
     </div>
   );
 };
