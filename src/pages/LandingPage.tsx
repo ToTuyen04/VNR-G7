@@ -37,7 +37,7 @@ const LandingPage = () => {
           </div>
           <nav className="hidden md:flex gap-8">
             <a href="#" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">TRANG CHỦ</a>
-            <a href="/history" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
+            <a href="/noi-dung" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
             <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
@@ -477,7 +477,7 @@ const LandingPage = () => {
             className="text-center mt-16"
           >
             <button
-              onClick={() => navigate('/history')}
+              onClick={() => navigate('/noi-dung')}
               className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-bold hover:from-red-700 hover:to-red-800 transition-all inline-flex items-center gap-2 group"
             >
               Xem chi tiết toàn bộ nội dung
