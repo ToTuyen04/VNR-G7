@@ -232,7 +232,7 @@ const LandingPage = () => {
           {/* Timeline */}
           <div className="relative max-w-4xl mx-auto" id="timeline">
             {/* Vertical Line connecting all dots */}
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[5px] md:-translate-x-1/2 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
 
             {/* Timeline Items */}
             {/* 1. Đại hội VI của Đảng (1986) */}
