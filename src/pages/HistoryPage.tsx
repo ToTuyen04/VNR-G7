@@ -393,7 +393,7 @@ const HistoryPage = () => {
 
                         {/* Date Badge */}
                         <div className="relative flex items-center gap-3 mb-6">
-                          <div className={`px-4 py-2 rounded-lg text-sm font-bold ${
+                          <div className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider ${
                             event.highlight 
                               ? 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-black' 
                               : 'bg-red-900/80 text-red-100'
@@ -408,12 +408,12 @@ const HistoryPage = () => {
                         </div>
 
                         {/* Title */}
-                        <h3 className="relative text-3xl lg:text-4xl font-black text-white mb-6 leading-tight">
+                        <h3 className="relative text-3xl lg:text-4xl font-cinzel font-black text-red-500 mb-6 leading-tight">
                           {event.title}
                         </h3>
 
                         {/* Description */}
-                        <p className="relative text-gray-300 mb-6 leading-relaxed text-lg">
+                        <p className="relative text-gray-300 mb-6 leading-relaxed text-base font-vietnam">
                           {event.description}
                         </p>
 
@@ -428,7 +428,7 @@ const HistoryPage = () => {
                                 >
                                   <div className="flex items-center gap-3">
                                     <span className="text-2xl">{section.icon}</span>
-                                    <h4 className="text-white font-bold text-left">{section.title}</h4>
+                                    <h4 className="text-white font-semibold text-left font-vietnam">{section.title}</h4>
                                   </div>
                                   <span className="text-gold-400 text-xl group-hover:scale-110 transition-transform">
                                     {expandedSection === `${index}-${idx}` ? '−' : '+'}
@@ -447,7 +447,7 @@ const HistoryPage = () => {
                                       {section.content.map((item, i) => (
                                         <div key={i} className="flex gap-3">
                                           <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
-                                          <p className="text-gray-400 leading-relaxed text-sm">
+                                          <p className="text-gray-300 leading-relaxed text-base font-vietnam">
                                             {item}
                                           </p>
                                         </div>
@@ -713,16 +713,16 @@ const HistoryPage = () => {
             <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
             <ul className="space-y-2 text-sm">
               <li className="text-gray-400">
-                <span className="text-white">1</span> Nguyễn Mỹ Thái Hòa - Leader/Dev
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader
               </li>
               <li className="text-gray-400">
-                <span className="text-white">2</span> Nguyễn Hoàng Phúc - Content
+                <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher
               </li>
               <li className="text-gray-400">
-                <span className="text-white">3</span> Lê Duy Trường - Designer
+                <span className="text-white">3</span> Nguyễn Quý Hưng - Game Developer
               </li>
               <li className="text-gray-400">
-                <span className="text-white">4</span> Nguyễn Minh Hùng - Researcher
+                <span className="text-white">4</span> Tô Minh Tuyền - Web Developer
               </li>
             </ul>
           </div>
