@@ -3,65 +3,198 @@ import { useState } from 'react';
 
 const HistoryPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   const timelineEvents = [
     {
-      year: '1930',
-      date: '3/2/1930',
-      dateLabel: '3/2/1930',
-      title: 'Đảng Cộng sản Việt Nam ra đời',
-      description: 'Ngày 3/2/1930, tại Hương Cảng (Trung Quốc), lãnh tụ Nguyễn Ái Quốc chủ trì Hội nghị hợp nhất các tổ chức cộng sản, thành lập Đảng Cộng sản Việt Nam.',
-      details: [
-        'Thống qua Cương lĩnh chính trị đầu tiên: Xác định đường lối chiến lược là làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản.',
-        'Sự kiện này là bước ngoặt vĩ đại, chấm dứt sự khủng hoảng về đường lối cứu nước kéo dài nhiều thập kỷ.'
+      year: '1986',
+      date: '12/1986',
+      dateLabel: 'Tháng 12/1986',
+      title: 'Đại hội VI của Đảng: Khởi Xướng Công Cuộc Đổi Mới',
+      highlight: 'BƯỚC NGOẶT',
+      description: 'Việt Nam rơi vào khủng hoảng kinh tế – xã hội kéo dài, lạm phát tăng vọt lên tới 774% năm 1986, đời sống nhân dân khó khăn.',
+      sections: [
+        {
+          title: 'Bối cảnh lịch sử',
+          icon: '📊',
+          content: [
+            'Sau thắng lợi thống nhất đất nước (1975), Việt Nam bước vào thời kỳ quá độ lên chủ nghĩa xã hội trong điều kiện vô cùng khó khăn',
+            'Nền kinh tế rơi vào khủng hoảng kéo dài, sản xuất trì trệ',
+            'Lạm phát tăng vọt: 300% (1985) → 774% (1986)',
+            'Đời sống nhân dân khó khăn, thiếu lương thực',
+            'Cơ chế quản lý hành chính bao cấp triệt tiêu động lực sản xuất'
+          ]
+        },
+        {
+          title: 'Mục đích Đại hội',
+          icon: '🎯',
+          content: [
+            'Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật',
+            'Chỉ rõ những sai lầm, khuyết điểm nghiêm trọng (nhất là bệnh chủ quan, duy ý chí) trong giai đoạn 1975–1986',
+            'Bầu đồng chí Nguyễn Văn Linh làm Tổng Bí thư',
+            'Quy mô: 1.129 đại biểu (đại diện gần 2 triệu đảng viên)'
+          ]
+        },
+        {
+          title: 'Đường lối Đổi mới',
+          icon: '💡',
+          content: [
+            'Đề ra đường lối đổi mới toàn diện đất nước',
+            'Đổi mới tư duy, trước hết là tư duy kinh tế là cấp bách',
+            'Kinh tế là trung tâm, xây dựng Đảng là then chốt',
+            'Chuyển sang kinh tế thị trường có định hướng xã hội chủ nghĩa'
+          ]
+        },
+        {
+          title: 'Nội dung cốt lõi',
+          icon: '⚙️',
+          content: [
+            'Thực hiện nhất quán nền kinh tế nhiều thành phần',
+            'Xóa bỏ cơ chế tập trung, quan liêu, bao cấp',
+            'Chuyển sang kết hợp kế hoạch với thị trường',
+            'Ba chương trình kinh tế lớn: Lương thực – thực phẩm; Hàng tiêu dùng; Hàng xuất khẩu',
+            'Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"'
+          ]
+        },
+        {
+          title: 'Kết quả bước đầu',
+          icon: '📈',
+          content: [
+            'Lạm phát giảm mạnh từ 774,7% (1986) xuống còn 67,1% (1991)',
+            'Đến năm 1989, Việt Nam bắt đầu xuất khẩu gạo sau khi đã đủ ăn',
+            'Tạo nền móng cho mô hình kinh tế thị trường định hướng XHCN',
+            'Khẳng định khả năng tự đổi mới, tự chỉnh đốn của Đảng'
+          ]
+        }
       ],
-      images: [
-        { src: '/images/hcm-young.jpg', caption: 'Tranh vẽ Hội nghị thành lập Đảng' },
-        { src: '/images/party-doc.jpg', caption: 'Bản thảo Cương lĩnh chính trị' }
-      ]
+      images: []
     },
     {
-      year: '1930',
-      date: '1930-1931',
-      dateLabel: '1930-1931',
-      title: 'Cao trào cách mạng 1930-1931',
-      description: 'Đảng vừa ra đời đã lãnh đạo quần chúng đấu tranh quyết liệt. Đỉnh cao là phong trào Xô viết Nghệ - Tĩnh.',
-      details: [
-        'Tháng 9/1930, nông dân Hưng Nguyên (Nghệ An) biểu tình lớn. Chính quyền thực dân tan rã ở nhiều thôn xã.',
-        'Chính quyền Xô viết (chính quyền của dân, do dân, vì dân) được thành lập, thực hiện chia ruộng đất, xóa bỏ tệ nạn, khuyến khích học chữ.',
-        'Tuy bị thực dân Pháp dìm trong bể máu, nhưng đây là cuộc tổng diễn tập đầu tiên của cách mạng Việt Nam.'
+      year: '1991',
+      date: '6/1991',
+      dateLabel: 'Tháng 6/1991',
+      title: 'Đại hội VII của Đảng: Hoàn Chỉnh Nhận Thức Lý Luận',
+      description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước XHCN Đông Âu sụp đổ.',
+      sections: [
+        {
+          title: 'Nội dung trọng tâm',
+          icon: '📜',
+          content: [
+            'Lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội (Cương lĩnh 1991)',
+            'Khẳng định tiếp tục con đường xã hội chủ nghĩa',
+            'Phát triển kinh tế nhiều thành phần',
+            'Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa'
+          ]
+        },
+        {
+          title: 'Định hướng chiến lược',
+          icon: '🧭',
+          content: [
+            'Khẳng định 5 bài học lớn của cách mạng',
+            'Phải nắm vững ngọn cờ độc lập dân tộc gắn liền với chủ nghĩa xã hội',
+            'Thông qua Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000',
+            'Mục tiêu: Ra khỏi khủng hoảng kinh tế – xã hội và đạt GDP tăng gấp khoảng 2 lần so với năm 1990'
+          ]
+        },
+        {
+          title: 'Kết quả giai đoạn 1991-1995',
+          icon: '📊',
+          content: [
+            'Tốc độ tăng trưởng kinh tế đạt khoảng 5,5% – 6,5%/năm',
+            'Lạm phát được kiềm chế mạnh (xuống còn 12,7% năm 1995)',
+            'Việt Nam gia nhập ASEAN (1995)',
+            'Bình thường hóa quan hệ ngoại giao với Hoa Kỳ (1995)'
+          ]
+        }
       ],
-      images: [
-        { src: '/images/xoviet1.jpg', caption: 'Phong trào Xô viết Nghệ Tĩnh' }
-      ]
+      images: []
     },
     {
-      year: '1936',
-      date: '1936-1939',
-      dateLabel: '1936-1939',
-      title: 'Phong trào Dân chủ 1936-1939',
-      description: 'Lợi dụng tình hình Mặt trận Nhân dân Pháp lên cầm quyền, Đảng chuyển hướng chỉ đạo chiến lược: Đấu tranh đòi tự do, dân sinh, dân chủ.',
-      details: [
-        'Thành lập Mặt trận Dân chủ Đông Dương. Kết hợp đấu tranh công khai, hợp pháp với bí mật, bất hợp pháp.',
-        'Sự kiện nổi bật: Cuộc mít tinh kỷ niệm ngày Quốc tế Lao động 1/5/1938 tại Khu Đầu Xéo (Hà Nội) với 25.000 người tham dự.',
-        'Đây là cuộc tổng diễn tập thứ hai, giúp Đảng rèn luyện đội ngũ và mở rộng ảnh hưởng trong quần chúng.'
+      year: '1994',
+      date: '1/1994',
+      dateLabel: 'Tháng 1/1994',
+      title: 'Hội nghị Đại biểu Toàn quốc Giữa Nhiệm kỳ Khóa VII: Nhận Diện Nguy Cơ',
+      description: 'Đánh giá tình hình sau Đại hội VII và xác định những vấn đề lớn cần tập trung giải quyết, giữ vững định hướng xã hội chủ nghĩa.',
+      sections: [
+        {
+          title: 'Cảnh báo 4 Nguy cơ lớn',
+          icon: '⚠️',
+          content: [
+            '1. Tụt hậu xa hơn về kinh tế',
+            '2. Chệch hướng xã hội chủ nghĩa',
+            '3. Tham nhũng và tệ quan liêu',
+            '4. Âm mưu "diễn biến hòa bình" của các thế lực thù địch'
+          ]
+        },
+        {
+          title: 'Phát triển nhận thức',
+          icon: '🏛️',
+          content: [
+            'Lần đầu tiên khẳng định chủ trương xây dựng Nhà nước pháp quyền xã hội chủ nghĩa',
+            'Nhà nước của nhân dân, do nhân dân, vì nhân dân',
+            'Do Đảng Cộng sản Việt Nam lãnh đạo',
+            'Hoàn thiện thể chế kinh tế thị trường',
+            'Tăng cường hội nhập kinh tế quốc tế',
+            'Đẩy mạnh công nghiệp hóa, hiện đại hóa'
+          ]
+        }
       ],
-      images: [
-        { src: '/images/demo1938.jpg', caption: 'Phong trào đấu tranh dân chủ' }
-      ]
+      images: []
     },
     {
-      year: '1945',
-      date: '1939-1945',
-      dateLabel: '1939-1945',
-      highlight: 'TRỌNG TÂM',
-      title: 'Giải phóng dân tộc & Tổng khởi nghĩa',
-      description: 'Thế chiến II bùng nổ. Đảng họp Hội nghị TW 6, 7, 8 -> Đặt nhiệm vụ giải phóng dân tộc lên hàng đầu.',
-      details: [
-        'Tháng 5/1941: Nguyễn Ái Quốc về nước, chủ trì Hội nghị TW 8 tại Pắc Bó (Cao Bằng), thành lập Mặt trận Việt Minh.',
-        '22/12/1944: Thành lập Đội Việt Nam Tuyên truyền Giải phóng quân (tiền thân Quân đội nhân dân Việt Nam).',
-        'Tháng 8/1945: Cơ hội cách mạng xuất hiện, Đảng lãnh đạo nhân dân nổ dậy tổng khởi nghĩa giành chính quyền trên toàn quốc.',
-        '2/9/1945: Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập, khai sinh nước Việt Nam Dân chủ Cộng hòa.'
+      year: '1996',
+      date: '1986-1996',
+      dateLabel: '1986-1996',
+      highlight: 'KẾT QUẢ',
+      title: 'Tổng kết Kết quả Đổi mới Giai đoạn 1986 – 1996',
+      description: 'Đất nước thoát khỏi khủng hoảng kinh tế – xã hội kéo dài. Việt Nam bảo đảm an ninh lương thực và trở thành nước xuất khẩu gạo từ năm 1989.',
+      sections: [
+        {
+          title: 'Kinh tế',
+          icon: '💰',
+          content: [
+            'Lạm phát giảm mạnh từ 774,7% (1986) xuống còn 12,7% (1995)',
+            'GDP tăng trưởng bình quân 7-8%/năm',
+            'Từ nước thiếu lương thực → xuất khẩu gạo lớn thứ 2 thế giới',
+            'Bảo đảm an ninh lương thực từ năm 1989',
+            'Hình thành nền kinh tế hàng hóa nhiều thành phần'
+          ]
+        },
+        {
+          title: 'Cơ chế quản lý',
+          icon: '⚙️',
+          content: [
+            'Vận hành theo cơ chế thị trường có sự quản lý của Nhà nước',
+            'Xóa bỏ cơ chế kế hoạch hóa tập trung, quan liêu, bao cấp',
+            'Thực hiện nhất quán nền kinh tế nhiều thành phần',
+            'Kết hợp kế hoạch với thị trường'
+          ]
+        },
+        {
+          title: 'Chính trị – Xã hội',
+          icon: '🏛️',
+          content: [
+            'Ổn định chính trị – xã hội được giữ vững',
+            'Tạo môi trường thuận lợi cho phát triển',
+            'Đời sống nhân dân được cải thiện rõ rệt',
+            'Nhận thức về xây dựng Nhà nước pháp quyền xã hội chủ nghĩa từng bước hình thành'
+          ]
+        },
+        {
+          title: 'Đối ngoại',
+          icon: '🌍',
+          content: [
+            'Phá thế bao vây, cấm vận',
+            'Bình thường hóa quan hệ với Trung Quốc (1991)',
+            'Bình thường hóa quan hệ với Hoa Kỳ (1995)',
+            'Gia nhập ASEAN (1995)',
+            'Vị thế quốc tế của Việt Nam được nâng cao'
+          ]
+        }
       ],
       images: []
     }
@@ -69,24 +202,28 @@ const HistoryPage = () => {
 
   const augustEvents = [
     {
-      date: '13/8',
-      title: 'QUÂN LỆNH SỐ 1',
-      description: 'Ủy ban Khởi nghĩa toàn quốc ban bố Quân lệnh số 1, phát động tổng khởi nghĩa.'
+      icon: '💰',
+      title: 'KINH TẾ TĂNG TRƯỞNG',
+      stat: '7-8%',
+      description: 'GDP tăng trưởng bình quân/năm, đưa Việt Nam thoát khỏi khủng hoảng kinh tế'
     },
     {
-      date: '16/8',
-      title: 'ĐẠI HỘI TÁN TRÀO',
-      description: 'Quốc dân Đại hội Tán Trào thông qua lệnh Tổng khởi nghĩa, bầu ra Ủy ban Dân tộc giải phóng.'
+      icon: '🌾',
+      title: 'XUẤT KHẨU GẠO',
+      stat: 'Top 2',
+      description: 'Từ thiếu lương thực (1986) → Nước xuất khẩu gạo lớn thứ 2 thế giới'
     },
     {
-      date: '19/8',
-      title: 'HÀ NỘI',
-      description: 'Khởi nghĩa thắng lợi tại Hà Nội. Cả thủ đô nổ ngập tràn cờ đỏ sao vàng.'
+      icon: '📉',
+      title: 'LẠM PHÁT GIẢM',
+      stat: '774% → 12.7%',
+      description: 'Từ 774% (1986) xuống còn 12.7% (1995), ổn định kinh tế vĩ mô'
     },
     {
-      date: '23/8',
-      title: 'HUẾ',
-      description: 'Khởi nghĩa thắng lợi tại Huế. Vua Bảo Đại chấp nhận thoái vị.'
+      icon: '🌍',
+      title: 'HỘI NHẬP QUỐC TẾ',
+      stat: 'ASEAN',
+      description: 'Gia nhập ASEAN (1995), bình thường hóa quan hệ với Mỹ và Trung Quốc'
     }
   ];
 
@@ -148,7 +285,7 @@ const HistoryPage = () => {
             className="mb-8"
           >
             <div className="inline-block border-2 border-red-500 rounded-full px-8 py-3 mb-8">
-              <span className="text-red-400 text-sm font-bold tracking-widest uppercase">📖 Dòng chảy lịch sử</span>
+              <span className="text-red-400 text-sm font-bold tracking-widest uppercase">📖 Công cuộc Đổi mới</span>
             </div>
             <motion.h1 
               className="text-5xl md:text-7xl lg:text-8xl font-cinzel font-black mb-6"
@@ -156,9 +293,9 @@ const HistoryPage = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
             >
-              <span className="text-white">Đảng Cộng sản </span>
+              <span className="text-white">Giai đoạn </span>
               <span className="block mt-2 bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-clip-text text-transparent">
-                Việt Nam ra đời
+                1986 - 1996
               </span>
             </motion.h1>
             <motion.p 
@@ -167,7 +304,7 @@ const HistoryPage = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              Từ khi Đảng ra đời ngày 3/2/1930, qua các cao trào cách mạng đến thắng lợi huy hoàng của cuộc Tổng khởi nghĩa Tháng Tám 1945.
+              Hành trình 10 năm đổi mới vĩ đại: Từ khủng hoảng đến phát triển, mở ra kỷ nguyên mới của nền kinh tế thị trường định hướng xã hội chủ nghĩa.
             </motion.p>
             
             {/* Scroll indicator */}
@@ -280,20 +417,51 @@ const HistoryPage = () => {
                           {event.description}
                         </p>
 
-                        {/* Details */}
-                        <div className="relative space-y-3 mb-6">
-                          {event.details.map((detail, i) => (
-                            <div key={i} className="flex gap-3">
-                              <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
-                              <p className="text-gray-400 leading-relaxed text-sm">
-                                {detail}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
+                        {/* Sections with expandable content */}
+                        {event.sections && (
+                          <div className="relative space-y-4">
+                            {event.sections.map((section, idx) => (
+                              <div key={idx}>
+                                <button
+                                  onClick={() => toggleSection(`${index}-${idx}`)}
+                                  className="w-full flex items-center justify-between p-4 bg-gray-800/50 hover:bg-gray-800/80 rounded-lg transition-all group"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-2xl">{section.icon}</span>
+                                    <h4 className="text-white font-bold text-left">{section.title}</h4>
+                                  </div>
+                                  <span className="text-gold-400 text-xl group-hover:scale-110 transition-transform">
+                                    {expandedSection === `${index}-${idx}` ? '−' : '+'}
+                                  </span>
+                                </button>
+                                
+                                {expandedSection === `${index}-${idx}` && (
+                                  <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="mt-2 p-4 bg-gray-900/50 rounded-lg overflow-hidden"
+                                  >
+                                    <div className="space-y-3">
+                                      {section.content.map((item, i) => (
+                                        <div key={i} className="flex gap-3">
+                                          <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
+                                          <p className="text-gray-400 leading-relaxed text-sm">
+                                            {item}
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                         {/* Images */}
-                        {event.images.length > 0 && (
+                        {event.images && event.images.length > 0 && (
                           <div className="relative grid grid-cols-2 gap-4 mt-8">
                             {event.images.map((img, i) => (
                               <motion.div
@@ -323,8 +491,8 @@ const HistoryPage = () => {
         </div>
       </div>
 
-      {/* August 1945 Section */}
-      <div className="py-20 px-4 bg-gradient-to-b from-black via-red-950/10 to-black">
+      {/* Statistics Section - Achievements */}
+      <div className="py-20 px-4 bg-gradient-to-b from-black via-blue-950/10 to-black">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -333,17 +501,17 @@ const HistoryPage = () => {
             className="text-center mb-16"
           >
             <div className="inline-block border border-gold-500 rounded-full px-6 py-2 mb-6">
-              <span className="text-gold-400 text-sm tracking-widest">🚩 MỐC SƠN LỊCH SỬ</span>
+              <span className="text-gold-400 text-sm tracking-widest">📊 THÀNH TỰU NỔI BẬT</span>
             </div>
             <h2 className="text-5xl md:text-7xl font-cinzel font-black text-gradient mb-6">
-              TỔNG KHỞI NGHĨA 1945
+              Kết Quả Vượt Bậc
             </h2>
             <p className="text-gray-400 text-lg">
-              15 ngày làm nên lịch sử, đập tan xiềng xích nô lệ gần 100 năm.
+              Những con số ấn tượng đánh dấu thành công của 10 năm đổi mới
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-4 gap-6 mb-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             {augustEvents.map((event, index) => (
               <motion.div
                 key={index}
@@ -351,42 +519,136 @@ const HistoryPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-gradient-to-br from-red-900/40 to-black border-2 border-red-800/50 rounded-lg p-6 hover:border-red-600 transition-all"
+                className="bg-gradient-to-br from-gray-900/80 to-black border-2 border-gray-700 hover:border-gold-500 rounded-lg p-6 transition-all group"
               >
-                <div className="text-6xl font-bold text-gray-700/30 mb-2">{index + 1}</div>
-                <div className="text-red-400 text-sm mb-3">📅 {event.date}</div>
-                <h3 className="text-xl font-bold text-white mb-3">{event.title}</h3>
-                <p className="text-gray-400 text-sm">{event.description}</p>
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{event.icon}</div>
+                <div className="text-4xl font-black text-gold-400 mb-2">{event.stat}</div>
+                <h3 className="text-lg font-bold text-white mb-3">{event.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{event.description}</p>
               </motion.div>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Ba Dinh Square Hero */}
+      {/* Ý nghĩa và Bài học Kinh nghiệm */}
+      <div className="py-20 px-4 bg-gradient-to-b from-black via-red-950/10 to-black">
+        <div className="container mx-auto max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-2xl overflow-hidden border-4 border-gold-500"
+            className="text-center mb-16"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10"></div>
-            <img
-              src="/images/ba-dinh.jpg"
-              alt="Ba Dinh Square"
-              className="w-full h-96 object-cover"
-            />
-            <div className="absolute inset-0 z-20 flex items-center justify-center">
-              <div className="text-center p-8">
-                <div className="bg-red-700 text-white px-4 py-2 rounded-full inline-block mb-4 text-sm font-bold">
-                  KHOẢNH KHẮC LỊCH SỬ
-                </div>
-                <h3 className="text-5xl font-cinzel font-black text-white mb-4">
-                  Quảng trường Ba Đình, ngày 2/9/1945
-                </h3>
-                <p className="text-gold-300 text-lg italic max-w-3xl mx-auto">
-                  "Nước Việt Nam có quyền hưởng tự do và độc lập, và sự thật đã thành một nước tự do độc lập."
-                </p>
-              </div>
+            <div className="inline-block border border-gold-500 rounded-full px-6 py-2 mb-6">
+              <span className="text-gold-400 text-sm tracking-widest">💡 TỔNG KẾT</span>
             </div>
+            <h2 className="text-5xl md:text-7xl font-cinzel font-black text-gradient mb-6">
+              Ý Nghĩa & Bài Học
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Giá trị lịch sử và những kinh nghiệm quý báu từ 10 năm đổi mới
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Ý nghĩa Lịch sử */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-red-900/40 to-black border-2 border-red-600/50 rounded-2xl p-8"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-5xl">🏆</span>
+                <h3 className="text-3xl font-bold text-gold-400">Ý nghĩa Lịch sử</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gold-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-300 leading-relaxed">
+                    Đánh dấu bước chuyển có tính lịch sử của đất nước từ cơ chế kế hoạch hóa tập trung sang <span className="text-white font-bold">kinh tế thị trường định hướng xã hội chủ nghĩa</span>
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gold-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-300 leading-relaxed">
+                    Cứu đất nước thoát khỏi <span className="text-red-400 font-bold">khủng hoảng kinh tế - xã hội</span>, mở ra con đường phát triển mới
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gold-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-300 leading-relaxed">
+                    Tạo nền tảng vững chắc cho thời kỳ đẩy mạnh <span className="text-white font-bold">công nghiệp hóa, hiện đại hóa</span>
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gold-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-300 leading-relaxed">
+                    Khẳng định <span className="text-white font-bold">sức sống của chủ nghĩa xã hội</span> trong điều kiện mới
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bài học Kinh nghiệm */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-blue-900/40 to-black border-2 border-blue-600/50 rounded-2xl p-8"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-5xl">📚</span>
+                <h3 className="text-3xl font-bold text-blue-400">Bài học Kinh nghiệm</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <span className="text-gold-400 font-bold text-lg flex-shrink-0">1.</span>
+                  <p className="text-gray-300 leading-relaxed">
+                    Kiên định mục tiêu <span className="text-white font-bold">độc lập dân tộc</span> gắn liền với <span className="text-white font-bold">chủ nghĩa xã hội</span>
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-gold-400 font-bold text-lg flex-shrink-0">2.</span>
+                  <p className="text-gray-300 leading-relaxed">
+                    Quán triệt tư tưởng <span className="text-red-400 font-bold">"lấy dân làm gốc"</span>, xuất phát từ lợi ích và nguyện vọng của nhân dân
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-gold-400 font-bold text-lg flex-shrink-0">3.</span>
+                  <p className="text-gray-300 leading-relaxed">
+                    Tôn trọng <span className="text-white font-bold">quy luật khách quan</span> của kinh tế thị trường, gắn với vai trò quản lý của Nhà nước
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-gold-400 font-bold text-lg flex-shrink-0">4.</span>
+                  <p className="text-gray-300 leading-relaxed">
+                    Kết hợp chặt chẽ <span className="text-white font-bold">đổi mới kinh tế</span> với <span className="text-white font-bold">đổi mới chính trị</span>, giữ vững ổn định xã hội
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="text-gold-400 font-bold text-lg flex-shrink-0">5.</span>
+                  <p className="text-gray-300 leading-relaxed">
+                    Không ngừng <span className="text-white font-bold">xây dựng, chỉnh đốn Đảng</span> và chủ động mở rộng đối ngoại, <span className="text-white font-bold">hội nhập quốc tế</span>
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Quote Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-2 border-gold-500/50 rounded-2xl p-8 md:p-12 text-center"
+          >
+            <div className="text-6xl mb-6">🚢</div>
+            <p className="text-gray-300 text-lg md:text-xl leading-relaxed italic mb-4">
+              "Quá trình đổi mới giai đoạn 1986–1996 có thể được hình dung như việc <span className="text-gold-400 font-bold">chuyển đổi một con tàu</span> đang mắc kẹt trong cơn bão (khủng hoảng kinh tế) sang một hải trình mới (kinh tế thị trường), nơi việc <span className="text-red-400 font-bold">đổi mới tư duy</span> (Đại hội VI) giúp xác định lại la bàn, và việc thông qua <span className="text-blue-400 font-bold">Cương lĩnh</span> (Đại hội VII) giúp vẽ ra bản đồ chi tiết cho hành trình dài phía trước."
+            </p>
+            <div className="w-20 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto"></div>
           </motion.div>
         </div>
       </div>
@@ -425,12 +687,12 @@ const HistoryPage = () => {
                 <span className="text-black text-xl">⭐</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Mùa Thu Cách Mạng</h3>
+                <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
                 <p className="text-xs text-gray-500">VNR202 - HISTORY</p>
               </div>
             </div>
             <p className="text-gray-400 text-sm">
-              Dự án số hóa lịch sử giai đoạn 1930-1945. Khơi dậy niềm tự hào dân tộc qua lăng kính công nghệ hiện đại.
+              Dự án số hóa lịch sử giai đoạn 1986-1996. Khơi dậy niềm tự hào dân tộc về công cuộc Đổi mới vĩ đại.
             </p>
           </div>
 

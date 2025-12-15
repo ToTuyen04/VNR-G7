@@ -516,10 +516,10 @@ const LandingPage = () => {
             <div>
               <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li>1️⃣ Nguyễn Mỹ Thái Hòa - Leader/Dev</li>
-                <li>2️⃣ Nguyễn Hoàng Phúc - Content</li>
-                <li>3️⃣ Lê Duy Trường - Designer</li>
-                <li>4️⃣ Nguyễn Minh Hùng - Researcher</li>
+                <li>1️⃣ Nguyễn Lê Kim Ngân - Leader</li>
+                <li>2️⃣ Nguyễn Quý Hưng - Dev Game</li>
+                <li>3️⃣ Trần Kim Nhã - Contentor & Researcher</li>
+                <li>4️⃣ Tô Minh Tuyền - Dev Web</li>
               </ul>
             </div>
             <div>
