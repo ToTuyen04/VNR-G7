@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import QuizGame from '../components/games/QuizGame';
-import MemoryGame from '../components/games/MemoryGame';
+import CoCaNguaGame from '../components/games/CoCaNguaGame';
 import { useState } from 'react';
 
 const GamesPage = () => {
@@ -8,18 +7,11 @@ const GamesPage = () => {
 
   const games = [
     {
-      id: 'quiz',
-      title: 'Trắc Nghiệm Lịch Sử',
-      description: 'Kiểm tra kiến thức của bạn về Cách mạng Tháng Tám 1945',
-      icon: '📝',
-      component: QuizGame
-    },
-    {
-      id: 'memory',
-      title: 'Trò Chơi Trí Nhớ',
-      description: 'Ghép các hình ảnh lịch sử với nhau',
-      icon: '🧠',
-      component: MemoryGame
+      id: 'cocangua',
+      title: 'Cờ Cá Ngựa',
+      description: 'Trò chơi nhiều người chơi.',
+      icon: '🎲',
+      component: CoCaNguaGame
     }
   ];
 
@@ -88,7 +80,7 @@ const GamesPage = () => {
       <div className="pt-20 container mx-auto px-4 py-12">
         <h2 className="section-title text-center mb-12">TRÒ CHƠI TÌM HIỂU LỊCH SỬ</h2>
         
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto">
           {games.map((game, index) => (
             <motion.div
               key={game.id}

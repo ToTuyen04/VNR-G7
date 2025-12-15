@@ -1,6 +1,61 @@
-# React + TypeScript + Vite
+# VNR202 - Nhóm 7 | Đảng Lãnh Đạo Đấu Tranh Giải Phóng Dân Tộc
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive learning platform về Cách mạng Tháng Tám 1945 với game Cờ Cá Ngựa multiplayer.
+
+## 🎮 Features
+
+- **Cờ Cá Ngựa Multiplayer**: Trò chơi nhiều người chơi (2-8 người) sử dụng PeerJS (WebRTC)
+- **P2P Connection**: Kết nối trực tiếp giữa các người chơi - **Không cần server backend!**
+- **Real-time Gameplay**: Chơi game thời gian thực với độ trễ cực thấp
+- **Room-based System**: Tạo phòng và chia sẻ Peer ID để bạn bè tham gia
+- **100% Free**: Không tốn phí hosting server
+
+## 🚀 Quick Start
+
+### Chỉ cần chạy Frontend (Không cần server!)
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Game sẽ chạy tại `http://localhost:5173`
+
+## 🎲 How to Play Cờ Cá Ngựa
+
+**Người tạo phòng:**
+1. Nhấn "Tạo phòng mới"
+2. Sao chép và chia sẻ **Peer ID** với bạn bè
+
+**Người tham gia:**
+1. Dán **Peer ID** vào ô "ID Phòng"
+2. Nhấn "Tham gia"
+
+**Bắt đầu chơi:**
+1. Chờ 2-8 người chơi tham gia
+2. Tất cả người chơi nhấn "Sẵn sàng"
+3. Host nhấn "Bắt đầu trò chơi"
+4. Lắc xúc xắc và di chuyển quân cờ theo lượt
+5. Người đầu tiên đưa cả 4 quân về đích sẽ chiến thắng!
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React + TypeScript + Vite
+- **Styling**: TailwindCSS
+- **Animation**: Framer Motion
+- **Multiplayer**: PeerJS (WebRTC P2P)
+- **Audio**: Howler.js
+
+## 🌟 Why PeerJS?
+
+- ✅ **No Backend Server Required** - Giảm chi phí và độ phức tạp
+- ✅ **Lower Latency** - Kết nối trực tiếp P2P
+- ✅ **Free Forever** - Không tốn phí hosting
+- ✅ **Easy to Deploy** - Chỉ cần deploy frontend
+- ✅ **Scalable** - Không lo về tải server
 
 Currently, two official plugins are available:
 

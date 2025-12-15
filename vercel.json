@@ -4,6 +4,11 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
+  "build": {
+    "env": {
+      "NODE_VERSION": "22"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
