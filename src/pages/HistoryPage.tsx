@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
+interface ImageType {
+  src: string;
+  caption: string;
+}
+
 const HistoryPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -71,7 +76,7 @@ const HistoryPage = () => {
           ]
         }
       ],
-      images: []
+      images: [] as ImageType[]
     },
     {
       year: '1991',
@@ -143,7 +148,7 @@ const HistoryPage = () => {
           ]
         }
       ],
-      images: []
+      images: [] as ImageType[]
     },
     {
       year: '1996',
@@ -196,7 +201,7 @@ const HistoryPage = () => {
           ]
         }
       ],
-      images: []
+      images: [] as ImageType[]
     }
   ];
 
