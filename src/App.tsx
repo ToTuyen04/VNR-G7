@@ -11,7 +11,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/noi-dung" element={<HistoryPage />} />
           <Route path="/games" element={<GamesPage />} />
         </Routes>
         <AudioController />

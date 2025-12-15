@@ -1,8 +1,12 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 const HistoryPage = () => {
+  const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
+
   const timelineEvents = [
     {
+      year: '1930',
       date: '3/2/1930',
       dateLabel: '3/2/1930',
       title: 'Đảng Cộng sản Việt Nam ra đời',
@@ -11,9 +15,13 @@ const HistoryPage = () => {
         'Thống qua Cương lĩnh chính trị đầu tiên: Xác định đường lối chiến lược là làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản.',
         'Sự kiện này là bước ngoặt vĩ đại, chấm dứt sự khủng hoảng về đường lối cứu nước kéo dài nhiều thập kỷ.'
       ],
-      images: ['/images/hcm-young.jpg', '/images/party-founding.jpg', '/images/party-doc.jpg']
+      images: [
+        { src: '/images/hcm-young.jpg', caption: 'Tranh vẽ Hội nghị thành lập Đảng' },
+        { src: '/images/party-doc.jpg', caption: 'Bản thảo Cương lĩnh chính trị' }
+      ]
     },
     {
+      year: '1930',
       date: '1930-1931',
       dateLabel: '1930-1931',
       title: 'Cao trào cách mạng 1930-1931',
@@ -23,9 +31,12 @@ const HistoryPage = () => {
         'Chính quyền Xô viết (chính quyền của dân, do dân, vì dân) được thành lập, thực hiện chia ruộng đất, xóa bỏ tệ nạn, khuyến khích học chữ.',
         'Tuy bị thực dân Pháp dìm trong bể máu, nhưng đây là cuộc tổng diễn tập đầu tiên của cách mạng Việt Nam.'
       ],
-      images: ['/images/xoviet1.jpg', '/images/xoviet2.jpg']
+      images: [
+        { src: '/images/xoviet1.jpg', caption: 'Phong trào Xô viết Nghệ Tĩnh' }
+      ]
     },
     {
+      year: '1936',
       date: '1936-1939',
       dateLabel: '1936-1939',
       title: 'Phong trào Dân chủ 1936-1939',
@@ -35,9 +46,12 @@ const HistoryPage = () => {
         'Sự kiện nổi bật: Cuộc mít tinh kỷ niệm ngày Quốc tế Lao động 1/5/1938 tại Khu Đầu Xéo (Hà Nội) với 25.000 người tham dự.',
         'Đây là cuộc tổng diễn tập thứ hai, giúp Đảng rèn luyện đội ngũ và mở rộng ảnh hưởng trong quần chúng.'
       ],
-      images: ['/images/demo1938.jpg', '/images/movement.jpg']
+      images: [
+        { src: '/images/demo1938.jpg', caption: 'Phong trào đấu tranh dân chủ' }
+      ]
     },
     {
+      year: '1945',
       date: '1939-1945',
       dateLabel: '1939-1945',
       highlight: 'TRỌNG TÂM',
@@ -105,89 +119,207 @@ const HistoryPage = () => {
       </header>
 
       {/* Hero Section */}
-      <div className="pt-32 pb-16 px-4">
-        <div className="container mx-auto text-center">
+      <div className="relative pt-32 pb-16 px-4 overflow-hidden">
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-red-900/20"></div>
+          <motion.div
+            className="absolute inset-0"
+            animate={{
+              backgroundPosition: ['0% 0%', '100% 100%'],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: 'reverse'
+            }}
+            style={{
+              backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.1) 1px, transparent 1px)',
+              backgroundSize: '50px 50px'
+            }}
+          />
+        </div>
+
+        <div className="container mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
             className="mb-8"
           >
-            <div className="inline-block border border-red-500 rounded-full px-6 py-2 mb-6">
-              <span className="text-red-400 text-sm tracking-widest">📖 DÒNG CHẢY LỊCH SỬ</span>
+            <div className="inline-block border-2 border-red-500 rounded-full px-8 py-3 mb-8">
+              <span className="text-red-400 text-sm font-bold tracking-widest uppercase">📖 Dòng chảy lịch sử</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-cinzel font-black mb-6">
-              <span className="text-white">Giai đoạn </span>
-              <span className="text-red-600">1930 - 1945</span>
-            </h1>
-            <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-              Từ khi Đảng ra đời, qua các cao trào cách mạng đến thắng lợi huy hoàng của cuộc Tổng khởi nghĩa Tháng Tám.
-            </p>
+            <motion.h1 
+              className="text-5xl md:text-7xl lg:text-8xl font-cinzel font-black mb-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+            >
+              <span className="text-white">Đảng Cộng sản </span>
+              <span className="block mt-2 bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-clip-text text-transparent">
+                Việt Nam ra đời
+              </span>
+            </motion.h1>
+            <motion.p 
+              className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            >
+              Từ khi Đảng ra đời ngày 3/2/1930, qua các cao trào cách mạng đến thắng lợi huy hoàng của cuộc Tổng khởi nghĩa Tháng Tám 1945.
+            </motion.p>
+            
+            {/* Scroll indicator */}
+            <motion.div
+              className="mt-12"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <div className="text-red-500 text-3xl">↓</div>
+              <p className="text-gray-500 text-sm mt-2">Cuộn để khám phá</p>
+            </motion.div>
           </motion.div>
         </div>
       </div>
 
       {/* Timeline Section */}
       <div id="history-section" className="relative py-16 px-4">
-        <div className="container mx-auto max-w-5xl">
-          {/* Vertical Line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-red-900/30 hidden md:block"></div>
+        <div className="container mx-auto max-w-7xl">
+          <div className="relative">
+            {/* Vertical Timeline Line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-red-900/50 via-red-600/30 to-red-900/50 hidden lg:block"></div>
 
-          {timelineEvents.map((event, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              className={`relative mb-24 ${
-                index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:ml-auto'
-              }`}
-            >
-              {/* Timeline Dot */}
-              <div className="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 bg-red-600 rounded-full border-4 border-black z-10 hidden md:block"></div>
-
-              {/* Date Badge Large */}
-              <div className={`absolute ${index % 2 === 0 ? 'right-8' : 'left-8'} top-0 text-8xl font-bold text-gray-800/20 hidden md:block`}>
-                {event.date.includes('-') ? event.date.split('-')[0] : event.date.split('/')[2] || '1930'}
-              </div>
-
-              {/* Content Card */}
-              <div className={`bg-gradient-to-br from-gray-900/80 to-black border-2 border-gray-800 rounded-lg p-8 ${
-                index % 2 === 0 ? 'md:mr-auto md:w-5/6' : 'md:ml-auto md:w-5/6'
-              }`}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`${event.highlight ? 'bg-gold-600' : 'bg-red-900'} text-white px-4 py-1 rounded text-sm font-bold`}>
-                    {event.dateLabel}
+            {timelineEvents.map((event, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="relative mb-32 lg:mb-48"
+              >
+                {/* Timeline Dot - Clickable */}
+                <motion.div 
+                  className="absolute left-1/2 top-20 transform -translate-x-1/2 -translate-y-1/2 z-30 hidden lg:block cursor-pointer"
+                  onClick={() => setSelectedEvent(index)}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <div className={`w-6 h-6 rounded-full border-4 border-black transition-all duration-300 ${
+                    selectedEvent === index ? 'bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.6)]' : 'bg-red-800'
+                  }`}>
+                    <div className="absolute inset-0 rounded-full animate-ping bg-red-500 opacity-20"></div>
                   </div>
-                  {event.highlight && (
-                    <div className="bg-gold-600 text-black px-4 py-1 rounded text-sm font-bold">
-                      {event.highlight}
-                    </div>
-                  )}
-                </div>
+                </motion.div>
 
-                <h3 className="text-3xl font-bold text-white mb-4">{event.title}</h3>
-                
-                <p className="text-gray-400 mb-4 leading-relaxed">{event.description}</p>
-
-                {event.details.map((detail, i) => (
-                  <p key={i} className="text-gray-500 mb-2 leading-relaxed">
-                    {detail}
-                  </p>
-                ))}
-
-                {event.images.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 mt-6">
-                    {event.images.map((img, i) => (
-                      <div key={i} className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
-                        <img src={img} alt="" className="w-full h-full object-cover" />
+                {/* Content Grid */}
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+                  {/* Year Display - Left side on even, right on odd */}
+                  <div className={`${index % 2 === 0 ? 'lg:order-1 lg:text-right' : 'lg:order-2 lg:text-left'} flex justify-center lg:justify-start`}>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5 }}
+                      className="relative"
+                    >
+                      <div className="text-[120px] lg:text-[180px] font-black leading-none opacity-10 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent">
+                        {event.year}
                       </div>
-                    ))}
+                      {/* Decorative circle */}
+                      <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-red-900/30 rounded-full"></div>
+                    </motion.div>
                   </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
+
+                  {/* Content Card - Right side on even, left on odd */}
+                  <div className={`${index % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      className="relative group"
+                    >
+                      {/* Glow effect */}
+                      <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-900 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500"></div>
+                      
+                      {/* Card */}
+                      <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-gray-800 rounded-2xl p-8 overflow-hidden">
+                        {/* Background pattern */}
+                        <div className="absolute inset-0 opacity-5">
+                          <div className="absolute inset-0" style={{
+                            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
+                            backgroundSize: '40px 40px'
+                          }}></div>
+                        </div>
+
+                        {/* Date Badge */}
+                        <div className="relative flex items-center gap-3 mb-6">
+                          <div className={`px-4 py-2 rounded-lg text-sm font-bold ${
+                            event.highlight 
+                              ? 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-black' 
+                              : 'bg-red-900/80 text-red-100'
+                          }`}>
+                            {event.dateLabel}
+                          </div>
+                          {event.highlight && (
+                            <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold animate-pulse">
+                              ⭐ {event.highlight}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="relative text-3xl lg:text-4xl font-black text-white mb-6 leading-tight">
+                          {event.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="relative text-gray-300 mb-6 leading-relaxed text-lg">
+                          {event.description}
+                        </p>
+
+                        {/* Details */}
+                        <div className="relative space-y-3 mb-6">
+                          {event.details.map((detail, i) => (
+                            <div key={i} className="flex gap-3">
+                              <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
+                              <p className="text-gray-400 leading-relaxed text-sm">
+                                {detail}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Images */}
+                        {event.images.length > 0 && (
+                          <div className="relative grid grid-cols-2 gap-4 mt-8">
+                            {event.images.map((img, i) => (
+                              <motion.div
+                                key={i}
+                                whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? -2 : 2 }}
+                                className="relative group/img"
+                              >
+                                <div className="aspect-[4/3] bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-700 group-hover/img:border-red-600 transition-colors">
+                                  <img 
+                                    src={img.src} 
+                                    alt={img.caption}
+                                    className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 transition-opacity" 
+                                  />
+                                </div>
+                                <p className="text-xs text-gray-500 mt-2 text-center">{img.caption}</p>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -258,6 +390,30 @@ const HistoryPage = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Floating Star Icon - Bottom Right */}
+      <motion.div
+        className="fixed bottom-8 right-8 z-40"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <motion.div
+          className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl cursor-pointer"
+          whileHover={{ scale: 1.1, rotate: 180 }}
+          whileTap={{ scale: 0.9 }}
+          animate={{ 
+            boxShadow: [
+              '0 0 20px rgba(220, 38, 38, 0.5)',
+              '0 0 40px rgba(220, 38, 38, 0.8)',
+              '0 0 20px rgba(220, 38, 38, 0.5)'
+            ]
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-yellow-300 text-3xl">★</span>
+        </motion.div>
+      </motion.div>
 
       {/* Footer */}
       <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4">
