@@ -5,11 +5,16 @@ import { useEffect, useState } from 'react';
 const LandingPage = () => {
   const navigate = useNavigate();
   const [showContent, setShowContent] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContent(true), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section);
+  };
 
   const scrollToHistory = () => {
     const historySection = document.getElementById('history-section');
@@ -243,7 +248,10 @@ const LandingPage = () => {
               className="relative mb-12 flex items-center"
             >
               <div className="w-1/2 pr-8 text-right">
-                <div className="bg-gray-900 border-2 border-gray-700 hover:border-gold-500 p-6 rounded-lg transition-all">
+                <div 
+                  onClick={() => toggleSection('daihoi6')}
+                  className="bg-gray-900 border-2 border-gray-700 hover:border-gold-500 p-6 rounded-lg transition-all cursor-pointer"
+                >
                   <div className="inline-block bg-red-900/30 text-red-400 px-3 py-1 rounded text-sm mb-3">Tháng 12/1986</div>
                   <h3 className="text-2xl font-bold text-white mb-2">🏛️ Đại hội VI của Đảng</h3>
                   <p className="text-gray-400 mb-3">Đường lối đổi mới toàn diện - bước ngoặt lịch sử của dân tộc.</p>
@@ -252,7 +260,87 @@ const LandingPage = () => {
                     <li>• Chuyển sang kinh tế thị trường có định hướng XHCN</li>
                     <li>• Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"</li>
                   </ul>
+                  <div className="mt-3 text-gold-400 text-sm flex items-center justify-end gap-2">
+                    <span>{expandedSection === 'daihoi6' ? 'Thu gọn' : 'Xem chi tiết'}</span>
+                    <span>{expandedSection === 'daihoi6' ? '▲' : '▼'}</span>
+                  </div>
                 </div>
+                
+                {/* Nội dung chi tiết Đại hội VI */}
+                {expandedSection === 'daihoi6' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4 bg-gray-800/50 border-2 border-gold-500/30 p-6 rounded-lg overflow-hidden"
+                  >
+                    <div className="text-left space-y-6">
+                      {/* 1. Bối cảnh */}
+                      <div>
+                        <h4 className="text-xl font-bold text-gold-400 mb-3">1. Bối cảnh lịch sử trước Đại hội VI</h4>
+                        <p className="text-gray-300 text-sm mb-3">
+                          Sau thắng lợi của cuộc kháng chiến chống Mỹ, đất nước thống nhất (1975), Việt Nam bước vào thời kỳ quá độ lên chủ nghĩa xã hội trong điều kiện vô cùng khó khăn.
+                        </p>
+                        <ul className="text-gray-400 text-sm space-y-2 ml-4">
+                          <li>• Nền kinh tế rơi vào khủng hoảng kéo dài, sản xuất trì trệ</li>
+                          <li>• Lạm phát tăng vọt: 300% (1985) → 774% (1986)</li>
+                          <li>• Đời sống nhân dân khó khăn, thiếu lương thực</li>
+                          <li>• Cơ chế quản lý hành chính bao cấp triệt tiêu động lực sản xuất</li>
+                        </ul>
+                      </div>
+
+                      {/* 2. Thông tin cơ bản */}
+                      <div>
+                        <h4 className="text-xl font-bold text-gold-400 mb-3">2. Thông tin cơ bản về Đại hội</h4>
+                        <ul className="text-gray-400 text-sm space-y-2 ml-4">
+                          <li>• Thời gian: 15-18/12/1986 tại Hà Nội</li>
+                          <li>• Quy mô: 1.129 đại biểu (đại diện gần 2 triệu đảng viên)</li>
+                          <li>• Bầu đồng chí Nguyễn Văn Linh làm Tổng Bí thư</li>
+                          <li>• Mục đích: Nhìn thẳng vào sự thật, đánh giá đúng sự thật</li>
+                        </ul>
+                      </div>
+
+                      {/* 3. Bài học kinh nghiệm */}
+                      <div>
+                        <h4 className="text-xl font-bold text-gold-400 mb-3">3. Bài học kinh nghiệm</h4>
+                        <ul className="text-gray-400 text-sm space-y-2 ml-4">
+                          <li>• Trong toàn bộ hoạt động, Đảng phải quán triệt tư tưởng "lấy dân làm gốc"</li>
+                          <li>• Đường lối phải xuất phát từ thực tế, tôn trọng quy luật khách quan</li>
+                          <li>• Kết hợp chặt chẽ sức mạnh dân tộc với sức mạnh thời đại</li>
+                          <li>• Thường xuyên chăm lo xây dựng Đảng ngang tầm với nhiệm vụ</li>
+                        </ul>
+                      </div>
+
+                      {/* 4. Nội dung đổi mới */}
+                      <div>
+                        <h4 className="text-xl font-bold text-gold-400 mb-3">4. Nội dung đường lối đổi mới</h4>
+                        <div className="space-y-3">
+                          <div>
+                            <h5 className="text-white font-semibold mb-2">Đổi mới tư duy và cơ chế kinh tế:</h5>
+                            <ul className="text-gray-400 text-sm space-y-2 ml-4">
+                              <li>• Thực hiện nhất quán nền kinh tế nhiều thành phần</li>
+                              <li>• Xóa bỏ cơ chế tập trung, quan liêu, bao cấp</li>
+                              <li>• Chuyển sang hạch toán kinh doanh, kết hợp kế hoạch với thị trường</li>
+                              <li>• Ba chương trình kinh tế lớn: Lương thực – thực phẩm; Hàng tiêu dùng; Hàng xuất khẩu</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 5. Ý nghĩa */}
+                      <div>
+                        <h4 className="text-xl font-bold text-gold-400 mb-3">5. Ý nghĩa lịch sử</h4>
+                        <ul className="text-gray-400 text-sm space-y-2 ml-4">
+                          <li>• Mở ra thời kỳ đổi mới toàn diện, đồng bộ và lâu dài</li>
+                          <li>• Đặt nền móng cho mô hình kinh tế thị trường định hướng XHCN</li>
+                          <li>• Tạo cơ sở để đất nước thoát khỏi khủng hoảng kinh tế – xã hội</li>
+                          <li>• Khẳng định khả năng tự đổi mới, tự chỉnh đốn của Đảng</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
               <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full border-4 border-black z-10"></div>
               <div className="w-1/2"></div>
