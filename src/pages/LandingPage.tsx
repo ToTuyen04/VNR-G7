@@ -254,7 +254,7 @@ const LandingPage = () => {
                   </ul>
                 </div>
               </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gold-500 rounded-full border-4 border-black z-10"></div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full border-4 border-black z-10"></div>
               <div className="w-1/2"></div>
             </motion.div>
 
@@ -354,9 +354,7 @@ const LandingPage = () => {
               className="relative mb-12 flex items-center"
             >
               <div className="w-1/2"></div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full border-4 border-black z-10 flex items-center justify-center">
-                <span className="text-black text-sm">⭐</span>
-              </div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-yellow-500 rounded-full border-4 border-black z-10"></div>
               <div className="w-1/2 pl-8">
                 <div className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-2 border-red-600 p-6 rounded-lg">
                   <div className="inline-block bg-red-700 text-white px-3 py-1 rounded text-sm mb-3">Ý nghĩa & Bài học</div>
