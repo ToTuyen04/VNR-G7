@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import HistoryChatBot from '../components/history/HistoryChatBot';
 import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
@@ -8,9 +8,20 @@ interface ImageType {
   caption: string;
 }
 
+interface SectionType {
+  title: string;
+  icon: string;
+  content: string[];
+  images?: ImageType[];
+}
+
 const HistoryPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = 'VNR202 - Nội dung';
+  }, []);
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -29,52 +40,117 @@ const HistoryPage = () => {
           title: 'Bối cảnh lịch sử',
           icon: '📊',
           content: [
-            'Sau thắng lợi thống nhất đất nước (1975), Việt Nam bước vào thời kỳ quá độ lên chủ nghĩa xã hội trong điều kiện vô cùng khó khăn',
-            'Nền kinh tế rơi vào khủng hoảng kéo dài, sản xuất trì trệ',
-            'Lạm phát tăng vọt: 300% (1985) → 774% (1986)',
-            'Đời sống nhân dân khó khăn, thiếu lương thực',
-            'Cơ chế quản lý hành chính bao cấp triệt tiêu động lực sản xuất'
+            'Sau thắng lợi của cuộc kháng chiến chống Mỹ, đất nước thống nhất (1975), Việt Nam bước vào thời kỳ quá độ lên chủ nghĩa xã hội trong điều kiện vô cùng khó khăn. Từ năm 1975 đến giữa những năm 1980, mô hình kinh tế kế hoạch hóa tập trung, quan liêu, bao cấp bộc lộ nhiều hạn chế nghiêm trọng:',
+            'Nền kinh tế rơi vào khủng hoảng kéo dài, sản xuất trì trệ, hiệu quả thấp',
+            'Lạm phát tăng vọt, từ 300% năm 1985 lên tới 774% năm 1986',
+            'Đời sống nhân dân gặp nhiều khó khăn, thiếu lương thực, hàng tiêu dùng khan hiếm',
+            'Các hiện tượng vi phạm pháp luật, vượt biên trái phép diễn ra phổ biến',
+            'Cơ chế quản lý hành chính bao cấp triệt tiêu động lực sản xuất, sáng tạo',
+            'Bên cạnh đó, tình hình thế giới có nhiều biến động lớn:',
+            'Xu thế đối thoại dần thay thế đối đầu',
+            'Cách mạng khoa học – kỹ thuật phát triển mạnh',
+            'Liên Xô và các nước xã hội chủ nghĩa tiến hành cải tổ',
+            'Xu thế mở cửa, hợp tác và hội nhập kinh tế quốc tế ngày càng rõ nét',
+            '👉 Thực tiễn đó đặt ra yêu cầu cấp bách phải đổi mới tư duy, trước hết là tư duy kinh tế, nếu không đất nước sẽ tiếp tục lâm vào khủng hoảng sâu sắc hơn.'
+          ],
+          images: [
+            {
+              src: '/img/Người dân xếp hàng mua đồ thời bao cấp. Ảnh tư liệu.png',
+              caption: 'Người dân xếp hàng mua đồ thời bao cấp - Minh chứng cho tình trạng khó khăn kinh tế trước Đại hội VI năm 1986'
+            }
           ]
         },
         {
-          title: 'Mục đích Đại hội',
+          title: 'Thông tin cơ bản về Đại hội',
           icon: '🎯',
           content: [
-            'Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật',
-            'Chỉ rõ những sai lầm, khuyết điểm nghiêm trọng (nhất là bệnh chủ quan, duy ý chí) trong giai đoạn 1975–1986',
-            'Bầu đồng chí Nguyễn Văn Linh làm Tổng Bí thư',
-            'Quy mô: 1.129 đại biểu (đại diện gần 2 triệu đảng viên)'
+            'Đại hội VI là dấu mốc quan trọng, mở ra một thời kỳ phát triển mới của cách mạng Việt Nam',
+            'Đại hội họp tại Hà Nội (15–18/12/1986), có 1.129 đại biểu (đại diện gần 2 triệu đảng viên) và 32 đoàn đại biểu quốc tế',
+            'Đại hội thông qua các văn kiện chính trị quan trọng, khởi xướng đường lối đổi mới toàn diện; bầu Ban Chấp hành Trung ương, Bộ Chính trị và bầu đồng chí Nguyễn Văn Linh làm Tổng Bí thư',
+            'Mục đích của Đại hội:',
+            '• Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật',
+            '• Chỉ rõ những sai lầm, khuyết điểm của Đảng giai đoạn 1975–1986',
+            '• Đề ra đường lối đổi mới nhằm đưa đất nước ra khỏi khủng hoảng kinh tế – xã hội'
+          ],
+          images: [
+            {
+              src: '/img/Toàn cảnh Đại hội VI năm 1986  – Đại hội đại biểu toàn quốc lần thứ VI của Đảng Cộng sản Việt Nam diễn ra tại Hà Nội, mở ra thời kỳ đổi mới toàn diện đất nước..jpg',
+              caption: 'Toàn cảnh Đại hội VI năm 1986 – Đại hội đại biểu toàn quốc lần thứ VI của Đảng Cộng sản Việt Nam diễn ra tại Hà Nội, mở ra thời kỳ đổi mới toàn diện đất nước'
+            },
+            {
+              src: '/img/Đồng chí Nguyễn Văn Linh được bầu làm Tổng Bí thư Ban Chấp hành Trung ương Đảng khóa VI..jpg',
+              caption: 'Đồng chí Nguyễn Văn Linh được bầu làm Tổng Bí thư Ban Chấp hành Trung ương Đảng khóa VI'
+            }
           ]
         },
         {
-          title: 'Đường lối Đổi mới',
+          title: 'Nhìn thẳng vào sự thật và rút ra bài học',
           icon: '💡',
           content: [
-            'Đề ra đường lối đổi mới toàn diện đất nước',
-            'Đổi mới tư duy, trước hết là tư duy kinh tế là cấp bách',
-            'Kinh tế là trung tâm, xây dựng Đảng là then chốt',
-            'Chuyển sang kinh tế thị trường có định hướng xã hội chủ nghĩa'
+            'Đại hội VI đã nghiêm túc kiểm điểm những sai lầm, khuyết điểm nghiêm trọng và kéo dài, đặc biệt trong lĩnh vực kinh tế',
+            'Nguyên nhân chủ yếu: Bệnh chủ quan, duy ý chí; Tư duy nóng vội, giản đơn; Những hạn chế trong công tác tư tưởng, tổ chức và cán bộ của Đảng',
+            'Bốn bài học kinh nghiệm quý báu:',
+            '1. Trong toàn bộ hoạt động của mình, Đảng phải quán triệt tư tưởng "lấy dân làm gốc"',
+            '2. Mọi đường lối, chủ trương phải xuất phát từ thực tế, tôn trọng và hành động theo quy luật khách quan',
+            '3. Kết hợp chặt chẽ sức mạnh dân tộc với sức mạnh thời đại trong điều kiện mới',
+            '4. Thường xuyên chăm lo xây dựng Đảng ngang tầm với nhiệm vụ lãnh đạo',
+            '👉 Trên cơ sở những bài học này, Đại hội VI đề ra đường lối đổi mới toàn diện đất nước'
           ]
         },
         {
-          title: 'Nội dung cốt lõi',
+          title: 'Đổi mới tư duy và cơ chế kinh tế',
           icon: '⚙️',
           content: [
             'Thực hiện nhất quán nền kinh tế nhiều thành phần',
             'Xóa bỏ cơ chế tập trung, quan liêu, bao cấp',
-            'Chuyển sang kết hợp kế hoạch với thị trường',
+            'Chuyển sang hạch toán kinh doanh, kết hợp kế hoạch với thị trường',
+            'Nhiệm vụ trung tâm: Sản xuất đủ tiêu dùng và có tích lũy; Bước đầu hình thành cơ cấu kinh tế hợp lý',
             'Ba chương trình kinh tế lớn: Lương thực – thực phẩm; Hàng tiêu dùng; Hàng xuất khẩu',
-            'Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"'
+            'Năm phương hướng phát triển: Bố trí lại cơ cấu sản xuất; Điều chỉnh cơ cấu đầu tư; Sử dụng và cải tạo đúng đắn các thành phần kinh tế; Đổi mới cơ chế quản lý kinh tế; Mở rộng kinh tế đối ngoại'
+          ]
+        },
+        {
+          title: 'Đổi mới xã hội và đối ngoại',
+          icon: '🌍',
+          content: [
+            'Chính sách xã hội bốn nhóm: Kế hoạch hóa dân số, giải quyết việc làm; Công bằng và an toàn xã hội; Giáo dục, văn hóa, y tế; Bảo trợ xã hội',
+            'Quốc phòng – an ninh: Tăng cường củng cố quốc phòng, giữ vững độc lập, chủ quyền, toàn vẹn lãnh thổ',
+            'Đối ngoại: Tăng cường hợp tác với Liên Xô và các nước XHCN; Bình thường hóa quan hệ với Trung Quốc; Mở rộng hợp tác quốc tế',
+            'Đổi mới lãnh đạo của Đảng: Đổi mới tư duy; Đổi mới công tác cán bộ; Phát huy dân chủ "Dân biết, dân bàn, dân làm, dân kiểm tra"'
+          ]
+        },
+        {
+          title: 'Quá trình thực hiện (1986-1991)',
+          icon: '📋',
+          content: [
+            'Hội nghị TW 2 (4/1987): Biện pháp cấp bách về phân phối – lưu thông, thực hiện "bốn giảm", cơ chế một giá và thống nhất lương',
+            'Quyết định 217-HĐBT (11/1987): Trao quyền tự chủ cho doanh nghiệp nhà nước, chuyển sang hạch toán kinh doanh',
+            'Nghị quyết 10 (4/1988): Khoán sản phẩm cuối cùng đến hộ xã viên (Khoán 10), tạo bước đột phá trong nông nghiệp',
+            'Luật Đầu tư nước ngoài (1988): Mở rộng thu hút vốn và công nghệ từ bên ngoài',
+            'Công nghiệp: Xóa bỏ cơ chế bao cấp, chuyển doanh nghiệp sang kinh doanh XHCN'
           ]
         },
         {
           title: 'Kết quả bước đầu',
           icon: '📈',
           content: [
-            'Lạm phát giảm mạnh từ 774,7% (1986) xuống còn 67,1% (1991)',
-            'Đến năm 1989, Việt Nam bắt đầu xuất khẩu gạo sau khi đã đủ ăn',
-            'Tạo nền móng cho mô hình kinh tế thị trường định hướng XHCN',
-            'Khẳng định khả năng tự đổi mới, tự chỉnh đốn của Đảng'
+            'Lạm phát giảm mạnh: từ 774,7% (1986) xuống còn 67,1% (1991)',
+            'Cuối 1988: Xóa bỏ chế độ phân phối theo tem phiếu, lưu thông hàng hóa được mở rộng',
+            'Lương thực: Năm 1988 còn nhập 450.000 tấn gạo → Năm 1989 đã đủ ăn, có dự trữ và bắt đầu xuất khẩu',
+            'Nền kinh tế hàng hóa nhiều thành phần, vận động theo cơ chế thị trường có quản lý của Nhà nước bước đầu hình thành',
+            'Kinh tế đối ngoại được mở rộng, phát triển nhanh hơn'
+          ]
+        },
+        {
+          title: 'Ý nghĩa lịch sử',
+          icon: '🏆',
+          content: [
+            'Mở ra thời kỳ đổi mới toàn diện, đồng bộ và lâu dài của đất nước',
+            'Đặt nền móng cho việc hình thành mô hình kinh tế thị trường định hướng xã hội chủ nghĩa',
+            'Tạo cơ sở để đất nước từng bước thoát khỏi khủng hoảng kinh tế – xã hội',
+            'Khẳng định khả năng tự đổi mới, tự chỉnh đốn của Đảng trước yêu cầu của lịch sử',
+            '👉 Đại hội VI được coi là bước ngoặt lịch sử trong sự nghiệp xây dựng và phát triển đất nước Việt Nam thời kỳ sau chiến tranh',
+            'Hạn chế: Chưa đề ra được giải pháp thật sự đồng bộ để tháo gỡ triệt để tình trạng rối ren trong phân phối và lưu thông'
           ]
         }
       ],
@@ -88,33 +164,130 @@ const HistoryPage = () => {
       description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước XHCN Đông Âu sụp đổ.',
       sections: [
         {
-          title: 'Nội dung trọng tâm',
+          title: 'Bối cảnh lịch sử trước Đại hội VII',
+          icon: '🌐',
+          content: [
+            'Sau hơn 4 năm thực hiện đường lối đổi mới do Đại hội VI đề ra, đất nước ta đã có những chuyển biến tích cực bước đầu nhưng vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội:',
+            '• Nền kinh tế hàng hóa nhiều thành phần bước đầu hình thành, lạm phát được kiềm chế',
+            '• Sản xuất có tăng nhưng chưa vững chắc, đời sống nhân dân còn nhiều khó khăn',
+            '• Nhiều vấn đề xã hội bức xúc chưa được giải quyết triệt để',
+            'Trong khi đó, bối cảnh quốc tế có những biến động rất lớn và phức tạp:',
+            '• Liên Xô và các nước xã hội chủ nghĩa Đông Âu lâm vào khủng hoảng và sụp đổ hoàn toàn (1991)',
+            '• Các thế lực thù địch tăng cường chống phá, thúc đẩy chiến lược "diễn biến hòa bình"',
+            '• Việt Nam vừa thoát dần thế bao vây, cấm vận nhưng vẫn đứng trước nhiều thách thức mới',
+            '👉 Thực tiễn đó đòi hỏi Đảng phải tổng kết sâu sắc công cuộc đổi mới, kiên định con đường xã hội chủ nghĩa và xác định rõ mô hình, mục tiêu phát triển lâu dài của đất nước.'
+          ]
+        },
+        {
+          title: 'Thông tin cơ bản và nhận định chung của Đại hội VII',
+          icon: '🎯',
+          content: [
+            'Đại hội VII là Đại hội có ý nghĩa rất quan trọng, tiếp tục đường lối đổi mới toàn diện và lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội.',
+            'Đại hội họp tại Hà Nội (24–27/6/1991), có 1.176 đại biểu, đại diện cho hơn 2 triệu đảng viên trong cả nước. Đại hội thông qua các văn kiện chính trị quan trọng, nổi bật là Cương lĩnh năm 1991 và Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000; bầu Ban Chấp hành Trung ương, Bộ Chính trị và bầu đồng chí Đỗ Mười làm Tổng Bí thư.',
+            'Đại hội khẳng định công cuộc đổi mới là đúng đắn, nền kinh tế bước đầu chuyển biến tích cực, nền kinh tế hàng hóa nhiều thành phần từng bước hình thành; đồng thời chỉ rõ đổi mới chưa đồng bộ, khó khăn và thách thức vẫn còn rất lớn.'
+          ]
+        },
+        {
+          title: 'Nội dung cơ bản của Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (Cương lĩnh 1991)',
           icon: '📜',
           content: [
-            'Lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội (Cương lĩnh 1991)',
-            'Khẳng định tiếp tục con đường xã hội chủ nghĩa',
-            'Phát triển kinh tế nhiều thành phần',
-            'Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa'
+            'a) Năm bài học lớn của cách mạng Việt Nam',
+            '• Nắm vững ngọn cờ độc lập dân tộc gắn liền với chủ nghĩa xã hội',
+            '• Cách mạng là sự nghiệp của nhân dân, do nhân dân và vì nhân dân',
+            '• Không ngừng củng cố và tăng cường đại đoàn kết toàn dân tộc',
+            '• Kết hợp sức mạnh dân tộc với sức mạnh thời đại',
+            '• Sự lãnh đạo đúng đắn của Đảng là nhân tố quyết định thắng lợi',
+            '',
+            'b) Những đặc trưng cơ bản của xã hội xã hội chủ nghĩa ở Việt Nam',
+            'Xã hội XHCN mà nhân dân ta xây dựng là xã hội:',
+            '• Do nhân dân lao động làm chủ',
+            '• Có nền kinh tế phát triển cao dựa trên lực lượng sản xuất hiện đại và chế độ công hữu về tư liệu sản xuất chủ yếu',
+            '• Có nền văn hóa tiên tiến, đậm đà bản sắc dân tộc',
+            '• Con người được giải phóng, có cuộc sống ấm no, tự do, hạnh phúc',
+            '• Các dân tộc trong nước bình đẳng, đoàn kết và giúp đỡ nhau cùng tiến bộ',
+            '• Có quan hệ hữu nghị và hợp tác với nhân dân các nước trên thế giới',
+            '',
+            'c) Bảy phương hướng lớn xây dựng chủ nghĩa xã hội',
+            '• Xây dựng Nhà nước xã hội chủ nghĩa của nhân dân, do nhân dân, vì nhân dân',
+            '• Phát triển lực lượng sản xuất, công nghiệp hóa – hiện đại hóa gắn với nông nghiệp toàn diện là nhiệm vụ trung tâm',
+            '• Thiết lập từng bước quan hệ sản xuất XHCN với nhiều hình thức sở hữu',
+            '• Phát triển nền kinh tế hàng hóa nhiều thành phần theo định hướng XHCN',
+            '• Tiến hành cách mạng XHCN trên lĩnh vực tư tưởng – văn hóa',
+            '• Thực hiện chính sách đại đoàn kết dân tộc',
+            '• Kết hợp chặt chẽ xây dựng và bảo vệ Tổ quốc'
           ]
         },
         {
-          title: 'Định hướng chiến lược',
+          title: 'Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000',
           icon: '🧭',
           content: [
-            'Khẳng định 5 bài học lớn của cách mạng',
-            'Phải nắm vững ngọn cờ độc lập dân tộc gắn liền với chủ nghĩa xã hội',
-            'Thông qua Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000',
-            'Mục tiêu: Ra khỏi khủng hoảng kinh tế – xã hội và đạt GDP tăng gấp khoảng 2 lần so với năm 1990'
+            'Đại hội VII lần đầu tiên thông qua một chiến lược phát triển dài hạn, xác định:',
+            '',
+            'Mục tiêu tổng quát:',
+            '• Đến năm 2000, ra khỏi khủng hoảng kinh tế – xã hội',
+            '• GDP tăng gấp khoảng 2 lần so với năm 1990',
+            '',
+            'Quan điểm chỉ đạo:',
+            '• Phát triển nền kinh tế hàng hóa nhiều thành phần',
+            '• Vận hành theo cơ chế thị trường có sự quản lý của Nhà nước',
+            '• Con người vừa là mục tiêu, vừa là động lực của sự phát triển',
+            '• Mọi người được tự do kinh doanh theo pháp luật, quyền sở hữu và thu nhập hợp pháp được bảo hộ'
           ]
         },
         {
-          title: 'Kết quả giai đoạn 1991-1995',
+          title: 'Thực hiện đường lối Đại hội VII (1991–1995)',
+          icon: '⚙️',
+          content: [
+            'Sau Đại hội VII, Trung ương Đảng đã ban hành nhiều nghị quyết quan trọng nhằm cụ thể hóa Cương lĩnh 1991 và Chiến lược ổn định, phát triển kinh tế – xã hội đến năm 2000.',
+            '',
+            'Hội nghị Trung ương 5 (6/1993):',
+            '• Coi nông nghiệp, nông dân, nông thôn là mặt trận hàng đầu trong phát triển kinh tế – xã hội.',
+            'Đề ra ba mục tiêu chủ yếu:',
+            '  - Phát triển nông thôn mới',
+            '  - Phát huy dân chủ, bảo đảm công bằng xã hội',
+            '  - Giữ vững ổn định chính trị – an ninh quốc phòng',
+            '',
+            'Hội nghị Trung ương 7 (7/1994):',
+            '• Đẩy mạnh công nghiệp hóa – hiện đại hóa',
+            '• Phát triển công nghệ',
+            '• Xây dựng giai cấp công nhân trong giai đoạn mới',
+            '',
+            '👉 Các chủ trương trên tạo cơ sở quan trọng cho việc đưa đất nước ra khỏi khủng hoảng kinh tế – xã hội và bước vào thời kỳ phát triển mới.'
+          ]
+        },
+        {
+          title: 'Kết quả thực hiện đường lối Đại hội VII (1991–1995)',
           icon: '📊',
           content: [
-            'Tốc độ tăng trưởng kinh tế đạt khoảng 5,5% – 6,5%/năm',
-            'Lạm phát được kiềm chế mạnh (xuống còn 12,7% năm 1995)',
-            'Việt Nam gia nhập ASEAN (1995)',
-            'Bình thường hóa quan hệ ngoại giao với Hoa Kỳ (1995)'
+            'Việc thực hiện đường lối Đại hội VII đã đạt được những kết quả quan trọng:',
+            '',
+            'a) Về kinh tế – xã hội',
+            '• Tốc độ tăng trưởng kinh tế đạt khoảng 5,5% – 6,5%/năm trong giai đoạn 1991–1995.',
+            '• Lạm phát được kiềm chế mạnh: từ 67,1% (1991) giảm xuống còn 12,7% (1995).',
+            '• Đời sống nhân dân được cải thiện; sản xuất phát triển; kinh tế hàng hóa nhiều thành phần tiếp tục được củng cố.',
+            '',
+            'b) Về đối ngoại',
+            '• 11/1991: Bình thường hóa quan hệ với Trung Quốc.',
+            '• 28/7/1995: Việt Nam gia nhập ASEAN.',
+            '• 11/7/1995: Bình thường hóa quan hệ ngoại giao với Hoa Kỳ.',
+            '→ Đối ngoại mở rộng, vị thế quốc tế của Việt Nam được nâng cao rõ rệt.'
+          ]
+        },
+        {
+          title: 'Ý nghĩa lịch sử và những hạn chế của Đại hội VII',
+          icon: '🏆',
+          content: [
+            'Đại hội VII có ý nghĩa quan trọng đối với tiến trình đổi mới của đất nước:',
+            '• Hoàn chỉnh nhận thức lý luận của Đảng về chủ nghĩa xã hội và con đường đi lên chủ nghĩa xã hội ở Việt Nam trong bối cảnh quốc tế nhiều biến động.',
+            '• Tạo nền tảng tư tưởng và chiến lược cho công cuộc đổi mới lâu dài.',
+            '• Củng cố niềm tin của nhân dân vào sự lãnh đạo của Đảng, góp phần giữ vững ổn định chính trị – xã hội.',
+            '• Giúp đất nước vượt qua thử thách lớn sau sự tan rã của hệ thống xã hội chủ nghĩa thế giới.',
+            '',
+            'Bên cạnh những kết quả đạt được, Đại hội VII vẫn còn một số hạn chế:',
+            '• Một số chủ trương được triển khai chưa kịp thời, chưa thật sự đồng bộ.',
+            '• Chuyển dịch cơ cấu kinh tế còn chậm, hiệu quả chưa cao giữa các vùng và các ngành.',
+            '• Khoảng cách giàu – nghèo bắt đầu xuất hiện, nảy sinh những vấn đề xã hội mới.',
+            '• Hiệu lực và hiệu quả quản lý của Nhà nước trong một số lĩnh vực còn hạn chế.'
           ]
         }
       ],
@@ -128,25 +301,38 @@ const HistoryPage = () => {
       description: 'Đánh giá tình hình sau Đại hội VII và xác định những vấn đề lớn cần tập trung giải quyết, giữ vững định hướng xã hội chủ nghĩa.',
       sections: [
         {
-          title: 'Cảnh báo 4 Nguy cơ lớn',
-          icon: '⚠️',
+          title: 'Hoàn cảnh và mục đích',
+          icon: '🎯',
           content: [
-            '1. Tụt hậu xa hơn về kinh tế',
-            '2. Chệch hướng xã hội chủ nghĩa',
-            '3. Tham nhũng và tệ quan liêu',
-            '4. Âm mưu "diễn biến hòa bình" của các thế lực thù địch'
+            'Sau một thời gian thực hiện đường lối Đại hội VII, đất nước đã có chuyển biến tích cực nhưng vẫn đứng trước nhiều khó khăn, thách thức mới. Trước yêu cầu phải giữ vững định hướng xã hội chủ nghĩa và đẩy mạnh đổi mới đồng bộ, Đảng triệu tập Hội nghị đại biểu toàn quốc giữa nhiệm kỳ khóa VII (tháng 1/1994) để đánh giá tình hình và xác định những vấn đề lớn cần tập trung giải quyết.'
           ]
         },
         {
-          title: 'Phát triển nhận thức',
-          icon: '🏛️',
+          title: 'Nội dung trọng tâm của Hội nghị',
+          icon: '📋',
           content: [
-            'Lần đầu tiên khẳng định chủ trương xây dựng Nhà nước pháp quyền xã hội chủ nghĩa',
-            'Nhà nước của nhân dân, do nhân dân, vì nhân dân',
-            'Do Đảng Cộng sản Việt Nam lãnh đạo',
-            'Hoàn thiện thể chế kinh tế thị trường',
-            'Tăng cường hội nhập kinh tế quốc tế',
-            'Đẩy mạnh công nghiệp hóa, hiện đại hóa'
+            '⚠️ Chỉ ra 4 nguy cơ, thách thức',
+            'Hội nghị cảnh báo 4 nguy cơ lớn đối với sự nghiệp cách mạng:',
+            '• Tụt hậu xa hơn về kinh tế',
+            '• Chệch hướng xã hội chủ nghĩa',
+            '• Tham nhũng và tệ quan liêu',
+            '• Âm mưu, thủ đoạn "diễn biến hòa bình" của các thế lực thù địch',
+            '',
+            '🏛️ Khẳng định chủ trương xây dựng Nhà nước pháp quyền XHCN',
+            'Một nội dung rất quan trọng của Hội nghị là lần đầu tiên khẳng định chủ trương xây dựng Nhà nước pháp quyền xã hội chủ nghĩa:',
+            '• Nhà nước của nhân dân, do nhân dân, vì nhân dân',
+            '• Do Đảng Cộng sản Việt Nam lãnh đạo',
+            '• Quyền lực nhà nước là thống nhất, đồng thời có sự phân công và phối hợp giữa các cơ quan trong thực hiện quyền lực nhà nước'
+          ]
+        },
+        {
+          title: 'Ý nghĩa',
+          icon: '🏆',
+          content: [
+            'Hội nghị giữa nhiệm kỳ khóa VII (1994) có ý nghĩa quan trọng:',
+            '• Giúp toàn Đảng và toàn dân nhận diện đúng các nguy cơ trong quá trình đổi mới để chủ động phòng ngừa và khắc phục.',
+            '• Khẳng định bước phát triển trong nhận thức về xây dựng Nhà nước pháp quyền XHCN, tạo cơ sở cho việc tiếp tục hoàn thiện hệ thống chính trị và quản lý xã hội bằng pháp luật.',
+            '• Tạo tiền đề để đẩy mạnh đổi mới đồng bộ và giữ vững ổn định chính trị – xã hội trong những năm tiếp theo.'
           ]
         }
       ],
@@ -255,8 +441,8 @@ const HistoryPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-              <span className="text-black text-xl">⭐</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
@@ -500,6 +686,28 @@ const HistoryPage = () => {
                                         </div>
                                       ))}
                                     </div>
+
+                                    {/* Section Images */}
+                                    {(section as SectionType).images && (section as SectionType).images!.length > 0 && (
+                                      <div className="relative grid grid-cols-2 gap-4 mt-6">
+                                        {(section as SectionType).images!.map((img: ImageType, i: number) => (
+                                          <motion.div
+                                            key={i}
+                                            whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? -2 : 2 }}
+                                            className="relative group/img"
+                                          >
+                                            <div className="aspect-[4/3] bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-700 group-hover/img:border-red-600 transition-colors">
+                                              <img 
+                                                src={img.src} 
+                                                alt={img.caption}
+                                                className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 transition-opacity" 
+                                              />
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-2 text-center">{img.caption}</p>
+                                          </motion.div>
+                                        ))}
+                                      </div>
+                                    )}
                                   </motion.div>
                                 )}
                               </div>
@@ -730,8 +938,8 @@ const HistoryPage = () => {
           {/* About Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-                <span className="text-black text-xl">⭐</span>
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
