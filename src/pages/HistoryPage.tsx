@@ -235,7 +235,22 @@ const HistoryPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black relative">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/img/Anh bia .webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.35
+        }}
+      ></div>
+      
+      {/* Overlay */}
+      <div className="fixed inset-0 z-[1] bg-black/40"></div>
+      
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -263,7 +278,7 @@ const HistoryPage = () => {
       </header>
 
       {/* Hero Section */}
-      <div className="relative pt-32 pb-16 px-4 overflow-hidden">
+      <div className="relative pt-32 pb-16 px-4 overflow-hidden z-10">
         {/* Animated background */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-red-900/20"></div>
@@ -328,7 +343,7 @@ const HistoryPage = () => {
       </div>
 
       {/* Timeline Section */}
-      <div id="history-section" className="relative py-16 px-4">
+      <div id="history-section" className="relative py-16 px-4 z-10">
         <div className="container mx-auto max-w-7xl">
           <div className="relative">
             {/* Vertical Timeline Line */}
@@ -368,9 +383,25 @@ const HistoryPage = () => {
                       transition={{ duration: 0.5 }}
                       className="relative"
                     >
-                      <div className="text-[120px] lg:text-[180px] font-black leading-none opacity-40 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent" style={{ fontWeight: 900, WebkitTextStroke: '2px rgba(239, 68, 68, 0.3)' }}>
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.05, 1],
+                          textShadow: [
+                            '0 0 20px rgba(239, 68, 68, 0.3)',
+                            '0 0 40px rgba(239, 68, 68, 0.6)',
+                            '0 0 20px rgba(239, 68, 68, 0.3)'
+                          ]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="text-[120px] lg:text-[180px] font-black leading-none opacity-40 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent" 
+                        style={{ fontWeight: 900, WebkitTextStroke: '2px rgba(239, 68, 68, 0.3)' }}
+                      >
                         {event.year}
-                      </div>
+                      </motion.div>
                       {/* Decorative circle */}
                       <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-red-900/30 rounded-full"></div>
                     </motion.div>
@@ -508,7 +539,7 @@ const HistoryPage = () => {
       </div>
 
       {/* Statistics Section - Achievements */}
-      <div className="py-20 px-4 bg-gradient-to-b from-black via-blue-950/10 to-black">
+      <div className="py-20 px-4 bg-gradient-to-b from-black via-blue-950/10 to-black relative z-10">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -548,7 +579,7 @@ const HistoryPage = () => {
       </div>
 
       {/* Ý nghĩa và Bài học Kinh nghiệm */}
-      <div className="py-20 px-4 bg-gradient-to-b from-black via-red-950/10 to-black">
+      <div className="py-20 px-4 bg-gradient-to-b from-black via-red-950/10 to-black relative z-10">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -694,7 +725,7 @@ const HistoryPage = () => {
       </motion.div>
 
       {/* Footer */}
-      <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4">
+      <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
         <div className="container mx-auto grid md:grid-cols-4 gap-8">
           {/* About Section */}
           <div>
