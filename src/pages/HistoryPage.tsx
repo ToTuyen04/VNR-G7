@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
 interface ImageType {
@@ -15,6 +16,7 @@ interface SectionType {
 }
 
 const HistoryPage = () => {
+  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -502,7 +504,7 @@ const HistoryPage = () => {
             <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
-            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
+            <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
           </nav>
           <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
             🎓 Bắt đầu học

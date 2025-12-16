@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion';
 import CoCaNguaGame from '../components/games/CoCaNguaGame';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const GamesPage = () => {
+  const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const GamesPage = () => {
             <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">GAME</a>
-            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
+            <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
           </nav>
           <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
             🎓 Bắt đầu học
