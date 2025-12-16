@@ -11,12 +11,8 @@ interface Player {
   pieces: PiecePosition[];
   isReady: boolean;
   team?: number; // Team 1, 2, 3, or 4
-  questionsAnswered?: number; // Number of questions answered
-  correctAnswers?: number; // Number of correct answers
-  wrongAnswers?: number; // Number of wrong answers
-  startTime?: number | null; // Timestamp when player started answering questions
-  finishTime?: number | null; // Timestamp when player completed all questions
-  cooldownUntil?: number | null; // Timestamp until player can answer again (after wrong answer)
+  correctVotes?: number; // Number of correct votes
+  wrongVotes?: number; // Number of wrong votes
 }
 
 interface PiecePosition {
@@ -30,18 +26,22 @@ interface GameState {
   diceValue: number | null;
   gameStarted: boolean;
   winner: string | null;
+  currentTeamIndex?: number; // Which team (1-4) is currently answering
+  teamQuestionsAnswered?: { [key: number]: number }; // Questions answered per team
   currentQuestion?: {
-    playerId: string;
+    team: number; // Which team this question is for
     question: string;
     options: string[];
     correctAnswer: number;
     questionNumber: number;
-    isRetry?: boolean;
+    startTime: number; // When question started (for 22s timer)
+    votes: { [playerId: string]: number }; // Player votes (answer index)
   } | null;
-  teamScores?: { [key: number]: number }; // Team scores
+  teamScores?: { [key: number]: number }; // Team scores (legacy, kept for compatibility)
+  teamCorrectAnswers?: { [key: number]: number }; // Correct answers per team
+  teamWrongAnswers?: { [key: number]: number }; // Wrong answers per team
   gameStartTime?: number | null; // Timestamp when game started
   gameEndTime?: number | null; // Timestamp when game ended
-  timeLimit?: number; // Time limit in milliseconds (10 minutes)
 }
 
 interface CoCaNguaGameProps {
@@ -55,7 +55,8 @@ const PLAYER_COLORS = [
   '#991B1B', '#1E40AF', '#065F46', '#92400E', '#5B21B6', '#9F1239', '#134E4A', '#9A3412',
   '#7F1D1D', '#1E3A8A', '#064E3B', '#78350F', '#4C1D95', '#831843', '#115E59', '#7C2D12'
 ];
-const QUESTIONS_PER_PLAYER = 10;
+const QUESTIONS_PER_TEAM = 10;
+const QUESTION_TIME_LIMIT = 22; // 22 seconds per question
 const PIECES_PER_PLAYER = 4;
 
 // Firebase configuration
@@ -78,7 +79,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
   const [playerName, setPlayerName] = useState('');
   const [isInRoom, setIsInRoom] = useState(false);
   const [isHost, setIsHost] = useState(false);
-  const [remainingTime, setRemainingTime] = useState<number>(600); // 10 minutes in seconds
+  const [questionTimeLeft, setQuestionTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     currentPlayerIndex: 0,
@@ -87,33 +88,50 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     winner: null,
     gameStartTime: null,
     gameEndTime: null,
-    currentQuestion: null
+    currentQuestion: null,
+    currentTeamIndex: 1,
+    teamQuestionsAnswered: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    teamCorrectAnswers: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    teamWrongAnswers: { 1: 0, 2: 0, 3: 0, 4: 0 }
   });
 
 
   // Room reference
   const roomRef = roomCode ? ref(database, `rooms/${roomCode}`) : null;
 
-  // Game timer countdown
+  // Question timer - 22 seconds countdown
   useEffect(() => {
-    if (!gameState.gameStarted || gameState.gameEndTime) return;
+    if (!gameState.gameStarted || gameState.gameEndTime || !gameState.currentQuestion) return;
 
     const interval = setInterval(() => {
-      if (gameState.gameStartTime) {
-        const elapsed = Date.now() - gameState.gameStartTime;
-        const timeLimit = gameState.timeLimit || 600000; // 10 minutes
-        const remaining = Math.max(0, Math.floor((timeLimit - elapsed) / 1000));
-        setRemainingTime(remaining);
+      const elapsed = Math.floor((Date.now() - gameState.currentQuestion!.startTime) / 1000);
+      const remaining = Math.max(0, QUESTION_TIME_LIMIT - elapsed);
+      setQuestionTimeLeft(remaining);
 
-        if (remaining <= 0 && isHost) {
-          // Time's up - end game
-          endGame();
-        }
+      // Time's up for this question - host tallies votes
+      if (remaining <= 0 && isHost) {
+        tallyVotesAndNextQuestion();
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [gameState.gameStarted, gameState.gameStartTime, gameState.gameEndTime, isHost]);
+  }, [gameState.gameStarted, gameState.currentQuestion, gameState.gameEndTime, isHost]);
+
+  // Check if all team members have voted - immediately reveal answer
+  useEffect(() => {
+    if (!gameState.gameStarted || gameState.gameEndTime || !gameState.currentQuestion || !isHost) return;
+
+    const currentTeam = gameState.currentQuestion.team;
+    const teamPlayers = gameState.players.filter(p => p.team === currentTeam);
+    const votes = gameState.currentQuestion.votes || {};
+    const voteCount = Object.keys(votes).length;
+
+    // If all team members have voted, immediately tally
+    if (teamPlayers.length > 0 && voteCount >= teamPlayers.length) {
+      tallyVotesAndNextQuestion();
+    }
+  }, [gameState.currentQuestion?.votes, isHost]);
 
   // Listen to room changes
   useEffect(() => {
@@ -125,7 +143,12 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
       const data = snapshot.val();
       if (data && data.gameState) {
         console.log('🔄 Room data updated:', data);
-        setGameState(data.gameState);
+        // Ensure players array exists
+        const updatedState = {
+          ...data.gameState,
+          players: data.gameState.players || []
+        };
+        setGameState(updatedState);
       } else if (!data) {
         console.log('⚠️ Room no longer exists');
         if (!isHost) {
@@ -176,20 +199,13 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
 
     // Generate room code
     const code = Math.floor(1000 + Math.random() * 9000).toString();
-    const playerId = `player_${Date.now()}`;
+    const playerId = `host_${Date.now()}`;
     
     console.log('🏠 Creating room with code:', code);
 
-    const newPlayer: Player = {
-      id: playerId,
-      name: playerName,
-      color: PLAYER_COLORS[0],
-      pieces: Array(PIECES_PER_PLAYER).fill(null).map(() => ({ position: -1, isFinished: false })),
-      isReady: false,
-    };
-
+    // Host is not a player, just manages the room
     const initialState = {
-      players: [newPlayer],
+      players: [],
       currentPlayerIndex: 0,
       diceValue: null,
       gameStarted: false,
@@ -240,12 +256,15 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
       const roomData = roomSnapshot.val();
       const currentState = roomData.gameState;
       
-      if (!currentState || !currentState.players) {
+      if (!currentState) {
         alert('Dữ liệu phòng không hợp lệ!');
         return;
       }
+
+      // Ensure players array exists
+      const players = currentState.players || [];
       
-      if (currentState.players.length >= 40) {
+      if (players.length >= 40) {
         alert('Phòng đã đầy! (Tối đa 40 người chơi)');
         return;
       }
@@ -258,14 +277,14 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
       const newPlayer: Player = {
         id: playerId,
         name: playerName,
-        color: PLAYER_COLORS[currentState.players.length],
+        color: PLAYER_COLORS[players.length],
         pieces: Array(PIECES_PER_PLAYER).fill(null).map(() => ({ position: -1, isFinished: false })),
         isReady: false,
       };
 
       const updatedState = {
         ...currentState,
-        players: [...currentState.players, newPlayer],
+        players: [...players, newPlayer],
       };
 
       if (roomRef) {
@@ -280,19 +299,6 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     }
   };
 
-  const toggleReady = () => {
-    setGameState((prev) => {
-      const updatedState = {
-        ...prev,
-        players: prev.players.map((p) =>
-          p.id === myPlayerId ? { ...p, isReady: !p.isReady } : p
-        ),
-      };
-      updateGameState(updatedState);
-      return updatedState;
-    });
-  };
-
   const startGame = () => {
     if (gameState.players.length < 2) {
       alert('Cần ít nhất 2 người chơi để bắt đầu!');
@@ -300,225 +306,241 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     }
 
     if (isHost) {
-      setGameState((prev) => {
-        // Randomize and assign teams
-        const shuffledPlayers = [...prev.players].sort(() => Math.random() - 0.5);
-        const playersPerTeam = Math.ceil(shuffledPlayers.length / 4);
-        
-        const playersWithTeams = shuffledPlayers.map((player, index) => ({
-          ...player,
-          team: Math.floor(index / playersPerTeam) + 1, // Teams 1-4
-          questionsAnswered: 0,
-          correctAnswers: 0,
-          wrongAnswers: 0,
-          startTime: null,
-          finishTime: null,
-          cooldownUntil: null
-        }));
+      // Randomize and assign teams
+      const shuffledPlayers = [...gameState.players].sort(() => Math.random() - 0.5);
+      const playersPerTeam = Math.ceil(shuffledPlayers.length / 4);
+      
+      const playersWithTeams = shuffledPlayers.map((player, index) => ({
+        ...player,
+        team: Math.floor(index / playersPerTeam) + 1, // Teams 1-4
+        correctVotes: 0,
+        wrongVotes: 0
+      }));
 
-        const now = Date.now();
-        const updatedState = {
-          ...prev,
-          players: playersWithTeams,
-          gameStarted: true,
-          teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
-          currentQuestion: null,
-          gameStartTime: now,
-          gameEndTime: null,
-          timeLimit: 600000 // 10 minutes in milliseconds
-        };
-        updateGameState(updatedState);
-        return updatedState;
-      });
-    }
-  };
+      // Get active teams (teams with players)
+      const activeTeams = [...new Set(playersWithTeams.map(p => p.team))].sort();
+      const firstTeam = activeTeams[0] || 1;
 
-  const generateQuestion = (playerId: string, fromOtherTeam: boolean = false) => {
-    const player = gameState.players.find(p => p.id === playerId);
-    if (!player || (player.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER) return;
-
-    const randomQuestion = QUESTION_POOL[Math.floor(Math.random() * QUESTION_POOL.length)];
-    
-    setGameState((prev) => {
-      const updatedState = {
-        ...prev,
+      const now = Date.now();
+      
+      // Generate first question for first team
+      const randomQuestion = QUESTION_POOL[Math.floor(Math.random() * QUESTION_POOL.length)];
+      
+      const updatedState: GameState = {
+        ...gameState,
+        players: playersWithTeams,
+        gameStarted: true,
+        teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+        teamQuestionsAnswered: { 1: 0, 2: 0, 3: 0, 4: 0 },
+        currentTeamIndex: firstTeam,
         currentQuestion: {
-          playerId,
+          team: firstTeam,
           question: randomQuestion.q,
           options: randomQuestion.opts,
           correctAnswer: randomQuestion.ans,
-          questionNumber: (player.questionsAnswered || 0) + 1,
-          isRetry: fromOtherTeam
-        }
+          questionNumber: 1,
+          startTime: now,
+          votes: {}
+        },
+        gameStartTime: now,
+        gameEndTime: null
       };
       updateGameState(updatedState);
-      return updatedState;
-    });
-  };
-
-  const answerQuestion = (answerIndex: number) => {
-    if (!gameState.currentQuestion) return;
-    if (gameState.currentQuestion.playerId !== myPlayerId) return;
-
-    const isCorrect = answerIndex === gameState.currentQuestion.correctAnswer;
-    
-    if (isCorrect) {
-      // Correct answer - update scores and move on
-      setGameState((prev) => {
-        const updatedPlayers = prev.players.map(p => {
-          if (p.id === myPlayerId) {
-            const newQuestionsAnswered = (p.questionsAnswered || 0) + 1;
-            const now = Date.now();
-            
-            return {
-              ...p,
-              questionsAnswered: newQuestionsAnswered,
-              correctAnswers: (p.correctAnswers || 0) + 1,
-              startTime: p.startTime || now, // Set start time on first correct answer
-              finishTime: newQuestionsAnswered >= QUESTIONS_PER_PLAYER ? now : (p.finishTime || null),
-              cooldownUntil: null // Clear cooldown on correct answer
-            };
-          }
-          return p;
-        });
-
-        // Update team scores
-        const currentPlayer = updatedPlayers.find(p => p.id === myPlayerId);
-        const updatedTeamScores = { ...(prev.teamScores || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
-        if (currentPlayer?.team) {
-          updatedTeamScores[currentPlayer.team] = (updatedTeamScores[currentPlayer.team] || 0) + 1;
-        }
-
-        const updatedState = {
-          ...prev,
-          players: updatedPlayers,
-          teamScores: updatedTeamScores,
-          currentQuestion: null
-        };
-        
-        updateGameState(updatedState);
-        return updatedState;
-      });
-      alert('✅ Chính xác! +1 điểm cho đội của bạn');
-    } else {
-      // Wrong answer - track it and set 5-second cooldown
-      setGameState((prev) => {
-        const updatedPlayers = prev.players.map(p => {
-          if (p.id === myPlayerId) {
-            const now = Date.now();
-            return {
-              ...p,
-              wrongAnswers: (p.wrongAnswers || 0) + 1,
-              startTime: p.startTime || now, // Set start time on first attempt
-              finishTime: p.finishTime || null,
-              cooldownUntil: now + 5000 // 5 seconds cooldown
-            };
-          }
-          return p;
-        });
-
-        const updatedState = {
-          ...prev,
-          players: updatedPlayers,
-          currentQuestion: null
-        };
-        
-        updateGameState(updatedState);
-        return updatedState;
-      });
-      
-      alert('❌ Sai rồi! Đáp án đúng là: ' + gameState.currentQuestion.options[gameState.currentQuestion.correctAnswer] + '\nVui lòng chờ 5 giây để trả lời tiếp.');
+      setGameState(updatedState);
     }
   };
 
-  const endGame = () => {
-    setGameState((prev) => {
-      const updatedState = {
-        ...prev,
+  // Submit a vote for the current question
+  const submitVote = async (answerIndex: number) => {
+    if (!gameState.currentQuestion) return;
+    
+    // Check if player is in the current team
+    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
+    if (!myPlayer || myPlayer.team !== gameState.currentQuestion.team) return;
+    
+    // Check if already voted
+    const currentVotes = gameState.currentQuestion.votes || {};
+    if (currentVotes[myPlayerId] !== undefined) return;
+
+    // Update votes in Firebase
+    const updatedVotes = {
+      ...currentVotes,
+      [myPlayerId]: answerIndex
+    };
+
+    const updatedState = {
+      ...gameState,
+      currentQuestion: {
+        ...gameState.currentQuestion,
+        votes: updatedVotes
+      }
+    };
+    
+    await updateGameState(updatedState);
+  };
+
+  // Tally votes and move to next question (called by host when timer expires)
+  const tallyVotesAndNextQuestion = async () => {
+    if (!gameState.currentQuestion || !isHost) return;
+
+    const currentTeam = gameState.currentQuestion.team;
+    const votes = gameState.currentQuestion.votes || {};
+    const correctAnswer = gameState.currentQuestion.correctAnswer;
+    
+    // Count correct and wrong votes
+    let correctVotes = 0;
+    let wrongVotes = 0;
+    
+    Object.values(votes).forEach(vote => {
+      if (vote === correctAnswer) {
+        correctVotes++;
+      } else {
+        wrongVotes++;
+      }
+    });
+
+    // Update player stats
+    const updatedPlayers = gameState.players.map(p => {
+      if (p.team === currentTeam && votes[p.id] !== undefined) {
+        const isCorrect = votes[p.id] === correctAnswer;
+        return {
+          ...p,
+          correctVotes: (p.correctVotes || 0) + (isCorrect ? 1 : 0),
+          wrongVotes: (p.wrongVotes || 0) + (isCorrect ? 0 : 1)
+        };
+      }
+      return p;
+    });
+
+    // Update team stats - track correct/wrong answers for ranking
+    const updatedTeamScores = { ...(gameState.teamScores || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
+    const updatedTeamCorrectAnswers = { ...(gameState.teamCorrectAnswers || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
+    const updatedTeamWrongAnswers = { ...(gameState.teamWrongAnswers || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
+    
+    // Majority correct = gain points, stalemate = no points
+    if (correctVotes > wrongVotes) {
+      updatedTeamScores[currentTeam] = (updatedTeamScores[currentTeam] || 0) + correctVotes;
+      updatedTeamCorrectAnswers[currentTeam] = (updatedTeamCorrectAnswers[currentTeam] || 0) + 1;
+    } else if (wrongVotes > correctVotes) {
+      // Majority wrong - count as wrong answer
+      updatedTeamWrongAnswers[currentTeam] = (updatedTeamWrongAnswers[currentTeam] || 0) + 1;
+    }
+    // Stalemate (correctVotes === wrongVotes) - no points, no correct/wrong counted
+
+    // Update questions answered for current team
+    const updatedTeamQuestionsAnswered = { ...(gameState.teamQuestionsAnswered || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
+    updatedTeamQuestionsAnswered[currentTeam] = (updatedTeamQuestionsAnswered[currentTeam] || 0) + 1;
+
+    // Find next team that still has questions remaining
+    const activeTeams = [...new Set(gameState.players.map(p => p.team))].filter(t => t !== undefined).sort() as number[];
+    let nextTeam: number | null = null;
+    let allTeamsCompleted = true;
+
+    // Try to find next team in rotation
+    const currentTeamIdx = activeTeams.indexOf(currentTeam);
+    for (let i = 1; i <= activeTeams.length; i++) {
+      const checkTeamIdx = (currentTeamIdx + i) % activeTeams.length;
+      const checkTeam = activeTeams[checkTeamIdx];
+      const questionsAnswered = checkTeam === currentTeam 
+        ? updatedTeamQuestionsAnswered[checkTeam] 
+        : (gameState.teamQuestionsAnswered?.[checkTeam] || 0);
+      
+      if (questionsAnswered < QUESTIONS_PER_TEAM) {
+        nextTeam = checkTeam;
+        allTeamsCompleted = false;
+        break;
+      }
+    }
+
+    // Check if current team also completed (in case all teams are done)
+    if (updatedTeamQuestionsAnswered[currentTeam] < QUESTIONS_PER_TEAM) {
+      allTeamsCompleted = false;
+      if (nextTeam === null) {
+        nextTeam = currentTeam;
+      }
+    }
+
+    if (allTeamsCompleted || nextTeam === null) {
+      // Game over - all teams completed 10 questions
+      const updatedState: GameState = {
+        ...gameState,
+        players: updatedPlayers,
+        teamScores: updatedTeamScores,
+        teamCorrectAnswers: updatedTeamCorrectAnswers,
+        teamWrongAnswers: updatedTeamWrongAnswers,
+        teamQuestionsAnswered: updatedTeamQuestionsAnswered,
+        currentQuestion: null,
         gameEndTime: Date.now()
       };
-      updateGameState(updatedState);
-      return updatedState;
-    });
+      await updateGameState(updatedState);
+    } else {
+      // Generate next question for next team
+      const randomQuestion = QUESTION_POOL[Math.floor(Math.random() * QUESTION_POOL.length)];
+      const nextQuestionNumber = (updatedTeamQuestionsAnswered[nextTeam] || 0) + 1;
+
+      const updatedState: GameState = {
+        ...gameState,
+        players: updatedPlayers,
+        teamScores: updatedTeamScores,
+        teamCorrectAnswers: updatedTeamCorrectAnswers,
+        teamWrongAnswers: updatedTeamWrongAnswers,
+        teamQuestionsAnswered: updatedTeamQuestionsAnswered,
+        currentTeamIndex: nextTeam,
+        currentQuestion: {
+          team: nextTeam,
+          question: randomQuestion.q,
+          options: randomQuestion.opts,
+          correctAnswer: randomQuestion.ans,
+          questionNumber: nextQuestionNumber,
+          startTime: Date.now(),
+          votes: {}
+        }
+      };
+      await updateGameState(updatedState);
+    }
   };
 
   const calculateTeamRankings = () => {
-    if (!gameState.gameStartTime) return [];
-
     const teams = [1, 2, 3, 4];
     const teamStats = teams.map(teamNum => {
       const teamPlayers = gameState.players.filter(p => p.team === teamNum);
-      
-      // Calculate team completion status
-      const allCompleted = teamPlayers.every(p => (p.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER);
-      const totalWrong = teamPlayers.reduce((sum, p) => sum + (p.wrongAnswers || 0), 0);
-      const avgWrong = totalWrong / (teamPlayers.length || 1);
-      
-      // Calculate average completion time (only for finished players)
-      const finishedPlayers = teamPlayers.filter(p => p.finishTime && p.startTime);
-      const avgTime = finishedPlayers.length > 0
-        ? finishedPlayers.reduce((sum, p) => sum + (p.finishTime! - p.startTime!), 0) / finishedPlayers.length
-        : Infinity;
+      const score = gameState.teamScores?.[teamNum] || 0;
+      const questionsAnswered = gameState.teamQuestionsAnswered?.[teamNum] || 0;
+      const correctAnswers = gameState.teamCorrectAnswers?.[teamNum] || 0;
+      const wrongAnswers = gameState.teamWrongAnswers?.[teamNum] || 0;
       
       return {
         team: teamNum,
         players: teamPlayers,
-        allCompleted,
-        totalWrong,
-        avgWrong,
-        avgTime,
-        completedCount: finishedPlayers.length
+        score,
+        questionsAnswered,
+        correctAnswers,
+        wrongAnswers
       };
-    });
+    }).filter(t => t.players.length > 0); // Only include teams with players
 
-    // Sort teams: 1) All completed first, 2) Least average wrong, 3) Fastest average time
+    // Sort by most correct answers first, then by least wrong answers
     return teamStats.sort((a, b) => {
-      if (a.allCompleted !== b.allCompleted) return b.allCompleted ? 1 : -1;
-      if (a.avgWrong !== b.avgWrong) return a.avgWrong - b.avgWrong;
-      return a.avgTime - b.avgTime;
+      if (b.correctAnswers !== a.correctAnswers) {
+        return b.correctAnswers - a.correctAnswers; // Most correct first
+      }
+      return a.wrongAnswers - b.wrongAnswers; // Least wrong as tiebreaker
     });
   };
 
   const rankPlayersInTeam = (teamPlayers: Player[]) => {
     return [...teamPlayers].sort((a, b) => {
-      const aCompleted = (a.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
-      const bCompleted = (b.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
+      const aCorrect = a.correctVotes || 0;
+      const bCorrect = b.correctVotes || 0;
+      const aWrong = a.wrongVotes || 0;
+      const bWrong = b.wrongVotes || 0;
       
-      // Completed players first
-      if (aCompleted !== bCompleted) return bCompleted ? 1 : -1;
-      
-      // Least wrong answers
-      if ((a.wrongAnswers || 0) !== (b.wrongAnswers || 0)) {
-        return (a.wrongAnswers || 0) - (b.wrongAnswers || 0);
+      // Sort by most correct votes first, then by least wrong votes
+      if (bCorrect !== aCorrect) {
+        return bCorrect - aCorrect; // Most correct first
       }
-      
-      // Fastest time
-      const aTime = (a.finishTime && a.startTime) ? (a.finishTime - a.startTime) : Infinity;
-      const bTime = (b.finishTime && b.startTime) ? (b.finishTime - b.startTime) : Infinity;
-      return aTime - bTime;
+      return aWrong - bWrong; // Least wrong as tiebreaker
     });
-  };
-
-  const rollDice = () => {
-    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
-    if (!myPlayer) return;
-
-    // Check if player completed all questions
-    if ((myPlayer.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER) {
-      alert('Bạn đã hoàn thành 10 câu hỏi của mình!');
-      return;
-    }
-
-    // Check cooldown
-    const now = Date.now();
-    if (myPlayer.cooldownUntil && myPlayer.cooldownUntil > now) {
-      const remainingSeconds = Math.ceil((myPlayer.cooldownUntil - now) / 1000);
-      alert(`⏳ Vui lòng chờ ${remainingSeconds} giây nữa để trả lời tiếp.`);
-      return;
-    }
-
-    // Generate question
-    generateQuestion(myPlayerId, true);
   };
 
   return (
@@ -636,8 +658,8 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   >
                     <div className="text-2xl mb-2">👤</div>
                     <div className="font-semibold truncate">{player.name}</div>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {player.isReady ? '✓ Sẵn sàng' : 'Đang chờ...'}
+                    <div className="text-xs text-green-400 mt-1">
+                      ✓ Đã tham gia
                     </div>
                   </motion.div>
                 ))}
@@ -654,29 +676,21 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
               </div>
 
               <div className="flex gap-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={toggleReady}
-                  className={`flex-1 py-3 rounded-lg font-semibold ${
-                    gameState.players.find(p => p.id === myPlayerId)?.isReady
-                      ? 'bg-gray-600 hover:bg-gray-500'
-                      : 'bg-green-600 hover:bg-green-700'
-                  }`}
-                >
-                  {gameState.players.find(p => p.id === myPlayerId)?.isReady ? 'Hủy sẵn sàng' : 'Sẵn sàng'}
-                </motion.button>
-
                 {isHost && (
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={startGame}
-                    disabled={gameState.players.length < 2 || !gameState.players.every(p => p.isReady)}
+                    disabled={gameState.players.length < 2}
                     className="flex-1 bg-gradient-to-r from-gold-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Bắt đầu trò chơi
                   </motion.button>
+                )}
+                {!isHost && (
+                  <div className="flex-1 bg-gray-700 py-3 rounded-lg font-semibold text-center">
+                    Đang chờ host bắt đầu...
+                  </div>
                 )}
               </div>
 
@@ -687,83 +701,130 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           </motion.div>
         )}
 
-        {/* Question Modal */}
-        <AnimatePresence>
-          {gameState.currentQuestion && gameState.currentQuestion.playerId === myPlayerId && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-            >
+        {/* Game Board */}
+        {gameState.gameStarted && !gameState.gameEndTime && (
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Current Question Display - Full Width */}
+            {gameState.currentQuestion && (
               <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 max-w-2xl w-full border-2 border-gold-500/30"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 mb-6 border-2 border-gold-500/30"
               >
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-gold-400 mb-2">
-                    Câu hỏi {gameState.currentQuestion.questionNumber}/{QUESTIONS_PER_PLAYER}
-                  </h2>
-                  {gameState.currentQuestion.isRetry && (
-                    <div className="bg-red-500/20 border border-red-500 rounded-lg p-2 mb-3">
-                      <p className="text-red-400 text-sm font-semibold">⚠️ Câu hỏi từ nhóm khác (Cơ hội thứ 2)</p>
-                    </div>
-                  )}
-                  <p className="text-lg font-semibold text-white">
+                {/* Question Timer */}
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">
+                      {gameState.currentQuestion.team === 1 ? '🔴' : 
+                       gameState.currentQuestion.team === 2 ? '🔵' : 
+                       gameState.currentQuestion.team === 3 ? '🟡' : '🟢'}
+                    </span>
+                    <h2 className="text-xl font-bold">
+                      Đội {gameState.currentQuestion.team} - Câu {gameState.currentQuestion.questionNumber}/{QUESTIONS_PER_TEAM}
+                    </h2>
+                  </div>
+                  <div className={`text-3xl font-bold ${
+                    questionTimeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-gold-400'
+                  }`}>
+                    ⏱️ {questionTimeLeft}s
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div className="bg-gray-700 rounded-lg p-4 mb-4">
+                  <p className="text-lg font-semibold text-white text-center">
                     {gameState.currentQuestion.question}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
-                  {gameState.currentQuestion.options.map((option, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => answerQuestion(index)}
-                      className="bg-gray-700 hover:bg-gold-500/20 border-2 border-gray-600 hover:border-gold-500 rounded-lg p-4 text-left font-semibold transition-all"
-                    >
-                      <span className="text-gold-400 mr-3">{['A', 'B', 'C', 'D'][index]}.</span>
-                      {option}
-                    </motion.button>
-                  ))}
+                {/* Voting Status */}
+                <div className="mb-4 text-center">
+                  {(() => {
+                    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
+                    const isMyTeam = myPlayer?.team === gameState.currentQuestion?.team;
+                    const votes = gameState.currentQuestion?.votes || {};
+                    const hasVoted = votes[myPlayerId] !== undefined;
+                    const teamPlayers = gameState.players.filter(p => p.team === gameState.currentQuestion?.team);
+                    const votedCount = Object.keys(votes).length;
+
+                    if (!isMyTeam) {
+                      return (
+                        <div className="bg-gray-600 rounded-lg p-3">
+                          <p className="text-gray-300">⏳ Đang chờ Đội {gameState.currentQuestion?.team} trả lời...</p>
+                          <p className="text-sm text-gray-400 mt-1">Đã vote: {votedCount}/{teamPlayers.length}</p>
+                        </div>
+                      );
+                    }
+
+                    if (hasVoted) {
+                      return (
+                        <div className="bg-green-600/30 border border-green-500 rounded-lg p-3">
+                          <p className="text-green-400 font-semibold">✓ Bạn đã vote! Đang chờ đồng đội...</p>
+                          <p className="text-sm text-gray-300 mt-1">Đã vote: {votedCount}/{teamPlayers.length}</p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="bg-gold-500/20 border border-gold-500 rounded-lg p-3">
+                        <p className="text-gold-400 font-semibold">🗳️ Lượt của đội bạn! Hãy vote đáp án!</p>
+                        <p className="text-sm text-gray-300 mt-1">Đã vote: {votedCount}/{teamPlayers.length}</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Answer Options */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {gameState.currentQuestion.options.map((option, index) => {
+                    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
+                    const isMyTeam = myPlayer?.team === gameState.currentQuestion?.team;
+                    const votes = gameState.currentQuestion?.votes || {};
+                    const hasVoted = votes[myPlayerId] !== undefined;
+                    const myVote = votes[myPlayerId];
+                    const isSelected = myVote === index;
+
+                    return (
+                      <motion.button
+                        key={index}
+                        whileHover={{ scale: isMyTeam && !hasVoted ? 1.02 : 1 }}
+                        whileTap={{ scale: isMyTeam && !hasVoted ? 0.98 : 1 }}
+                        onClick={() => isMyTeam && !hasVoted && submitVote(index)}
+                        disabled={!isMyTeam || hasVoted}
+                        className={`rounded-lg p-4 text-left font-semibold transition-all ${
+                          isSelected 
+                            ? 'bg-gold-500/40 border-2 border-gold-500' 
+                            : hasVoted || !isMyTeam
+                              ? 'bg-gray-600 border-2 border-gray-500 opacity-60 cursor-not-allowed'
+                              : 'bg-gray-700 hover:bg-gold-500/20 border-2 border-gray-600 hover:border-gold-500'
+                        }`}
+                      >
+                        <span className="text-gold-400 mr-3">{['A', 'B', 'C', 'D'][index]}.</span>
+                        {option}
+                        {isSelected && <span className="ml-2 text-gold-400">✓</span>}
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            )}
 
-        {/* Game Board */}
-        {gameState.gameStarted && !gameState.gameEndTime && (
-          <div className="max-w-7xl mx-auto px-4">
             {/* Main Layout: 3 columns on large screens */}
             <div className="grid lg:grid-cols-[1fr_2fr_1fr] gap-4">
               
               {/* LEFT COLUMN - Team 1 & 3 Info */}
               <div className="space-y-4">
-                {/* Timer Display - Top */}
-                <div className="bg-gray-800 rounded-xl p-4 border-2 border-gold-500/30">
-                  <div className="text-center">
-                    <div className="text-xs text-gray-400 mb-1">Thời gian còn lại</div>
-                    <div className={`text-3xl font-bold ${
-                      remainingTime <= 60 ? 'text-red-500 animate-pulse' : 'text-gold-400'
-                    }`}>
-                      {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, '0')}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Team 1 (Red) */}
                 {(() => {
                   const team1Players = gameState.players.filter(p => p.team === 1);
+                  const isCurrentTeam = gameState.currentQuestion?.team === 1;
                   return team1Players.length > 0 && (
-                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-red-500">
+                    <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-red-500 ${isCurrentTeam ? 'ring-2 ring-red-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-red-400">🔴 Đội 1</h3>
-                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[1] || 0}/10</span>
+                        <h3 className="font-bold text-red-400">🔴 Đội 1 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[1] || 0} điểm</span>
                       </div>
+                      <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM}</div>
                       {team1Players.map(player => (
                         <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
                           <div className="flex items-center justify-between text-sm">
@@ -772,11 +833,10 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                               <span className="font-semibold truncate">{player.name}</span>
                               {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
                             </div>
-                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1 flex gap-2">
-                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
-                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                            <span className="text-green-400">✓{player.correctVotes || 0}</span>
+                            <span className="text-red-400">✗{player.wrongVotes || 0}</span>
                           </div>
                         </div>
                       ))}
@@ -787,12 +847,14 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                 {/* Team 3 (Yellow/Orange) */}
                 {(() => {
                   const team3Players = gameState.players.filter(p => p.team === 3);
+                  const isCurrentTeam = gameState.currentQuestion?.team === 3;
                   return team3Players.length > 0 && (
-                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-yellow-500">
+                    <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-yellow-500 ${isCurrentTeam ? 'ring-2 ring-yellow-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-yellow-400">🟡 Đội 3</h3>
-                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[3] || 0}/10</span>
+                        <h3 className="font-bold text-yellow-400">🟡 Đội 3 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[3] || 0} điểm</span>
                       </div>
+                      <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM}</div>
                       {team3Players.map(player => (
                         <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
                           <div className="flex items-center justify-between text-sm">
@@ -801,11 +863,10 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                               <span className="font-semibold truncate">{player.name}</span>
                               {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
                             </div>
-                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1 flex gap-2">
-                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
-                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                            <span className="text-green-400">✓{player.correctVotes || 0}</span>
+                            <span className="text-red-400">✗{player.wrongVotes || 0}</span>
                           </div>
                         </div>
                       ))}
@@ -826,133 +887,58 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                         
                         {/* Home Areas - 4 corners */}
                         {/* Red (Top-Left) */}
-                        <rect x="20" y="20" width="140" height="140" fill="#ef4444" opacity="0.3" stroke="#ef4444" strokeWidth="3" rx="8"/>
+                        <rect x="20" y="20" width="140" height="140" fill="#ef4444" opacity={gameState.currentQuestion?.team === 1 ? "0.6" : "0.3"} stroke="#ef4444" strokeWidth="3" rx="8"/>
                         {/* Blue (Top-Right) */}
-                        <rect x="240" y="20" width="140" height="140" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" strokeWidth="3" rx="8"/>
+                        <rect x="240" y="20" width="140" height="140" fill="#3b82f6" opacity={gameState.currentQuestion?.team === 2 ? "0.6" : "0.3"} stroke="#3b82f6" strokeWidth="3" rx="8"/>
                         {/* Yellow/Orange (Bottom-Left) */}
-                        <rect x="20" y="240" width="140" height="140" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="3" rx="8"/>
+                        <rect x="20" y="240" width="140" height="140" fill="#f59e0b" opacity={gameState.currentQuestion?.team === 3 ? "0.6" : "0.3"} stroke="#f59e0b" strokeWidth="3" rx="8"/>
                         {/* Green (Bottom-Right) */}
-                        <rect x="240" y="240" width="140" height="140" fill="#10b981" opacity="0.3" stroke="#10b981" strokeWidth="3" rx="8"/>
+                        <rect x="240" y="240" width="140" height="140" fill="#10b981" opacity={gameState.currentQuestion?.team === 4 ? "0.6" : "0.3"} stroke="#10b981" strokeWidth="3" rx="8"/>
                         
                         {/* Center finish area */}
                         <rect x="170" y="170" width="60" height="60" fill="#fbbf24" opacity="0.5" stroke="#fbbf24" strokeWidth="2" rx="4"/>
                         
-                        {/* Path Lines - Vertical paths */}
-                        <line x1="200" y1="160" x2="200" y2="20" stroke="#4b5563" strokeWidth="2"/>
-                        <line x1="200" y1="380" x2="200" y2="240" stroke="#4b5563" strokeWidth="2"/>
+                        {/* Team scores in corners */}
+                        <text x="90" y="80" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">Đội 1</text>
+                        <text x="90" y="100" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[1] || 0}</text>
+                        <text x="90" y="115" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM})</text>
                         
-                        {/* Path Lines - Horizontal paths */}
-                        <line x1="20" y1="200" x2="160" y2="200" stroke="#4b5563" strokeWidth="2"/>
-                        <line x1="240" y1="200" x2="380" y2="200" stroke="#4b5563" strokeWidth="2"/>
+                        <text x="310" y="80" textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">Đội 2</text>
+                        <text x="310" y="100" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[2] || 0}</text>
+                        <text x="310" y="115" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM})</text>
                         
-                        {/* Player pieces on board */}
-                        {gameState.players.map((player, _idx) => {
-                          const progress = (player.questionsAnswered || 0) / QUESTIONS_PER_PLAYER;
-                          const team = player.team || 1;
-                          
-                          // Calculate position based on team and progress
-                          let x = 200, y = 200;
-                          if (team === 1) { // Red - top-left, moves right then down
-                            if (progress < 0.25) {
-                              x = 90 + progress * 4 * 110;
-                              y = 80;
-                            } else if (progress < 0.5) {
-                              x = 200;
-                              y = 80 + (progress - 0.25) * 4 * 120;
-                            } else {
-                              x = 200 - (progress - 0.5) * 2 * 30;
-                              y = 200 - (progress - 0.5) * 2 * 30;
-                            }
-                          } else if (team === 2) { // Blue - top-right, moves down then left
-                            if (progress < 0.25) {
-                              x = 310;
-                              y = 80 + progress * 4 * 120;
-                            } else if (progress < 0.5) {
-                              x = 310 - (progress - 0.25) * 4 * 110;
-                              y = 200;
-                            } else {
-                              x = 200 + (progress - 0.5) * 2 * 30;
-                              y = 200 - (progress - 0.5) * 2 * 30;
-                            }
-                          } else if (team === 3) { // Yellow - bottom-left, moves up then right
-                            if (progress < 0.25) {
-                              x = 90;
-                              y = 320 - progress * 4 * 120;
-                            } else if (progress < 0.5) {
-                              x = 90 + (progress - 0.25) * 4 * 110;
-                              y = 200;
-                            } else {
-                              x = 200 - (progress - 0.5) * 2 * 30;
-                              y = 200 + (progress - 0.5) * 2 * 30;
-                            }
-                          } else { // Green - bottom-right, moves left then up
-                            if (progress < 0.25) {
-                              x = 310 - progress * 4 * 110;
-                              y = 320;
-                            } else if (progress < 0.5) {
-                              x = 200;
-                              y = 320 - (progress - 0.25) * 4 * 120;
-                            } else {
-                              x = 200 + (progress - 0.5) * 2 * 30;
-                              y = 200 + (progress - 0.5) * 2 * 30;
-                            }
-                          }
-                          
-                          return (
-                            <g key={player.id}>
-                              {/* Horse piece */}
-                              <circle cx={x} cy={y} r="12" fill={player.color} stroke="#fff" strokeWidth="2"/>
-                              <text x={x} y={y + 1} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
-                                {player.questionsAnswered || 0}
-                              </text>
-                            </g>
-                          );
-                        })}
+                        <text x="90" y="300" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">Đội 3</text>
+                        <text x="90" y="320" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[3] || 0}</text>
+                        <text x="90" y="335" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM})</text>
                         
-                        {/* Team labels */}
-                        <text x="90" y="90" textAnchor="middle" fill="#ef4444" fontSize="16" fontWeight="bold">Đội 1</text>
-                        <text x="310" y="90" textAnchor="middle" fill="#3b82f6" fontSize="16" fontWeight="bold">Đội 2</text>
-                        <text x="90" y="310" textAnchor="middle" fill="#f59e0b" fontSize="16" fontWeight="bold">Đội 3</text>
-                        <text x="310" y="310" textAnchor="middle" fill="#10b981" fontSize="16" fontWeight="bold">Đội 4</text>
+                        <text x="310" y="300" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">Đội 4</text>
+                        <text x="310" y="320" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[4] || 0}</text>
+                        <text x="310" y="335" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM})</text>
                         
                         {/* Finish label */}
-                        <text x="200" y="205" textAnchor="middle" fill="#fbbf24" fontSize="14" fontWeight="bold">Đích</text>
+                        <text x="200" y="195" textAnchor="middle" fill="#fbbf24" fontSize="12" fontWeight="bold">Đích</text>
+                        <text x="200" y="210" textAnchor="middle" fill="#fbbf24" fontSize="10">🏆</text>
                       </svg>
                     </div>
                 </div>
 
-                {/* Action Button */}
-                <div className="bg-gray-800 rounded-xl p-6 text-center border-2 border-gold-500/30">
-                  <h3 className="text-lg font-bold mb-4 text-gold-400">🎯 Hành động</h3>
-                  {(() => {
-                    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
-                    const now = Date.now();
-                    const onCooldown = myPlayer?.cooldownUntil && myPlayer.cooldownUntil > now;
-                    const remainingSeconds = onCooldown ? Math.ceil(((myPlayer?.cooldownUntil || 0) - now) / 1000) : 0;
-                    const completed = (myPlayer?.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
-                    
-                    return (
-                      <>
-                        <motion.button
-                          whileHover={{ scale: onCooldown || completed ? 1 : 1.05 }}
-                          whileTap={{ scale: onCooldown || completed ? 1 : 0.95 }}
-                          onClick={rollDice}
-                          disabled={!!gameState.currentQuestion || onCooldown || completed}
-                          className="w-full bg-gradient-to-r from-gold-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-4 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {completed ? '✅ Hoàn thành!' : onCooldown ? `⏳ Chờ ${remainingSeconds}s...` : '❓ Trả lời câu hỏi'}
-                        </motion.button>
-                        {onCooldown && (
-                          <p className="text-sm text-red-400 mt-2">⏳ Cooldown sau câu trả lời sai</p>
-                        )}
-                        {myPlayer && !completed && !onCooldown && (
-                          <p className="text-sm text-gray-400 mt-2">
-                            Tiến độ: {myPlayer.questionsAnswered || 0}/10 câu
-                          </p>
-                        )}
-                      </>
-                    );
-                  })()}
+                {/* Game Info */}
+                <div className="bg-gray-800 rounded-xl p-4 border-2 border-gold-500/30">
+                  <h3 className="text-sm font-bold mb-3 text-center text-gold-400">📊 Thông tin trò chơi</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Mỗi câu hỏi:</span>
+                      <span className="font-bold text-gold-400">{QUESTION_TIME_LIMIT}s</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Tổng câu hỏi/đội:</span>
+                      <span className="font-bold text-gold-400">{QUESTIONS_PER_TEAM}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Cách tính điểm:</span>
+                      <span className="font-bold text-green-400">Đa số đúng = +điểm</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -961,12 +947,14 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                 {/* Team 2 (Blue) */}
                 {(() => {
                   const team2Players = gameState.players.filter(p => p.team === 2);
+                  const isCurrentTeam = gameState.currentQuestion?.team === 2;
                   return team2Players.length > 0 && (
-                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-blue-500">
+                    <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-blue-500 ${isCurrentTeam ? 'ring-2 ring-blue-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-blue-400">🔵 Đội 2</h3>
-                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[2] || 0}/10</span>
+                        <h3 className="font-bold text-blue-400">🔵 Đội 2 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[2] || 0} điểm</span>
                       </div>
+                      <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM}</div>
                       {team2Players.map(player => (
                         <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
                           <div className="flex items-center justify-between text-sm">
@@ -975,11 +963,10 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                               <span className="font-semibold truncate">{player.name}</span>
                               {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
                             </div>
-                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1 flex gap-2">
-                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
-                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                            <span className="text-green-400">✓{player.correctVotes || 0}</span>
+                            <span className="text-red-400">✗{player.wrongVotes || 0}</span>
                           </div>
                         </div>
                       ))}
@@ -990,12 +977,14 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                 {/* Team 4 (Green) */}
                 {(() => {
                   const team4Players = gameState.players.filter(p => p.team === 4);
+                  const isCurrentTeam = gameState.currentQuestion?.team === 4;
                   return team4Players.length > 0 && (
-                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-green-500">
+                    <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-green-500 ${isCurrentTeam ? 'ring-2 ring-green-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-green-400">🟢 Đội 4</h3>
-                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[4] || 0}/10</span>
+                        <h3 className="font-bold text-green-400">🟢 Đội 4 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[4] || 0} điểm</span>
                       </div>
+                      <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM}</div>
                       {team4Players.map(player => (
                         <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
                           <div className="flex items-center justify-between text-sm">
@@ -1004,42 +993,16 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                               <span className="font-semibold truncate">{player.name}</span>
                               {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
                             </div>
-                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
                           </div>
                           <div className="text-xs text-gray-400 mt-1 flex gap-2">
-                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
-                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                            <span className="text-green-400">✓{player.correctVotes || 0}</span>
+                            <span className="text-red-400">✗{player.wrongVotes || 0}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   );
                 })()}
-
-                {/* Stats Summary */}
-                <div className="bg-gray-800 rounded-xl p-4 border-2 border-gold-500/30">
-                  <h3 className="text-sm font-bold mb-3 text-center text-gold-400">📊 Tổng quan</h3>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between p-2 bg-gray-700 rounded">
-                      <span>Tổng câu đúng:</span>
-                      <span className="font-bold text-green-400">
-                        {gameState.players.reduce((sum, p) => sum + (p.correctAnswers || 0), 0)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-gray-700 rounded">
-                      <span>Tổng câu sai:</span>
-                      <span className="font-bold text-red-400">
-                        {gameState.players.reduce((sum, p) => sum + (p.wrongAnswers || 0), 0)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-gray-700 rounded">
-                      <span>Hoàn thành:</span>
-                      <span className="font-bold text-gold-400">
-                        {gameState.players.filter(p => (p.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER).length}/{gameState.players.length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -1056,7 +1019,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
               <div className="text-center mb-8">
                 <div className="text-6xl mb-4">🏆</div>
                 <h2 className="text-4xl font-bold text-gold-400 mb-2">Kết quả trò chơi</h2>
-                <p className="text-gray-400">Thời gian: {remainingTime <= 0 ? 'Hết giờ!' : 'Hoàn thành sớm'}</p>
+                <p className="text-gray-400">Tất cả các đội đã hoàn thành {QUESTIONS_PER_TEAM} câu hỏi!</p>
               </div>
 
               {/* Team Rankings */}
@@ -1070,20 +1033,17 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{['🥇', '🥈', '🥉', '4️⃣'][index]}</span>
-                          <span className="text-xl font-bold">Đội {teamStat.team}</span>
+                          <span className="text-xl font-bold">
+                            {teamStat.team === 1 ? '🔴' : teamStat.team === 2 ? '🔵' : teamStat.team === 3 ? '🟡' : '🟢'} Đội {teamStat.team}
+                          </span>
                         </div>
                         <div className="text-right">
+                          <div className="text-2xl font-bold text-gold-400">
+                            {teamStat.score} điểm
+                          </div>
                           <div className="text-sm text-gray-400">
-                            Hoàn thành: {teamStat.completedCount}/{teamStat.players.length}
+                            {teamStat.questionsAnswered}/{QUESTIONS_PER_TEAM} câu hỏi
                           </div>
-                          <div className="text-sm text-red-400">
-                            Tổng sai: {teamStat.totalWrong}
-                          </div>
-                          {teamStat.avgTime !== Infinity && (
-                            <div className="text-sm text-green-400">
-                              TB: {Math.floor(teamStat.avgTime / 1000)}s
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -1097,13 +1057,8 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                               <span className="font-semibold">{player.name}</span>
                             </div>
                             <div className="flex gap-3 text-sm">
-                              <span className="text-gold-400">✓ {player.correctAnswers || 0}</span>
-                              <span className="text-red-400">✗ {player.wrongAnswers || 0}</span>
-                              {player.finishTime && player.startTime && (
-                                <span className="text-green-400">
-                                  ⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s
-                                </span>
-                              )}
+                              <span className="text-green-400">✓ {player.correctVotes || 0}</span>
+                              <span className="text-red-400">✗ {player.wrongVotes || 0}</span>
                             </div>
                           </div>
                         ))}
