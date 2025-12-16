@@ -22,6 +22,23 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-black">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.35
+        }}
+      ></div>
+      
+      {/* Overlay */}
+      <div className="fixed inset-0 z-[1] bg-black/40"></div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -50,8 +67,6 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background with dark overlay */}
-      <div className="absolute inset-0 z-0 bg-black"></div>
 
       {/* Animated particles effect */}
       <div className="absolute inset-0 z-10">
@@ -415,6 +430,7 @@ const LandingPage = () => {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 };

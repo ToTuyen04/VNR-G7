@@ -139,6 +139,20 @@ const HistoryPage = () => {
             'Lương thực: Năm 1988 còn nhập 450.000 tấn gạo → Năm 1989 đã đủ ăn, có dự trữ và bắt đầu xuất khẩu',
             'Nền kinh tế hàng hóa nhiều thành phần, vận động theo cơ chế thị trường có quản lý của Nhà nước bước đầu hình thành',
             'Kinh tế đối ngoại được mở rộng, phát triển nhanh hơn'
+          ],
+          images: [
+            {
+              src: '/img/ketquabuocdau/Sản xuất lúa gạo tăng lên sau các chính sách Đổi mới – từ việc thiếu ăn, phải nhập gạo trước đó chuyển sang đủ ăn và bắt đầu xuất khẩu từ năm 1989..jpg',
+              caption: 'Sản xuất lúa gạo tăng lên sau các chính sách Đổi mới – từ việc thiếu ăn, phải nhập gạo trước đó chuyển sang đủ ăn và bắt đầu xuất khẩu từ năm 1989'
+            },
+            {
+              src: '/img/ketquabuocdau/Chỉ sau một năm ban hành Nghị quyết 10, đến năm 1989, sản lượng lúa gạo đạt con số 21,5 triệu tấn, lần đầu tiên Việt Nam xuất khẩu được 1,2 triệu tấn lúa.png',
+              caption: 'Chỉ sau một năm ban hành Nghị quyết 10, đến năm 1989, sản lượng lúa gạo đạt con số 21,5 triệu tấn, lần đầu tiên Việt Nam xuất khẩu được 1,2 triệu tấn lúa'
+            },
+            {
+              src: '/img/ketquabuocdau/Sau 1 năm thi công khẩn trương, chợ Đồng Xuân (Hà Nội) đã tiến hành và đi vào hoạt động đầu tháng 2_1991. Chợ cao 3 tầng, với tổng diện tích 28.000m2, là nơi tập trung buôn bán c.jpg',
+              caption: 'Sau 1 năm thi công khẩn trương, chợ Đồng Xuân (Hà Nội) đã tiến hành và đi vào hoạt động đầu tháng 2/1991. Chợ cao 3 tầng, với tổng diện tích 28.000m2, là nơi tập trung buôn bán'
+            }
           ]
         },
         {
@@ -176,6 +190,12 @@ const HistoryPage = () => {
             '• Các thế lực thù địch tăng cường chống phá, thúc đẩy chiến lược "diễn biến hòa bình"',
             '• Việt Nam vừa thoát dần thế bao vây, cấm vận nhưng vẫn đứng trước nhiều thách thức mới',
             '👉 Thực tiễn đó đòi hỏi Đảng phải tổng kết sâu sắc công cuộc đổi mới, kiên định con đường xã hội chủ nghĩa và xác định rõ mô hình, mục tiêu phát triển lâu dài của đất nước.'
+          ],
+          images: [
+            {
+              src: '/img/Liên Xô và các nước xã hội chủ nghĩa Đông Âu lâm vào khủng hoảng và sụp đổ hoàn toàn (1991).jpg',
+              caption: 'Liên Xô và các nước xã hội chủ nghĩa Đông Âu lâm vào khủng hoảng và sụp đổ hoàn toàn (1991)'
+            }
           ]
         },
         {
@@ -185,6 +205,20 @@ const HistoryPage = () => {
             'Đại hội VII là Đại hội có ý nghĩa rất quan trọng, tiếp tục đường lối đổi mới toàn diện và lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội.',
             'Đại hội họp tại Hà Nội (24–27/6/1991), có 1.176 đại biểu, đại diện cho hơn 2 triệu đảng viên trong cả nước. Đại hội thông qua các văn kiện chính trị quan trọng, nổi bật là Cương lĩnh năm 1991 và Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000; bầu Ban Chấp hành Trung ương, Bộ Chính trị và bầu đồng chí Đỗ Mười làm Tổng Bí thư.',
             'Đại hội khẳng định công cuộc đổi mới là đúng đắn, nền kinh tế bước đầu chuyển biến tích cực, nền kinh tế hàng hóa nhiều thành phần từng bước hình thành; đồng thời chỉ rõ đổi mới chưa đồng bộ, khó khăn và thách thức vẫn còn rất lớn.'
+          ],
+          images: [
+            {
+              src: '/img/thongtincoban/Đại hội đại biểu toàn quốc lần thứ VII Đảng Cộng sản Việt Nam.png',
+              caption: 'Đại hội đại biểu toàn quốc lần thứ VII Đảng Cộng sản Việt Nam'
+            },
+            {
+              src: '/img/thongtincoban/Đồng chí Đỗ Mười và các đại biểu dự Đại hội VII của Đảng. Ảnh_ TTXVN. Ảnh_ TTXVN. Ảnh_ TTXVN',
+              caption: 'Đồng chí Đỗ Mười và các đại biểu dự Đại hội VII của Đảng'
+            },
+            {
+              src: '/img/thongtincoban/Đồng chí Đỗ Mười - nhà lãnh đạo tài năng, Tổng bí thư kiên định, sáng tạo trong sự nghiệp đổi mới.jpg',
+              caption: 'Đồng chí Đỗ Mười - nhà lãnh đạo tài năng, Tổng bí thư kiên định, sáng tạo trong sự nghiệp đổi mới'
+            }
           ]
         },
         {
@@ -271,6 +305,20 @@ const HistoryPage = () => {
             '• 28/7/1995: Việt Nam gia nhập ASEAN.',
             '• 11/7/1995: Bình thường hóa quan hệ ngoại giao với Hoa Kỳ.',
             '→ Đối ngoại mở rộng, vị thế quốc tế của Việt Nam được nâng cao rõ rệt.'
+          ],
+          images: [
+            {
+              src: '/img/ketquathuchien/Tổng Bí thư Đỗ Mười hội đàm với Tổng Bí thư, Chủ tịch nước CHND Trung Hoa Giang Trạch Dân tại Bắc Kinh ngày 6-11-1991.jpg',
+              caption: 'Tổng Bí thư Đỗ Mười hội đàm với Tổng Bí thư, Chủ tịch nước CHND Trung Hoa Giang Trạch Dân tại Bắc Kinh ngày 6/11/1991 - Bình thường hóa quan hệ Việt Nam - Trung Quốc'
+            },
+            {
+              src: '/img/ketquathuchien/Việt Nam trở thành thành viên ASEAN (28_7_1995).jpg',
+              caption: 'Việt Nam chính thức trở thành thành viên thứ 7 của ASEAN ngày 28/7/1995'
+            },
+            {
+              src: '/img/ketquathuchien/Tổng thống Mỹ Bill Clinton tuyên bố bình thường hóa quan hệ với Việt Nam ngày 11-7-1995 tại Nhà Trắng.webp',
+              caption: 'Tổng thống Mỹ Bill Clinton tuyên bố bình thường hóa quan hệ với Việt Nam ngày 11/7/1995 tại Nhà Trắng'
+            }
           ]
         },
         {
