@@ -5,16 +5,15 @@ import { useEffect, useState } from 'react';
 const LandingPage = () => {
   const navigate = useNavigate();
   const [showContent, setShowContent] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = 'VNR202 - Trang chủ';
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContent(true), 500);
     return () => clearTimeout(timer);
   }, []);
-
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
 
   const scrollToHistory = () => {
     const historySection = document.getElementById('history-section');
@@ -27,8 +26,8 @@ const LandingPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-              <span className="text-black text-xl">⭐</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
@@ -399,8 +398,8 @@ const LandingPage = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-                  <span className="text-black text-xl">⭐</span>
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white">Công cuộc Đổi mới</h3>

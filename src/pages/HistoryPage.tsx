@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import HistoryChatBot from '../components/history/HistoryChatBot';
 import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
@@ -8,9 +8,20 @@ interface ImageType {
   caption: string;
 }
 
+interface SectionType {
+  title: string;
+  icon: string;
+  content: string[];
+  images?: ImageType[];
+}
+
 const HistoryPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = 'VNR202 - Nội dung';
+  }, []);
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -41,6 +52,12 @@ const HistoryPage = () => {
             'Liên Xô và các nước xã hội chủ nghĩa tiến hành cải tổ',
             'Xu thế mở cửa, hợp tác và hội nhập kinh tế quốc tế ngày càng rõ nét',
             '👉 Thực tiễn đó đặt ra yêu cầu cấp bách phải đổi mới tư duy, trước hết là tư duy kinh tế, nếu không đất nước sẽ tiếp tục lâm vào khủng hoảng sâu sắc hơn.'
+          ],
+          images: [
+            {
+              src: '/img/Người dân xếp hàng mua đồ thời bao cấp. Ảnh tư liệu.png',
+              caption: 'Người dân xếp hàng mua đồ thời bao cấp - Minh chứng cho tình trạng khó khăn kinh tế trước Đại hội VI năm 1986'
+            }
           ]
         },
         {
@@ -54,6 +71,16 @@ const HistoryPage = () => {
             '• Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật',
             '• Chỉ rõ những sai lầm, khuyết điểm của Đảng giai đoạn 1975–1986',
             '• Đề ra đường lối đổi mới nhằm đưa đất nước ra khỏi khủng hoảng kinh tế – xã hội'
+          ],
+          images: [
+            {
+              src: '/img/Toàn cảnh Đại hội VI năm 1986  – Đại hội đại biểu toàn quốc lần thứ VI của Đảng Cộng sản Việt Nam diễn ra tại Hà Nội, mở ra thời kỳ đổi mới toàn diện đất nước..jpg',
+              caption: 'Toàn cảnh Đại hội VI năm 1986 – Đại hội đại biểu toàn quốc lần thứ VI của Đảng Cộng sản Việt Nam diễn ra tại Hà Nội, mở ra thời kỳ đổi mới toàn diện đất nước'
+            },
+            {
+              src: '/img/Đồng chí Nguyễn Văn Linh được bầu làm Tổng Bí thư Ban Chấp hành Trung ương Đảng khóa VI..jpg',
+              caption: 'Đồng chí Nguyễn Văn Linh được bầu làm Tổng Bí thư Ban Chấp hành Trung ương Đảng khóa VI'
+            }
           ]
         },
         {
@@ -414,8 +441,8 @@ const HistoryPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-              <span className="text-black text-xl">⭐</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
@@ -659,6 +686,28 @@ const HistoryPage = () => {
                                         </div>
                                       ))}
                                     </div>
+
+                                    {/* Section Images */}
+                                    {(section as SectionType).images && (section as SectionType).images!.length > 0 && (
+                                      <div className="relative grid grid-cols-2 gap-4 mt-6">
+                                        {(section as SectionType).images!.map((img: ImageType, i: number) => (
+                                          <motion.div
+                                            key={i}
+                                            whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? -2 : 2 }}
+                                            className="relative group/img"
+                                          >
+                                            <div className="aspect-[4/3] bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-700 group-hover/img:border-red-600 transition-colors">
+                                              <img 
+                                                src={img.src} 
+                                                alt={img.caption}
+                                                className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 transition-opacity" 
+                                              />
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-2 text-center">{img.caption}</p>
+                                          </motion.div>
+                                        ))}
+                                      </div>
+                                    )}
                                   </motion.div>
                                 )}
                               </div>
@@ -889,8 +938,8 @@ const HistoryPage = () => {
           {/* About Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-full flex items-center justify-center">
-                <span className="text-black text-xl">⭐</span>
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
