@@ -155,7 +155,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     
     try {
       // Clean undefined values - Firebase doesn't accept undefined
-      const cleanState = JSON.parse(JSON.stringify(newState, (key, value) => 
+      const cleanState = JSON.parse(JSON.stringify(newState, (_key, value) => 
         value === undefined ? null : value
       ));
       
@@ -521,9 +521,6 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     generateQuestion(myPlayerId, true);
   };
 
-  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const isMyTurn = currentPlayer?.id === myPlayerId;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -849,7 +846,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                         <line x1="240" y1="200" x2="380" y2="200" stroke="#4b5563" strokeWidth="2"/>
                         
                         {/* Player pieces on board */}
-                        {gameState.players.map((player, idx) => {
+                        {gameState.players.map((player, _idx) => {
                           const progress = (player.questionsAnswered || 0) / QUESTIONS_PER_PLAYER;
                           const team = player.team || 1;
                           
