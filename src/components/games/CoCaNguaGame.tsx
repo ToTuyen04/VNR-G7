@@ -14,8 +14,9 @@ interface Player {
   questionsAnswered?: number; // Number of questions answered
   correctAnswers?: number; // Number of correct answers
   wrongAnswers?: number; // Number of wrong answers
-  startTime?: number; // Timestamp when player started answering questions
-  finishTime?: number; // Timestamp when player completed all questions
+  startTime?: number | null; // Timestamp when player started answering questions
+  finishTime?: number | null; // Timestamp when player completed all questions
+  cooldownUntil?: number | null; // Timestamp until player can answer again (after wrong answer)
 }
 
 interface PiecePosition {
@@ -38,8 +39,8 @@ interface GameState {
     isRetry?: boolean;
   } | null;
   teamScores?: { [key: number]: number }; // Team scores
-  gameStartTime?: number; // Timestamp when game started
-  gameEndTime?: number; // Timestamp when game ended
+  gameStartTime?: number | null; // Timestamp when game started
+  gameEndTime?: number | null; // Timestamp when game ended
   timeLimit?: number; // Time limit in milliseconds (10 minutes)
 }
 
@@ -84,6 +85,9 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     diceValue: null,
     gameStarted: false,
     winner: null,
+    gameStartTime: null,
+    gameEndTime: null,
+    currentQuestion: null
   });
 
 
@@ -119,33 +123,44 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     
     const unsubscribe = onValue(roomDbRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
+      if (data && data.gameState) {
         console.log('🔄 Room data updated:', data);
-        setGameState(data.gameState || gameState);
-      } else {
+        setGameState(data.gameState);
+      } else if (!data) {
         console.log('⚠️ Room no longer exists');
         if (!isHost) {
           alert('Phòng đã bị đóng!');
           setIsInRoom(false);
+          setRoomCode('');
         }
       }
     });
 
     return () => {
       unsubscribe();
-      if (isHost && roomCode) {
-        // Host cleans up room on unmount
+    };
+  }, [roomCode, isInRoom, isHost]);
+
+  // Cleanup room on unmount for host
+  useEffect(() => {
+    return () => {
+      if (isHost && roomCode && isInRoom) {
         remove(ref(database, `rooms/${roomCode}`)).catch(console.error);
       }
     };
-  }, [roomCode, isInRoom, isHost]);
+  }, [isHost, roomCode, isInRoom]);
 
   const updateGameState = async (newState: GameState) => {
     if (!roomCode) return;
     
     try {
+      // Clean undefined values - Firebase doesn't accept undefined
+      const cleanState = JSON.parse(JSON.stringify(newState, (key, value) => 
+        value === undefined ? null : value
+      ));
+      
       await update(ref(database, `rooms/${roomCode}`), {
-        gameState: newState
+        gameState: cleanState
       });
       console.log('✅ Game state updated');
     } catch (error) {
@@ -296,8 +311,9 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           questionsAnswered: 0,
           correctAnswers: 0,
           wrongAnswers: 0,
-          startTime: undefined,
-          finishTime: undefined
+          startTime: null,
+          finishTime: null,
+          cooldownUntil: null
         }));
 
         const now = Date.now();
@@ -308,7 +324,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
           currentQuestion: null,
           gameStartTime: now,
-          gameEndTime: undefined,
+          gameEndTime: null,
           timeLimit: 600000 // 10 minutes in milliseconds
         };
         updateGameState(updatedState);
@@ -359,7 +375,8 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
               questionsAnswered: newQuestionsAnswered,
               correctAnswers: (p.correctAnswers || 0) + 1,
               startTime: p.startTime || now, // Set start time on first correct answer
-              finishTime: newQuestionsAnswered >= QUESTIONS_PER_PLAYER ? now : p.finishTime
+              finishTime: newQuestionsAnswered >= QUESTIONS_PER_PLAYER ? now : (p.finishTime || null),
+              cooldownUntil: null // Clear cooldown on correct answer
             };
           }
           return p;
@@ -384,7 +401,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
       });
       alert('✅ Chính xác! +1 điểm cho đội của bạn');
     } else {
-      // Wrong answer - track it and give another retry question
+      // Wrong answer - track it and set 5-second cooldown
       setGameState((prev) => {
         const updatedPlayers = prev.players.map(p => {
           if (p.id === myPlayerId) {
@@ -392,7 +409,9 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
             return {
               ...p,
               wrongAnswers: (p.wrongAnswers || 0) + 1,
-              startTime: p.startTime || now // Set start time on first attempt
+              startTime: p.startTime || now, // Set start time on first attempt
+              finishTime: p.finishTime || null,
+              cooldownUntil: now + 5000 // 5 seconds cooldown
             };
           }
           return p;
@@ -408,12 +427,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
         return updatedState;
       });
       
-      alert('❌ Sai rồi! Đáp án đúng là: ' + gameState.currentQuestion.options[gameState.currentQuestion.correctAnswer] + '\nBạn sẽ nhận câu hỏi khác từ nhóm khác.');
-      
-      // Give another retry question after a short delay
-      setTimeout(() => {
-        generateQuestion(myPlayerId, true);
-      }, 1500);
+      alert('❌ Sai rồi! Đáp án đúng là: ' + gameState.currentQuestion.options[gameState.currentQuestion.correctAnswer] + '\nVui lòng chờ 5 giây để trả lời tiếp.');
     }
   };
 
@@ -486,24 +500,25 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
   };
 
   const rollDice = () => {
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (currentPlayer?.id !== myPlayerId) return;
+    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
+    if (!myPlayer) return;
 
-    // Check if player still has questions to answer
-    if ((currentPlayer.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER) {
+    // Check if player completed all questions
+    if ((myPlayer.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER) {
       alert('Bạn đã hoàn thành 10 câu hỏi của mình!');
-      // Move to next player
-      setGameState((prev) => {
-        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
-        const updatedState = { ...prev, currentPlayerIndex: nextPlayerIndex };
-        updateGameState(updatedState);
-        return updatedState;
-      });
       return;
     }
 
-    // Generate question instead of rolling dice
-    generateQuestion(myPlayerId);
+    // Check cooldown
+    const now = Date.now();
+    if (myPlayer.cooldownUntil && myPlayer.cooldownUntil > now) {
+      const remainingSeconds = Math.ceil((myPlayer.cooldownUntil - now) / 1000);
+      alert(`⏳ Vui lòng chờ ${remainingSeconds} giây nữa để trả lời tiếp.`);
+      return;
+    }
+
+    // Generate question
+    generateQuestion(myPlayerId, true);
   };
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
@@ -576,12 +591,6 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                 >
                   ← Quay lại
                 </motion.button>
-
-                <div className="mt-6 text-sm text-gray-400 text-center">
-                  <p>👥 Hỗ trợ 2-8 người chơi</p>
-                  <p>🎯 Đưa 4 quân cờ về đích để chiến thắng</p>
-                  <p className="mt-2 text-xs">🔒 P2P - Không cần server backend</p>
-                </div>
               </div>
             </motion.div>
           )}
@@ -731,156 +740,306 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
 
         {/* Game Board */}
         {gameState.gameStarted && !gameState.gameEndTime && (
-          <div className="max-w-6xl mx-auto">
-            {/* Timer Display */}
-            <div className="mb-6 text-center">
-              <div className={`inline-block bg-gray-800 rounded-xl px-8 py-4 border-2 ${
-                remainingTime <= 60 ? 'border-red-500 animate-pulse' : 'border-gold-500'
-              }`}>
-                <div className="text-sm text-gray-400 mb-1">Thời gian còn lại</div>
-                <div className={`text-4xl font-bold ${
-                  remainingTime <= 60 ? 'text-red-500' : 'text-gold-400'
-                }`}>
-                  {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, '0')}
-                </div>
-              </div>
-            </div>
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Team Scores & Players Info */}
-              <div className="lg:col-span-1 space-y-4">
-                {/* Team Scores */}
-                <div className="bg-gray-800 rounded-xl p-4">
-                  <h3 className="text-xl font-bold mb-4">Điểm đội</h3>
-                  {[1, 2, 3, 4].map(teamNum => (
-                    <div key={teamNum} className="flex justify-between items-center p-2 bg-gray-700 rounded mb-2">
-                      <span className="font-semibold">Đội {teamNum}</span>
-                      <span className="text-gold-400 font-bold">{gameState.teamScores?.[teamNum] || 0}/10</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-gray-800 rounded-xl p-4">
-                  <h3 className="text-xl font-bold mb-4">Người chơi</h3>
-                  {gameState.players.map((player, index) => (
-                    <div
-                      key={player.id}
-                      className={`p-3 rounded-lg mb-2 ${
-                        index === gameState.currentPlayerIndex ? 'bg-gold-500/20 border-2 border-gold-500' : 'bg-gray-700'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-4 h-4 rounded-full"
-                              style={{ backgroundColor: player.color }}
-                            />
-                            <span className="font-semibold">{player.name}</span>
-                            {player.id === myPlayerId && <span className="text-xs text-gold-400">(Bạn)</span>}
-                            <span className="text-xs text-gray-400">Đội {player.team}</span>
-                          </div>
-                          <div className="text-sm">
-                            {player.questionsAnswered || 0}/{QUESTIONS_PER_PLAYER} câu
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-400 flex gap-3">
-                          <span className="text-red-400">❌ {player.wrongAnswers || 0} sai</span>
-                          {player.finishTime && player.startTime && (
-                            <span className="text-green-400">⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Question Action */}
-                <div className="bg-gray-800 rounded-xl p-6 text-center">
-                  <h3 className="text-xl font-bold mb-4">Hành động</h3>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={rollDice}
-                    disabled={!isMyTurn || !!gameState.currentQuestion}
-                    className="w-full bg-gradient-to-r from-gold-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isMyTurn ? 'Trả lời câu hỏi' : 'Chờ lượt...'}
-                  </motion.button>
-                </div>
-
-                {/* Current Turn */}
-                <div className="bg-gray-800 rounded-xl p-4">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Main Layout: 3 columns on large screens */}
+            <div className="grid lg:grid-cols-[1fr_2fr_1fr] gap-4">
+              
+              {/* LEFT COLUMN - Team 1 & 3 Info */}
+              <div className="space-y-4">
+                {/* Timer Display - Top */}
+                <div className="bg-gray-800 rounded-xl p-4 border-2 border-gold-500/30">
                   <div className="text-center">
-                    <p className="text-sm text-gray-400 mb-2">Lượt hiện tại</p>
-                    <p className="text-xl font-bold" style={{ color: currentPlayer?.color }}>
-                      {currentPlayer?.name} (Đội {currentPlayer?.team})
-                    </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Đã trả lời: {currentPlayer?.questionsAnswered || 0}/{QUESTIONS_PER_PLAYER}
-                    </p>
+                    <div className="text-xs text-gray-400 mb-1">Thời gian còn lại</div>
+                    <div className={`text-3xl font-bold ${
+                      remainingTime <= 60 ? 'text-red-500 animate-pulse' : 'text-gold-400'
+                    }`}>
+                      {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, '0')}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Game Status */}
-              <div className="lg:col-span-2">
-                <div className="bg-gray-800 rounded-xl p-6">
-                  <h2 className="text-2xl font-bold text-center mb-6">Trò chơi đang diễn ra</h2>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {[1, 2, 3, 4].map(teamNum => {
-                      const teamPlayers = gameState.players.filter(p => p.team === teamNum);
-                      const totalQuestions = teamPlayers.reduce((sum, p) => sum + (p.questionsAnswered || 0), 0);
-                      
-                      return (
-                        <div key={teamNum} className="bg-gray-700 rounded-lg p-4 text-center">
-                          <h3 className="text-lg font-bold mb-2">Đội {teamNum}</h3>
-                          <p className="text-3xl font-bold text-gold-400 mb-2">
-                            {gameState.teamScores?.[teamNum] || 0}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            {totalQuestions}/{teamPlayers.length * QUESTIONS_PER_PLAYER} câu
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {teamPlayers.length} người chơi
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="bg-gray-700 rounded-lg p-6">
-                    <h3 className="text-xl font-bold mb-4 text-center">Tiến độ trả lời</h3>
-                    <div className="space-y-2">
-                      {gameState.players.map(player => (
-                        <div key={player.id} className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-3 h-3 rounded-full" style={{ backgroundColor: player.color }} />
-                          <div className="flex-1">
-                            <div className="flex justify-between text-sm mb-1">
-                              <span>{player.name} (Đội {player.team})</span>
-                              <div className="flex gap-2 text-xs">
-                                <span className="text-gold-400">
-                                  ✓ {player.correctAnswers || 0}/{player.questionsAnswered || 0}
-                                </span>
-                                <span className="text-red-400">
-                                  ✗ {player.wrongAnswers || 0}
-                                </span>
-                                {player.finishTime && player.startTime && (
-                                  <span className="text-green-400">
-                                    ⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s
-                                  </span>
-                                )}
-                              </div>
+                {/* Team 1 (Red) */}
+                {(() => {
+                  const team1Players = gameState.players.filter(p => p.team === 1);
+                  return team1Players.length > 0 && (
+                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-red-500">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-red-400">🔴 Đội 1</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[1] || 0}/10</span>
+                      </div>
+                      {team1Players.map(player => (
+                        <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-red-500" />
+                              <span className="font-semibold truncate">{player.name}</span>
+                              {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
                             </div>
-                            <div className="bg-gray-600 rounded-full h-2 overflow-hidden">
-                              <div
-                                className="bg-gold-500 h-full transition-all"
-                                style={{ width: `${((player.questionsAnswered || 0) / QUESTIONS_PER_PLAYER) * 100}%` }}
-                              />
-                            </div>
+                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
+                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
                           </div>
                         </div>
                       ))}
+                    </div>
+                  );
+                })()}
+
+                {/* Team 3 (Yellow/Orange) */}
+                {(() => {
+                  const team3Players = gameState.players.filter(p => p.team === 3);
+                  return team3Players.length > 0 && (
+                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-yellow-500">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-yellow-400">🟡 Đội 3</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[3] || 0}/10</span>
+                      </div>
+                      {team3Players.map(player => (
+                        <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                              <span className="font-semibold truncate">{player.name}</span>
+                              {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
+                            </div>
+                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
+                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* CENTER COLUMN - Game Board */}
+              <div className="space-y-4">
+                {/* Cờ cá ngựa Board - CENTER */}
+                <div className="bg-gray-800 rounded-xl p-6 border-2 border-gold-500/30">
+                  <h3 className="text-2xl font-bold mb-4 text-center text-gold-400">🎲 Bàn Cờ Cá Ngựa</h3>
+                  <div className="relative aspect-square max-w-full mx-auto">
+                      <svg viewBox="0 0 400 400" className="w-full h-full">
+                        {/* Board Background */}
+                        <rect x="0" y="0" width="400" height="400" fill="#1f2937" stroke="#374151" strokeWidth="2"/>
+                        
+                        {/* Home Areas - 4 corners */}
+                        {/* Red (Top-Left) */}
+                        <rect x="20" y="20" width="140" height="140" fill="#ef4444" opacity="0.3" stroke="#ef4444" strokeWidth="3" rx="8"/>
+                        {/* Blue (Top-Right) */}
+                        <rect x="240" y="20" width="140" height="140" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" strokeWidth="3" rx="8"/>
+                        {/* Yellow/Orange (Bottom-Left) */}
+                        <rect x="20" y="240" width="140" height="140" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="3" rx="8"/>
+                        {/* Green (Bottom-Right) */}
+                        <rect x="240" y="240" width="140" height="140" fill="#10b981" opacity="0.3" stroke="#10b981" strokeWidth="3" rx="8"/>
+                        
+                        {/* Center finish area */}
+                        <rect x="170" y="170" width="60" height="60" fill="#fbbf24" opacity="0.5" stroke="#fbbf24" strokeWidth="2" rx="4"/>
+                        
+                        {/* Path Lines - Vertical paths */}
+                        <line x1="200" y1="160" x2="200" y2="20" stroke="#4b5563" strokeWidth="2"/>
+                        <line x1="200" y1="380" x2="200" y2="240" stroke="#4b5563" strokeWidth="2"/>
+                        
+                        {/* Path Lines - Horizontal paths */}
+                        <line x1="20" y1="200" x2="160" y2="200" stroke="#4b5563" strokeWidth="2"/>
+                        <line x1="240" y1="200" x2="380" y2="200" stroke="#4b5563" strokeWidth="2"/>
+                        
+                        {/* Player pieces on board */}
+                        {gameState.players.map((player, idx) => {
+                          const progress = (player.questionsAnswered || 0) / QUESTIONS_PER_PLAYER;
+                          const team = player.team || 1;
+                          
+                          // Calculate position based on team and progress
+                          let x = 200, y = 200;
+                          if (team === 1) { // Red - top-left, moves right then down
+                            if (progress < 0.25) {
+                              x = 90 + progress * 4 * 110;
+                              y = 80;
+                            } else if (progress < 0.5) {
+                              x = 200;
+                              y = 80 + (progress - 0.25) * 4 * 120;
+                            } else {
+                              x = 200 - (progress - 0.5) * 2 * 30;
+                              y = 200 - (progress - 0.5) * 2 * 30;
+                            }
+                          } else if (team === 2) { // Blue - top-right, moves down then left
+                            if (progress < 0.25) {
+                              x = 310;
+                              y = 80 + progress * 4 * 120;
+                            } else if (progress < 0.5) {
+                              x = 310 - (progress - 0.25) * 4 * 110;
+                              y = 200;
+                            } else {
+                              x = 200 + (progress - 0.5) * 2 * 30;
+                              y = 200 - (progress - 0.5) * 2 * 30;
+                            }
+                          } else if (team === 3) { // Yellow - bottom-left, moves up then right
+                            if (progress < 0.25) {
+                              x = 90;
+                              y = 320 - progress * 4 * 120;
+                            } else if (progress < 0.5) {
+                              x = 90 + (progress - 0.25) * 4 * 110;
+                              y = 200;
+                            } else {
+                              x = 200 - (progress - 0.5) * 2 * 30;
+                              y = 200 + (progress - 0.5) * 2 * 30;
+                            }
+                          } else { // Green - bottom-right, moves left then up
+                            if (progress < 0.25) {
+                              x = 310 - progress * 4 * 110;
+                              y = 320;
+                            } else if (progress < 0.5) {
+                              x = 200;
+                              y = 320 - (progress - 0.25) * 4 * 120;
+                            } else {
+                              x = 200 + (progress - 0.5) * 2 * 30;
+                              y = 200 + (progress - 0.5) * 2 * 30;
+                            }
+                          }
+                          
+                          return (
+                            <g key={player.id}>
+                              {/* Horse piece */}
+                              <circle cx={x} cy={y} r="12" fill={player.color} stroke="#fff" strokeWidth="2"/>
+                              <text x={x} y={y + 1} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">
+                                {player.questionsAnswered || 0}
+                              </text>
+                            </g>
+                          );
+                        })}
+                        
+                        {/* Team labels */}
+                        <text x="90" y="90" textAnchor="middle" fill="#ef4444" fontSize="16" fontWeight="bold">Đội 1</text>
+                        <text x="310" y="90" textAnchor="middle" fill="#3b82f6" fontSize="16" fontWeight="bold">Đội 2</text>
+                        <text x="90" y="310" textAnchor="middle" fill="#f59e0b" fontSize="16" fontWeight="bold">Đội 3</text>
+                        <text x="310" y="310" textAnchor="middle" fill="#10b981" fontSize="16" fontWeight="bold">Đội 4</text>
+                        
+                        {/* Finish label */}
+                        <text x="200" y="205" textAnchor="middle" fill="#fbbf24" fontSize="14" fontWeight="bold">Đích</text>
+                      </svg>
+                    </div>
+                </div>
+
+                {/* Action Button */}
+                <div className="bg-gray-800 rounded-xl p-6 text-center border-2 border-gold-500/30">
+                  <h3 className="text-lg font-bold mb-4 text-gold-400">🎯 Hành động</h3>
+                  {(() => {
+                    const myPlayer = gameState.players.find(p => p.id === myPlayerId);
+                    const now = Date.now();
+                    const onCooldown = myPlayer?.cooldownUntil && myPlayer.cooldownUntil > now;
+                    const remainingSeconds = onCooldown ? Math.ceil(((myPlayer?.cooldownUntil || 0) - now) / 1000) : 0;
+                    const completed = (myPlayer?.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
+                    
+                    return (
+                      <>
+                        <motion.button
+                          whileHover={{ scale: onCooldown || completed ? 1 : 1.05 }}
+                          whileTap={{ scale: onCooldown || completed ? 1 : 0.95 }}
+                          onClick={rollDice}
+                          disabled={!!gameState.currentQuestion || onCooldown || completed}
+                          className="w-full bg-gradient-to-r from-gold-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-4 rounded-lg font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {completed ? '✅ Hoàn thành!' : onCooldown ? `⏳ Chờ ${remainingSeconds}s...` : '❓ Trả lời câu hỏi'}
+                        </motion.button>
+                        {onCooldown && (
+                          <p className="text-sm text-red-400 mt-2">⏳ Cooldown sau câu trả lời sai</p>
+                        )}
+                        {myPlayer && !completed && !onCooldown && (
+                          <p className="text-sm text-gray-400 mt-2">
+                            Tiến độ: {myPlayer.questionsAnswered || 0}/10 câu
+                          </p>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN - Team 2 & 4 Info */}
+              <div className="space-y-4">
+                {/* Team 2 (Blue) */}
+                {(() => {
+                  const team2Players = gameState.players.filter(p => p.team === 2);
+                  return team2Players.length > 0 && (
+                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-blue-400">🔵 Đội 2</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[2] || 0}/10</span>
+                      </div>
+                      {team2Players.map(player => (
+                        <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-blue-500" />
+                              <span className="font-semibold truncate">{player.name}</span>
+                              {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
+                            </div>
+                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
+                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                {/* Team 4 (Green) */}
+                {(() => {
+                  const team4Players = gameState.players.filter(p => p.team === 4);
+                  return team4Players.length > 0 && (
+                    <div className="bg-gray-800 rounded-xl p-4 border-l-4 border-green-500">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-green-400">🟢 Đội 4</h3>
+                        <span className="text-gold-400 font-bold">{gameState.teamScores?.[4] || 0}/10</span>
+                      </div>
+                      {team4Players.map(player => (
+                        <div key={player.id} className="bg-gray-700 rounded p-2 mb-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-green-500" />
+                              <span className="font-semibold truncate">{player.name}</span>
+                              {player.id === myPlayerId && <span className="text-xs text-gold-400">★</span>}
+                            </div>
+                            <span className="text-xs">{player.questionsAnswered || 0}/10</span>
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                            <span className="text-green-400">✓{player.correctAnswers || 0}</span>
+                            <span className="text-red-400">✗{player.wrongAnswers || 0}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                {/* Stats Summary */}
+                <div className="bg-gray-800 rounded-xl p-4 border-2 border-gold-500/30">
+                  <h3 className="text-sm font-bold mb-3 text-center text-gold-400">📊 Tổng quan</h3>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Tổng câu đúng:</span>
+                      <span className="font-bold text-green-400">
+                        {gameState.players.reduce((sum, p) => sum + (p.correctAnswers || 0), 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Tổng câu sai:</span>
+                      <span className="font-bold text-red-400">
+                        {gameState.players.reduce((sum, p) => sum + (p.wrongAnswers || 0), 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-gray-700 rounded">
+                      <span>Hoàn thành:</span>
+                      <span className="font-bold text-gold-400">
+                        {gameState.players.filter(p => (p.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER).length}/{gameState.players.length}
+                      </span>
                     </div>
                   </div>
                 </div>
