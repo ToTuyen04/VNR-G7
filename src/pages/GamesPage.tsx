@@ -12,7 +12,7 @@ const GamesPage = () => {
   const games = [
     {
       id: 'cocangua',
-      title: 'Cờ Cá Ngựa',
+      title: 'Góp phần xây dựng đất nước',
       description: 'Trò chơi nhiều người chơi.',
       icon: '🎲',
       component: CoCaNguaGame

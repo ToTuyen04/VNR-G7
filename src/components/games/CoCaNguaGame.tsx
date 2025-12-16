@@ -557,7 +557,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
             >
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border-2 border-gold-500/30 shadow-2xl">
                 <h2 className="text-3xl font-bold text-center mb-6 text-gradient">
-                  🎲 Cờ Cá Ngựa
+                  �️ Góp phần xây dựng đất nước
                 </h2>
                 
                 <div className="bg-blue-900/50 border border-blue-500 rounded-lg p-3 mb-4 text-sm text-center">
@@ -877,9 +877,9 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
 
               {/* CENTER COLUMN - Game Board */}
               <div className="space-y-4">
-                {/* Cờ cá ngựa Board - CENTER */}
+                {/* Game Board - CENTER */}
                 <div className="bg-gray-800 rounded-xl p-6 border-2 border-gold-500/30">
-                  <h3 className="text-2xl font-bold mb-4 text-center text-gold-400">🎲 Bàn Cờ Cá Ngựa</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-center text-gold-400">�️ Góp phần xây dựng đất nước</h3>
                   <div className="relative aspect-square max-w-full mx-auto">
                       <svg viewBox="0 0 400 400" className="w-full h-full">
                         {/* Board Background */}
@@ -899,25 +899,33 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                         <rect x="170" y="170" width="60" height="60" fill="#fbbf24" opacity="0.5" stroke="#fbbf24" strokeWidth="2" rx="4"/>
                         
                         {/* Team scores in corners */}
-                        <text x="90" y="80" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">Đội 1</text>
-                        <text x="90" y="100" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[1] || 0}</text>
-                        <text x="90" y="115" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM})</text>
+                        <text x="90" y="70" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">Đội 1</text>
+                        <text x="90" y="95" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[1] || 0}</text>
+                        <text x="90" y="115" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[1] || 0}</text>
+                        <text x="90" y="135" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="310" y="80" textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">Đội 2</text>
-                        <text x="310" y="100" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[2] || 0}</text>
-                        <text x="310" y="115" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM})</text>
+                        <text x="310" y="70" textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">Đội 2</text>
+                        <text x="310" y="95" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[2] || 0}</text>
+                        <text x="310" y="115" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[2] || 0}</text>
+                        <text x="310" y="135" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="90" y="300" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">Đội 3</text>
-                        <text x="90" y="320" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[3] || 0}</text>
-                        <text x="90" y="335" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM})</text>
+                        <text x="90" y="280" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">Đội 3</text>
+                        <text x="90" y="305" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[3] || 0}</text>
+                        <text x="90" y="325" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[3] || 0}</text>
+                        <text x="90" y="345" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="310" y="300" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">Đội 4</text>
-                        <text x="310" y="320" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">{gameState.teamScores?.[4] || 0}</text>
-                        <text x="310" y="335" textAnchor="middle" fill="#9ca3af" fontSize="10">({gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM})</text>
+                        <text x="310" y="280" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">Đội 4</text>
+                        <text x="310" y="305" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[4] || 0}</text>
+                        <text x="310" y="325" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[4] || 0}</text>
+                        <text x="310" y="345" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        {/* Finish label */}
-                        <text x="200" y="195" textAnchor="middle" fill="#fbbf24" fontSize="12" fontWeight="bold">Đích</text>
-                        <text x="200" y="210" textAnchor="middle" fill="#fbbf24" fontSize="10">🏆</text>
+                        {/* Center - Current Team Turn */}
+                        <text x="200" y="190" textAnchor="middle" fill="#fbbf24" fontSize="11" fontWeight="bold">
+                          {gameState.currentQuestion ? `Đội ${gameState.currentQuestion.team}` : 'Chờ...'}
+                        </text>
+                        <text x="200" y="210" textAnchor="middle" fill="#9ca3af" fontSize="10">
+                          {gameState.currentQuestion ? `Câu ${gameState.currentQuestion.questionNumber}` : ''}
+                        </text>
                       </svg>
                     </div>
                 </div>
