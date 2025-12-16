@@ -100,11 +100,11 @@ const LandingPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1 }}
                 >
-                  <h1 className="text-5xl md:text-7xl font-cinzel font-black mb-4 leading-tight">
-                    <div className="text-white">CÔNG CUỘC</div>
-                    <div className="text-red-600">ĐỔI MỚI</div>
-                    <div className="text-red-600">ĐẤT NƯỚC</div>
-                    <div className="text-gradient">1986-1996</div>
+                  <h1 className="font-cinzel font-black mb-4 leading-tight">
+                    <div className="text-white text-3xl md:text-5xl mb-4">CÔNG CUỘC</div>
+                    <div className="text-red-600 text-6xl md:text-8xl my-6">ĐỔI MỚI</div>
+                    <div className="text-red-600 text-6xl md:text-8xl mb-6">ĐẤT NƯỚC</div>
+                    <div className="text-gradient text-3xl md:text-5xl mt-4">1986-1996</div>
                   </h1>
                 </motion.div>
 
