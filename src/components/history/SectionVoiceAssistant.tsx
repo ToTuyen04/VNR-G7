@@ -17,7 +17,8 @@ const SectionVoiceAssistant = ({ content, title, position = 'right' }: SectionVo
       stop();
     } else {
       const fullText = `${title}. ${content}`;
-      speak(fullText, 0.9);
+      const voiceGender = position === 'right' ? 'female' : 'male';
+      speak(fullText, 0.9, 1, voiceGender);
     }
   };
 
@@ -37,7 +38,11 @@ const SectionVoiceAssistant = ({ content, title, position = 'right' }: SectionVo
         >
           {/* Character Image/Icon */}
           <div className="relative z-10 w-full h-full flex items-center justify-center">
-            <img src="/img/bodoi.webp" alt="Bộ Đội" className="w-12 h-12 object-contain" />
+            <img 
+              src={position === 'right' ? '/img/AI_ICON_NU.png' : '/img/AI_ICON_NAM.png'} 
+              alt={position === 'right' ? 'AI Nữ' : 'AI Nam'} 
+              className="w-12 h-12 object-contain" 
+            />
           </div>
 
           {/* Speaking Animation */}

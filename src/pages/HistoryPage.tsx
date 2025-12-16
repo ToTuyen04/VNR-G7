@@ -383,9 +383,25 @@ const HistoryPage = () => {
                       transition={{ duration: 0.5 }}
                       className="relative"
                     >
-                      <div className="text-[120px] lg:text-[180px] font-black leading-none opacity-40 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent" style={{ fontWeight: 900, WebkitTextStroke: '2px rgba(239, 68, 68, 0.3)' }}>
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.05, 1],
+                          textShadow: [
+                            '0 0 20px rgba(239, 68, 68, 0.3)',
+                            '0 0 40px rgba(239, 68, 68, 0.6)',
+                            '0 0 20px rgba(239, 68, 68, 0.3)'
+                          ]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="text-[120px] lg:text-[180px] font-black leading-none opacity-40 bg-gradient-to-b from-red-500 to-transparent bg-clip-text text-transparent" 
+                        style={{ fontWeight: 900, WebkitTextStroke: '2px rgba(239, 68, 68, 0.3)' }}
+                      >
                         {event.year}
-                      </div>
+                      </motion.div>
                       {/* Decorative circle */}
                       <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-red-900/30 rounded-full"></div>
                     </motion.div>

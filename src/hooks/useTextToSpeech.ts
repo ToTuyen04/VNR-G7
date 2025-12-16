@@ -52,14 +52,52 @@ export const useTextToSpeech = () => {
     setTimeout(loadVoices, 100);
   }, []);
 
-  const speak = (text: string, rate: number = 0.85, pitch: number = 1) => {
+  const speak = (text: string, rate: number = 0.85, pitch: number = 1, voiceGender?: 'female' | 'male') => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
+    // Chọn giọng dựa trên gender nếu có
+    let voiceToUse = selectedVoice;
+    let adjustedPitch = pitch;
+    
+    if (voiceGender && voices.length > 0) {
+      // Tìm giọng theo gender
+      const genderVoices = voices.filter(voice => {
+        const nameLower = voice.name.toLowerCase();
+        if (voiceGender === 'female') {
+          // Ưu tiên giọng có chứa "female" hoặc tên nữ
+          return voice.lang.startsWith('vi') && 
+                 (nameLower.includes('female') || 
+                  nameLower.includes('woman') ||
+                  nameLower.includes('nữ') || 
+                  nameLower.includes('linh') ||
+                  nameLower.includes('my') ||
+                  nameLower.includes('chi') ||
+                  nameLower.includes('hằng'));
+        } else {
+          // Ưu tiên giọng có chứa "male" hoặc tên nam
+          return voice.lang.startsWith('vi') && 
+                 (nameLower.includes('male') && !nameLower.includes('female') || 
+                  nameLower.includes('nam') && !nameLower.includes('vietnam') ||
+                  nameLower.includes('minh') ||
+                  nameLower.includes('an'));
+        }
+      });
+      
+      if (genderVoices.length > 0) {
+        voiceToUse = genderVoices[0];
+        console.log(`🎤 Selected ${voiceGender} voice:`, voiceToUse.name);
+      } else {
+        // Nếu không tìm thấy giọng cụ thể, điều chỉnh pitch để tạo hiệu ứng
+        adjustedPitch = voiceGender === 'female' ? 1.3 : 0.8;
+        console.log(`🎤 No ${voiceGender} voice found, using pitch adjustment:`, adjustedPitch);
+      }
+    }
+    
+    if (voiceToUse) {
+      utterance.voice = voiceToUse;
+      utterance.lang = voiceToUse.lang;
     } else {
       // Nếu không có voice được chọn, set lang trực tiếp
       utterance.lang = 'vi-VN';
@@ -67,12 +105,12 @@ export const useTextToSpeech = () => {
     
     // Tốc độ chậm hơn một chút cho tiếng Việt (0.85 thay vì 0.9)
     utterance.rate = rate;
-    utterance.pitch = pitch;
+    utterance.pitch = adjustedPitch;
     utterance.volume = 1;
 
     utterance.onstart = () => {
       setIsSpeaking(true);
-      console.log('🔊 Speaking:', utterance.voice?.name || 'Default voice');
+      console.log('🔊 Speaking:', utterance.voice?.name || 'Default voice', 'Pitch:', adjustedPitch);
     };
     
     utterance.onend = () => {
