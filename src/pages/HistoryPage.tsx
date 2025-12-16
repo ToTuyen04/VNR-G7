@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import HistoryChatBot from '../components/history/HistoryChatBot';
+import { useNavigate } from 'react-router-dom';
 import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
 interface ImageType {
@@ -16,6 +16,7 @@ interface SectionType {
 }
 
 const HistoryPage = () => {
+  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<number | null>(0);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -115,7 +116,7 @@ const HistoryPage = () => {
           content: [
             'Chính sách xã hội bốn nhóm: Kế hoạch hóa dân số, giải quyết việc làm; Công bằng và an toàn xã hội; Giáo dục, văn hóa, y tế; Bảo trợ xã hội',
             'Quốc phòng – an ninh: Tăng cường củng cố quốc phòng, giữ vững độc lập, chủ quyền, toàn vẹn lãnh thổ',
-            'Đối ngoại: Tăng cường hợp tác với Liên Xô và các nước XHCN; Bình thường hóa quan hệ với Trung Quốc; Mở rộng hợp tác quốc tế',
+            'Đối ngoại: Tăng cường hợp tác với Liên Xô và các nước Xã hội chủ nghĩa; Bình thường hóa quan hệ với Trung Quốc; Mở rộng hợp tác quốc tế',
             'Đổi mới lãnh đạo của Đảng: Đổi mới tư duy; Đổi mới công tác cán bộ; Phát huy dân chủ "Dân biết, dân bàn, dân làm, dân kiểm tra"'
           ]
         },
@@ -127,7 +128,7 @@ const HistoryPage = () => {
             'Quyết định 217-HĐBT (11/1987): Trao quyền tự chủ cho doanh nghiệp nhà nước, chuyển sang hạch toán kinh doanh',
             'Nghị quyết 10 (4/1988): Khoán sản phẩm cuối cùng đến hộ xã viên (Khoán 10), tạo bước đột phá trong nông nghiệp',
             'Luật Đầu tư nước ngoài (1988): Mở rộng thu hút vốn và công nghệ từ bên ngoài',
-            'Công nghiệp: Xóa bỏ cơ chế bao cấp, chuyển doanh nghiệp sang kinh doanh XHCN'
+            'Công nghiệp: Xóa bỏ cơ chế bao cấp, chuyển doanh nghiệp sang kinh doanh Xã hội chủ nghĩa',
           ]
         },
         {
@@ -139,6 +140,20 @@ const HistoryPage = () => {
             'Lương thực: Năm 1988 còn nhập 450.000 tấn gạo → Năm 1989 đã đủ ăn, có dự trữ và bắt đầu xuất khẩu',
             'Nền kinh tế hàng hóa nhiều thành phần, vận động theo cơ chế thị trường có quản lý của Nhà nước bước đầu hình thành',
             'Kinh tế đối ngoại được mở rộng, phát triển nhanh hơn'
+          ],
+          images: [
+            {
+              src: '/img/ketquabuocdau/Sản xuất lúa gạo tăng lên sau các chính sách Đổi mới – từ việc thiếu ăn, phải nhập gạo trước đó chuyển sang đủ ăn và bắt đầu xuất khẩu từ năm 1989..jpg',
+              caption: 'Sản xuất lúa gạo tăng lên sau các chính sách Đổi mới – từ việc thiếu ăn, phải nhập gạo trước đó chuyển sang đủ ăn và bắt đầu xuất khẩu từ năm 1989'
+            },
+            {
+              src: '/img/ketquabuocdau/Chỉ sau một năm ban hành Nghị quyết 10, đến năm 1989, sản lượng lúa gạo đạt con số 21,5 triệu tấn, lần đầu tiên Việt Nam xuất khẩu được 1,2 triệu tấn lúa.png',
+              caption: 'Chỉ sau một năm ban hành Nghị quyết 10, đến năm 1989, sản lượng lúa gạo đạt con số 21,5 triệu tấn, lần đầu tiên Việt Nam xuất khẩu được 1,2 triệu tấn lúa'
+            },
+            {
+              src: '/img/ketquabuocdau/Sau 1 năm thi công khẩn trương, chợ Đồng Xuân (Hà Nội) đã tiến hành và đi vào hoạt động đầu tháng 2_1991. Chợ cao 3 tầng, với tổng diện tích 28.000m2, là nơi tập trung buôn bán c.jpg',
+              caption: 'Sau 1 năm thi công khẩn trương, chợ Đồng Xuân (Hà Nội) đã tiến hành và đi vào hoạt động đầu tháng 2/1991. Chợ cao 3 tầng, với tổng diện tích 28.000m2, là nơi tập trung buôn bán'
+            }
           ]
         },
         {
@@ -161,7 +176,7 @@ const HistoryPage = () => {
       date: '6/1991',
       dateLabel: 'Tháng 6/1991',
       title: 'Đại hội VII của Đảng: Hoàn Chỉnh Nhận Thức Lý Luận',
-      description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước XHCN Đông Âu sụp đổ.',
+      description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước Xã hội chủ nghĩa Đông Âu sụp đổ.',
       sections: [
         {
           title: 'Bối cảnh lịch sử trước Đại hội VII',
@@ -176,6 +191,12 @@ const HistoryPage = () => {
             '• Các thế lực thù địch tăng cường chống phá, thúc đẩy chiến lược "diễn biến hòa bình"',
             '• Việt Nam vừa thoát dần thế bao vây, cấm vận nhưng vẫn đứng trước nhiều thách thức mới',
             '👉 Thực tiễn đó đòi hỏi Đảng phải tổng kết sâu sắc công cuộc đổi mới, kiên định con đường xã hội chủ nghĩa và xác định rõ mô hình, mục tiêu phát triển lâu dài của đất nước.'
+          ],
+          images: [
+            {
+              src: '/img/Liên Xô và các nước xã hội chủ nghĩa Đông Âu lâm vào khủng hoảng và sụp đổ hoàn toàn (1991).jpg',
+              caption: 'Liên Xô và các nước xã hội chủ nghĩa Đông Âu lâm vào khủng hoảng và sụp đổ hoàn toàn (1991)'
+            }
           ]
         },
         {
@@ -185,6 +206,20 @@ const HistoryPage = () => {
             'Đại hội VII là Đại hội có ý nghĩa rất quan trọng, tiếp tục đường lối đổi mới toàn diện và lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên chủ nghĩa xã hội.',
             'Đại hội họp tại Hà Nội (24–27/6/1991), có 1.176 đại biểu, đại diện cho hơn 2 triệu đảng viên trong cả nước. Đại hội thông qua các văn kiện chính trị quan trọng, nổi bật là Cương lĩnh năm 1991 và Chiến lược ổn định và phát triển kinh tế – xã hội đến năm 2000; bầu Ban Chấp hành Trung ương, Bộ Chính trị và bầu đồng chí Đỗ Mười làm Tổng Bí thư.',
             'Đại hội khẳng định công cuộc đổi mới là đúng đắn, nền kinh tế bước đầu chuyển biến tích cực, nền kinh tế hàng hóa nhiều thành phần từng bước hình thành; đồng thời chỉ rõ đổi mới chưa đồng bộ, khó khăn và thách thức vẫn còn rất lớn.'
+          ],
+          images: [
+            {
+              src: '/img/thongtincoban/Đại hội đại biểu toàn quốc lần thứ VII Đảng Cộng sản Việt Nam.png',
+              caption: 'Đại hội đại biểu toàn quốc lần thứ VII Đảng Cộng sản Việt Nam'
+            },
+            {
+              src: '/img/thongtincoban/Đồng chí Đỗ Mười và các đại biểu dự Đại hội VII của Đảng. Ảnh_ TTXVN. Ảnh_ TTXVN. Ảnh_ TTXVN',
+              caption: 'Đồng chí Đỗ Mười và các đại biểu dự Đại hội VII của Đảng'
+            },
+            {
+              src: '/img/thongtincoban/Đồng chí Đỗ Mười - nhà lãnh đạo tài năng, Tổng bí thư kiên định, sáng tạo trong sự nghiệp đổi mới.jpg',
+              caption: 'Đồng chí Đỗ Mười - nhà lãnh đạo tài năng, Tổng bí thư kiên định, sáng tạo trong sự nghiệp đổi mới'
+            }
           ]
         },
         {
@@ -199,7 +234,7 @@ const HistoryPage = () => {
             '• Sự lãnh đạo đúng đắn của Đảng là nhân tố quyết định thắng lợi',
             '',
             'b) Những đặc trưng cơ bản của xã hội xã hội chủ nghĩa ở Việt Nam',
-            'Xã hội XHCN mà nhân dân ta xây dựng là xã hội:',
+            'Xã hội Xã hội chủ nghĩa mà nhân dân ta xây dựng là xã hội:',
             '• Do nhân dân lao động làm chủ',
             '• Có nền kinh tế phát triển cao dựa trên lực lượng sản xuất hiện đại và chế độ công hữu về tư liệu sản xuất chủ yếu',
             '• Có nền văn hóa tiên tiến, đậm đà bản sắc dân tộc',
@@ -210,9 +245,9 @@ const HistoryPage = () => {
             'c) Bảy phương hướng lớn xây dựng chủ nghĩa xã hội',
             '• Xây dựng Nhà nước xã hội chủ nghĩa của nhân dân, do nhân dân, vì nhân dân',
             '• Phát triển lực lượng sản xuất, công nghiệp hóa – hiện đại hóa gắn với nông nghiệp toàn diện là nhiệm vụ trung tâm',
-            '• Thiết lập từng bước quan hệ sản xuất XHCN với nhiều hình thức sở hữu',
-            '• Phát triển nền kinh tế hàng hóa nhiều thành phần theo định hướng XHCN',
-            '• Tiến hành cách mạng XHCN trên lĩnh vực tư tưởng – văn hóa',
+            '• Thiết lập từng bước quan hệ sản xuất Xã hội chủ nghĩa với nhiều hình thức sở hữu',
+            '• Phát triển nền kinh tế hàng hóa nhiều thành phần theo định hướng Xã hội chủ nghĩa',
+            '• Tiến hành cách mạng Xã hội chủ nghĩa trên lĩnh vực tư tưởng – văn hóa',
             '• Thực hiện chính sách đại đoàn kết dân tộc',
             '• Kết hợp chặt chẽ xây dựng và bảo vệ Tổ quốc'
           ]
@@ -271,6 +306,20 @@ const HistoryPage = () => {
             '• 28/7/1995: Việt Nam gia nhập ASEAN.',
             '• 11/7/1995: Bình thường hóa quan hệ ngoại giao với Hoa Kỳ.',
             '→ Đối ngoại mở rộng, vị thế quốc tế của Việt Nam được nâng cao rõ rệt.'
+          ],
+          images: [
+            {
+              src: '/img/ketquathuchien/Tổng Bí thư Đỗ Mười hội đàm với Tổng Bí thư, Chủ tịch nước CHND Trung Hoa Giang Trạch Dân tại Bắc Kinh ngày 6-11-1991.jpg',
+              caption: 'Tổng Bí thư Đỗ Mười hội đàm với Tổng Bí thư, Chủ tịch nước CHND Trung Hoa Giang Trạch Dân tại Bắc Kinh ngày 6/11/1991 - Bình thường hóa quan hệ Việt Nam - Trung Quốc'
+            },
+            {
+              src: '/img/ketquathuchien/Việt Nam trở thành thành viên ASEAN (28_7_1995).jpg',
+              caption: 'Việt Nam chính thức trở thành thành viên thứ 7 của ASEAN ngày 28/7/1995'
+            },
+            {
+              src: '/img/ketquathuchien/Tổng thống Mỹ Bill Clinton tuyên bố bình thường hóa quan hệ với Việt Nam ngày 11-7-1995 tại Nhà Trắng.webp',
+              caption: 'Tổng thống Mỹ Bill Clinton tuyên bố bình thường hóa quan hệ với Việt Nam ngày 11/7/1995 tại Nhà Trắng'
+            }
           ]
         },
         {
@@ -318,7 +367,7 @@ const HistoryPage = () => {
             '• Tham nhũng và tệ quan liêu',
             '• Âm mưu, thủ đoạn "diễn biến hòa bình" của các thế lực thù địch',
             '',
-            '🏛️ Khẳng định chủ trương xây dựng Nhà nước pháp quyền XHCN',
+            '🏛️ Khẳng định chủ trương xây dựng Nhà nước pháp quyền Xã hội chủ nghĩa',
             'Một nội dung rất quan trọng của Hội nghị là lần đầu tiên khẳng định chủ trương xây dựng Nhà nước pháp quyền xã hội chủ nghĩa:',
             '• Nhà nước của nhân dân, do nhân dân, vì nhân dân',
             '• Do Đảng Cộng sản Việt Nam lãnh đạo',
@@ -331,7 +380,7 @@ const HistoryPage = () => {
           content: [
             'Hội nghị giữa nhiệm kỳ khóa VII (1994) có ý nghĩa quan trọng:',
             '• Giúp toàn Đảng và toàn dân nhận diện đúng các nguy cơ trong quá trình đổi mới để chủ động phòng ngừa và khắc phục.',
-            '• Khẳng định bước phát triển trong nhận thức về xây dựng Nhà nước pháp quyền XHCN, tạo cơ sở cho việc tiếp tục hoàn thiện hệ thống chính trị và quản lý xã hội bằng pháp luật.',
+            '• Khẳng định bước phát triển trong nhận thức về xây dựng Nhà nước pháp quyền Xã hội chủ nghĩa, tạo cơ sở cho việc tiếp tục hoàn thiện hệ thống chính trị và quản lý xã hội bằng pháp luật.',
             '• Tạo tiền đề để đẩy mạnh đổi mới đồng bộ và giữ vững ổn định chính trị – xã hội trong những năm tiếp theo.'
           ]
         }
@@ -455,7 +504,7 @@ const HistoryPage = () => {
             <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
-            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
+            <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
           </nav>
           <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
             🎓 Bắt đầu học
@@ -908,30 +957,6 @@ const HistoryPage = () => {
         </div>
       </div>
 
-      {/* Floating Star Icon - Bottom Right */}
-      <motion.div
-        className="fixed bottom-8 right-8 z-40"
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <motion.div
-          className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl cursor-pointer"
-          whileHover={{ scale: 1.1, rotate: 180 }}
-          whileTap={{ scale: 0.9 }}
-          animate={{ 
-            boxShadow: [
-              '0 0 20px rgba(220, 38, 38, 0.5)',
-              '0 0 40px rgba(220, 38, 38, 0.8)',
-              '0 0 20px rgba(220, 38, 38, 0.5)'
-            ]
-          }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <span className="text-yellow-300 text-3xl">★</span>
-        </motion.div>
-      </motion.div>
-
       {/* Footer */}
       <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
         <div className="container mx-auto grid md:grid-cols-4 gap-8">
@@ -1006,9 +1031,6 @@ const HistoryPage = () => {
           </p>
         </div>
       </footer>
-
-      {/* ChatBot */}
-      <HistoryChatBot />
     </div>
   );
 };

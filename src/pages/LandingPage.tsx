@@ -22,6 +22,23 @@ const LandingPage = () => {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-black">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.35
+        }}
+      ></div>
+      
+      {/* Overlay */}
+      <div className="fixed inset-0 z-[1] bg-black/40"></div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -40,7 +57,7 @@ const LandingPage = () => {
             <a href="/trien-lam" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
-            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
+            <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
           </nav>
           <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
             🎓 Bắt đầu học
@@ -50,8 +67,6 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background with dark overlay */}
-      <div className="absolute inset-0 z-0 bg-black"></div>
 
       {/* Animated particles effect */}
       <div className="absolute inset-0 z-10">
@@ -178,7 +193,7 @@ const LandingPage = () => {
       </div>
 
       {/* History Timeline Section */}
-      <div id="history-section" className="min-h-screen bg-black py-20">
+      <div id="history-section" className="min-h-screen bg-black/70 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-block border border-red-500 rounded-full px-6 py-2 mb-6">
@@ -211,9 +226,19 @@ const LandingPage = () => {
                   <div className="inline-block bg-red-900/30 text-red-400 px-3 py-1 rounded text-sm mb-3">Tháng 12/1986</div>
                   <h3 className="text-2xl font-bold text-white mb-2">🏛️ Đại hội VI của Đảng</h3>
                   <p className="text-gray-400 mb-3">Đường lối đổi mới toàn diện - bước ngoặt lịch sử của dân tộc.</p>
+                  
+                  {/* Image */}
+                  <div className="mb-4">
+                    <img 
+                      src="/img/daihoi6.jpg" 
+                      alt="Đại hội VI của Đảng" 
+                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
+                    />
+                  </div>
+                  
                   <ul className="text-gray-400 text-sm space-y-2">
                     <li>• Kinh tế là trung tâm, xây dựng Đảng là then chốt</li>
-                    <li>• Chuyển sang kinh tế thị trường có định hướng XHCN</li>
+                    <li>• Chuyển sang kinh tế thị trường có định hướng Xã hội chủ nghĩa</li>
                     <li>• Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"</li>
                   </ul>
                 </div>
@@ -235,7 +260,16 @@ const LandingPage = () => {
                 <div className="bg-gray-900 border-2 border-gray-700 hover:border-blue-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 p-6 rounded-lg transition-all duration-300">
                   <div className="inline-block bg-blue-900/30 text-blue-400 px-3 py-1 rounded text-sm mb-3">Tháng 4/1988</div>
                   <h3 className="text-2xl font-bold text-white mb-2">🌾 Nghị quyết 10 - Đổi mới nông nghiệp</h3>
-                  <p className="text-gray-400">Giao đất, giao rừng cho nông dân. Việt Nam từ thiếu đói thành nước xuất khẩu gạo lớn thứ 2 thế giới.</p>
+                  <p className="text-gray-400 mb-3">Giao đất, giao rừng cho nông dân. Việt Nam từ thiếu đói thành nước xuất khẩu gạo lớn thứ 2 thế giới.</p>
+                  
+                  {/* Image */}
+                  <div className="mb-3">
+                    <img 
+                      src="/img/dmnongnghiep.jpg" 
+                      alt="Nghị quyết 10 - Đổi mới nông nghiệp" 
+                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
+                    />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -253,8 +287,18 @@ const LandingPage = () => {
                   <div className="inline-block bg-green-900/30 text-green-400 px-3 py-1 rounded text-sm mb-3">Tháng 6/1991</div>
                   <h3 className="text-2xl font-bold text-white mb-2">🎯 Đại hội VII của Đảng</h3>
                   <p className="text-gray-400 mb-3">Tiếp tục đẩy mạnh công cuộc đổi mới trong bối cảnh quốc tế biến động.</p>
+                  
+                  {/* Image */}
+                  <div className="mb-4">
+                    <img 
+                      src="/img/dh7.png" 
+                      alt="Đại hội VII của Đảng" 
+                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
+                    />
+                  </div>
+                  
                   <ul className="text-gray-400 text-sm space-y-2">
-                    <li>• Khẳng định tiếp tục con đường XHCN</li>
+                    <li>• Khẳng định tiếp tục con đường Xã hội chủ nghĩa</li>
                     <li>• Phát triển kinh tế nhiều thành phần</li>
                     <li>• Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa</li>
                   </ul>
@@ -300,6 +344,16 @@ const LandingPage = () => {
                 <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-2 border-blue-500 hover:border-blue-400 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 p-6 rounded-lg transition-all duration-300">
                   <div className="inline-block bg-blue-700 text-white px-3 py-1 rounded text-sm mb-3">1986-1996</div>
                   <h3 className="text-2xl font-bold text-blue-300 mb-2">📈 Kết quả đổi mới giai đoạn 1986-1996</h3>
+                  
+                  {/* Image */}
+                  <div className="mb-4">
+                    <img 
+                      src="/img/kqdm.jpg" 
+                      alt="Kết quả đổi mới giai đoạn 1986-1996" 
+                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
+                    />
+                  </div>
+                  
                   <ul className="text-gray-300 text-sm space-y-2">
                     <li>• GDP tăng trưởng bình quân 7-8%/năm</li>
                     <li>• Từ nước thiếu lương thực → xuất khẩu gạo lớn thứ 2 thế giới</li>
@@ -340,7 +394,7 @@ const LandingPage = () => {
                       <ul className="text-gray-300 text-sm space-y-1">
                         <li>• Đổi mới phải toàn diện, đồng bộ và có trọng tâm</li>
                         <li>• Kết hợp sức mạnh dân tộc với sức mạnh thời đại</li>
-                        <li>• Giữ vững định hướng XHCN, không dao động trước khó khăn</li>
+                        <li>• Giữ vững định hướng Xã hội chủ nghĩa, không dao động trước khó khăn</li>
                       </ul>
                     </div>
                   </div>
@@ -367,54 +421,80 @@ const LandingPage = () => {
       </div>
 
       {/* Footer */}
-      <footer id="footer" className="bg-black border-t border-gray-800 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-gold-400">Trang chủ</a></li>
-                <li><a href="#history-section" className="hover:text-gold-400">Nội dung lịch sử</a></li>
-                <li><a href="#timeline" className="hover:text-gold-400">Triển lãm số</a></li>
-                <li><a href="#" className="hover:text-gold-400">Trò chơi mật mã</a></li>
-                <li><a href="#footer" className="hover:text-gold-400">Kho tài liệu</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Group 7</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
-                <li>1️⃣ Nguyễn Lê Kim Ngân - Leader & Designer</li>
-                <li>2️⃣ Nguyễn Quý Hưng - Dev Game</li>
-                <li>3️⃣ Trần Kim Nhã - Contentor & Researcher</li>
-                <li>4️⃣ Tô Minh Tuyền - Dev Web</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Thông tin môn học</h4>
-              <div className="text-gray-400 text-sm mb-4">
-                <p className="mb-2">📚 Lịch sử Đảng Cộng sản Việt Nam</p>
-                <p className="mb-2">🎓 Đại học FPT (FPT University)</p>
-                <p>👩‍🏫 Giảng viên: Mrs. Dương Thị Thúy Thơ</p>
+      <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
+        <div className="container mx-auto grid md:grid-cols-4 gap-8">
+          {/* About Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
+                <p className="text-xs text-gray-500">VNR202 - HISTORY</p>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 flex items-center justify-center">
-                  <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-white">Công cuộc Đổi mới</h3>
-                  <p className="text-xs text-gold-400">VNR202 - HISTORY</p>
-                </div>
-              </div>
-              <p className="text-gray-400 text-sm mb-4">Dự án số hóa lịch sử giai đoạn 1986-1996. Khơi dậy niềm tự hào dân tộc về công cuộc Đổi mới vĩ đại.</p>
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                <p className="text-gold-400 italic text-sm">"Dân ta phải biết sử ta,<br/>Cho tường gốc tích nước nhà Việt Nam."</p>
-                <p className="text-right text-gray-500 text-xs mt-2">- Hồ Chí Minh</p>
-              </div>
+            <p className="text-gray-400 text-sm">
+              Dự án số hóa lịch sử giai đoạn 1986-1996. Khơi dậy niềm tự hào dân tộc về công cuộc Đổi mới vĩ đại.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Điều hướng</h4>
+            <ul className="space-y-2">
+              <li><a href="/" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trang chủ</a></li>
+              <li><a href="/noi-dung" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Nội dung lịch sử</a></li>
+              <li><a href="#timeline" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Triển lãm số</a></li>
+              <li><a href="/games" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trò chơi mật mã</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Kho tài liệu</a></li>
+            </ul>
+          </div>
+
+          {/* Team */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
+            <ul className="space-y-2 text-sm">
+              <li className="text-gray-400">
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">3</span> Nguyễn Quý Hưng - Game Developer
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">4</span> Tô Minh Tuyền - Web Developer
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Thông tin môn học</h4>
+            <div className="text-sm text-gray-400 space-y-2">
+              <p>
+                <span className="text-gold-400">🏫</span> Đại học FPT (FPT University)<br/>
+                <span className="text-gray-500">Mentor: Mrs. Dương Thị Thúy Thơ</span>
+              </p>
+              <p className="italic text-gray-500 border-l-2 border-gold-500 pl-3">
+                "Dân ta một lòng theo Đảng,<br/>
+                Để cho non nước huy hoàng, vinh quang."<br/>
+                <span className="text-gold-400">— Hồ Chí Minh</span>
+              </p>
             </div>
           </div>
         </div>
+
+        <div className="container mx-auto mt-8 pt-8 border-t border-gray-800 text-center">
+          <p className="text-gray-500 text-sm">
+            © 2025 VNR202 Project. Designed for education purpose.
+            <span className="ml-4">Made with ❤️ by Group 7</span>
+          </p>
+        </div>
       </footer>
+      </div>
     </div>
   );
 };

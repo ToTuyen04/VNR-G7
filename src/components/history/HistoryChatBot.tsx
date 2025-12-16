@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTextToSpeech } from '../../hooks/useTextToSpeech';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface Message {
   id: string;
@@ -8,6 +9,9 @@ interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
 }
+
+// Initialize Gemini AI outside component to avoid re-creation
+const genAI = new GoogleGenerativeAI('AIzaSyCV4ScB6r0150jBWbg81uDQ3Nd7E0elfR8');
 
 const HistoryChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +27,9 @@ const HistoryChatBot = () => {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { speak, stop, isSpeaking } = useTextToSpeech();
+
+  // Get model instance with useMemo to avoid re-creation
+  const model = useMemo(() => genAI.getGenerativeModel({ model: 'gemini-pro' }), []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,7 +52,7 @@ const HistoryChatBot = () => {
     'đại hội vii': 'Đại hội VII (1991) tiếp tục công cuộc đổi mới, lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH. Khẳng định 5 bài học lớn của cách mạng.',
     'kinh tế thị trường': 'Đại hội VI chuyển đổi từ cơ chế tập trung quan liêu bao cấp sang nền kinh tế thị trường có định hướng xã hội chủ nghĩa, kết hợp nhiều thành phần kinh tế.',
     'xuất khẩu gạo': 'Từ năm 1989, Việt Nam chuyển từ thiếu lương thực sang xuất khẩu gạo. Đến năm 1996, Việt Nam trở thành nước xuất khẩu gạo lớn thứ 2 thế giới.',
-    'ý nghĩa': 'Ý nghĩa lịch sử: Đánh dấu bước chuyển mang tính lịch sử từ cơ chế kế hoạch hóa tập trung sang kinh tế thị trường định hướng XHCN. Cứu đất nước thoát khỏi khủng hoảng.',
+    'ý nghĩa': 'Ý nghĩa lịch sử: Đánh dấu bước chuyển mang tính lịch sử từ cơ chế kế hoạch hóa tập trung sang kinh tế thị trường định hướng Xã hội chủ nghĩa. Cứu đất nước thoát khỏi khủng hoảng.',
     'bài học': 'Bài học kinh nghiệm: Kiên định mục tiêu độc lập dân tộc gắn với CNXH; Quán triệt "lấy dân làm gốc"; Tôn trọng quy luật khách quan; Kết hợp đổi mới kinh tế và chính trị.'
   };
 
@@ -93,10 +100,28 @@ const HistoryChatBot = () => {
     setInputText('');
     setIsTyping(true);
 
-    // Simulate bot thinking
-    setTimeout(() => {
-      const answer = findAnswer(inputText);
+    try {
+      // Context về lịch sử Việt Nam cho AI
+      const context = `Bạn là trợ lý AI chuyên về lịch sử công cuộc Đổi mới của Việt Nam, đặc biệt là về Đại hội VI năm 1986 và Đại hội VII năm 1991.
       
+Thông tin quan trọng:
+- Đại hội VI (12/1986): Mốc son đánh dấu công cuộc Đổi mới, Nguyễn Văn Linh được bầu làm Tổng Bí thư
+- Bối cảnh: Khủng hoảng kinh tế nghiêm trọng, lạm phát 774% năm 1986
+- Đường lối: Đổi mới toàn diện, kinh tế là trung tâm, xây dựng Đảng là then chốt
+- Kết quả: Lạm phát giảm xuống 67,1% (1991), xuất khẩu gạo từ 1989
+- Đại hội VII (1991): Thông qua Cương lĩnh xây dựng CNXH, khẳng định 5 bài học lớn
+- Chuyển đổi từ cơ chế tập trung bao cấp sang kinh tế thị trường định hướng XHCN
+
+Hãy trả lời câu hỏi sau một cách chi tiết, chính xác và dễ hiểu. Nếu câu hỏi không liên quan đến lịch sử Việt Nam, hãy lịch sự từ chối và hướng dẫn người dùng hỏi về lịch sử Đổi mới.`;
+
+      const prompt = `${context}\n\nCâu hỏi: ${inputText}\n\nTrả lời:`;
+      
+      // Call Gemini API
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const answer = response.text();
+
+      // Add bot response
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: answer,
@@ -109,7 +134,22 @@ const HistoryChatBot = () => {
 
       // Auto speak answer
       setTimeout(() => speak(answer), 300);
-    }, 1000);
+    } catch (error) {
+      console.error('Lỗi khi gọi Gemini API:', error);
+      
+      // Fallback to knowledge base if API fails
+      const fallbackAnswer = findAnswer(inputText);
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: fallbackAnswer,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+      setIsTyping(false);
+      setTimeout(() => speak(fallbackAnswer), 300);
+    }
   };
 
   const handleQuickQuestion = (question: string) => {
@@ -129,10 +169,13 @@ const HistoryChatBot = () => {
       {/* Floating Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 rounded-full shadow-2xl flex items-center justify-center z-50 group"
+        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full shadow-2xl flex items-center justify-center z-50 group cursor-pointer"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        initial={{ scale: 0, rotate: -180 }}
         animate={{
+          scale: 1,
+          rotate: 0,
           boxShadow: [
             '0 0 20px rgba(220, 38, 38, 0.5)',
             '0 0 40px rgba(220, 38, 38, 0.8)',
@@ -140,24 +183,21 @@ const HistoryChatBot = () => {
           ]
         }}
         transition={{
+          scale: { duration: 0.5, delay: 0.3, type: 'spring', stiffness: 260, damping: 20 },
+          rotate: { duration: 0.5, delay: 0.3, type: 'spring', stiffness: 260, damping: 20 },
           boxShadow: { duration: 2, repeat: Infinity }
         }}
       >
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {isOpen ? (
-            <span className="text-white text-3xl">×</span>
-          ) : (
-            <span className="text-white text-2xl">🔥</span>
-          )}
-        </motion.div>
+        {isOpen ? (
+          <span className="text-white text-3xl">×</span>
+        ) : (
+          <span className="text-yellow-300 text-3xl">★</span>
+        )}
 
         {/* Badge */}
         {!isOpen && (
           <motion.div
-            className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-black"
+            className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-black group-hover:w-8 group-hover:h-8 group-hover:text-sm transition-all duration-300"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
@@ -180,8 +220,8 @@ const HistoryChatBot = () => {
             {/* Header */}
             <div className="bg-gradient-to-r from-red-600 to-red-700 p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden">
+                  <img src="/img/DRAGON_ICON.png" alt="Dragon AI" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h3 className="text-white font-bold">Trợ lý Lịch sử AI</h3>
