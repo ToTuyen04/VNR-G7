@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { QUESTION_POOL } from '../../data/questions';
 
 interface QuizGameProps {
   onBack: () => void;
@@ -19,48 +20,13 @@ const QuizGame = ({ onBack }: QuizGameProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
 
-  const questions: Question[] = [
-    {
-      question: 'Đại hội nào của Đảng đánh dấu bước ngoặt với đường lối đổi mới?',
-      options: ['Đại hội V (1982)', 'Đại hội VI (1986)', 'Đại hội VII (1991)', 'Đại hội VIII (1996)'],
-      correctAnswer: 1,
-      explanation: 'Đại hội VI của Đảng (tháng 12/1986) đánh dấu bước ngoặt lịch sử với đường lối đổi mới toàn diện đất nước.'
-    },
-    {
-      question: 'Nghị quyết 10 (tháng 4/1988) đã đổi mới lĩnh vực nào?',
-      options: ['Công nghiệp', 'Nông nghiệp', 'Thương mại', 'Giáo dục'],
-      correctAnswer: 1,
-      explanation: 'Nghị quyết 10 về đổi mới quản lý kinh tế nông nghiệp - giao đất, giao rừng cho nông dân, giúp Việt Nam trở thành nước xuất khẩu gạo lớn.'
-    },
-    {
-      question: 'Việt Nam gia nhập ASEAN vào năm nào?',
-      options: ['1992', '1995', '1996', '1998'],
-      correctAnswer: 1,
-      explanation: 'Việt Nam chính thức gia nhập ASEAN vào tháng 7/1995, đánh dấu bước tiến quan trọng trong hội nhập quốc tế.'
-    },
-    {
-      question: 'Cơ chế kinh tế mới sau đổi mới là gì?',
-      options: [
-        'Kế hoạch hóa tập trung',
-        'Kinh tế thị trường tự do',
-        'Kinh tế thị trường định hướng XHCN',
-        'Kinh tế bao cấp'
-      ],
-      correctAnswer: 2,
-      explanation: 'Chuyển từ cơ chế kế hoạch hóa tập trung quan liêu bao cấp sang cơ chế thị trường có sự quản lý của Nhà nước theo định hướng xã hội chủ nghĩa.'
-    },
-    {
-      question: 'Thành tựu quan trọng nhất của giai đoạn 1986-1996 là gì?',
-      options: [
-        'Tăng trưởng kinh tế cao',
-        'Đưa đất nước thoát khủng hoảng',
-        'Gia nhập WTO',
-        'Xây dựng nhiều nhà máy'
-      ],
-      correctAnswer: 1,
-      explanation: 'Thành tựu quan trọng nhất là đưa đất nước thoát khỏi khủng hoảng kinh tế - xã hội trầm trọng, mở ra thời kỳ phát triển mới.'
-    }
-  ];
+  // Convert imported questions to the format expected by this component
+  const questions: Question[] = QUESTION_POOL.map(q => ({
+    question: q.q,
+    options: q.opts,
+    correctAnswer: q.ans,
+    explanation: '' // No explanations in the Excel file
+  }));
 
   const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);

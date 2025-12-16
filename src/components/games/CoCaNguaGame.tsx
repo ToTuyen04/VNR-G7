@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set, onValue, remove, update, get } from 'firebase/database';
+import { QUESTION_POOL } from '../../data/questions';
 
 interface Player {
   id: string;
@@ -12,6 +13,9 @@ interface Player {
   team?: number; // Team 1, 2, 3, or 4
   questionsAnswered?: number; // Number of questions answered
   correctAnswers?: number; // Number of correct answers
+  wrongAnswers?: number; // Number of wrong answers
+  startTime?: number; // Timestamp when player started answering questions
+  finishTime?: number; // Timestamp when player completed all questions
 }
 
 interface PiecePosition {
@@ -31,8 +35,12 @@ interface GameState {
     options: string[];
     correctAnswer: number;
     questionNumber: number;
+    isRetry?: boolean;
   } | null;
   teamScores?: { [key: number]: number }; // Team scores
+  gameStartTime?: number; // Timestamp when game started
+  gameEndTime?: number; // Timestamp when game ended
+  timeLimit?: number; // Time limit in milliseconds (10 minutes)
 }
 
 interface CoCaNguaGameProps {
@@ -48,50 +56,6 @@ const PLAYER_COLORS = [
 ];
 const QUESTIONS_PER_PLAYER = 10;
 const PIECES_PER_PLAYER = 4;
-
-// Sample questions pool (Vietnamese history)
-const QUESTION_POOL = [
-  { q: "Năm nào Việt Nam giành độc lập?", opts: ["1945", "1954", "1975", "1930"], ans: 0 },
-  { q: "Ai là Chủ tịch đầu tiên của nước Việt Nam Dân chủ Cộng hòa?", opts: ["Hồ Chí Minh", "Võ Nguyên Giáp", "Phạm Văn Đồng", "Lê Duẩn"], ans: 0 },
-  { q: "Chiến dịch nào kết thúc sự hiện diện của Pháp ở Việt Nam?", opts: ["Biên Giới", "Điện Biên Phủ", "Hòa Bình", "Tây Bắc"], ans: 1 },
-  { q: "Thủ đô của Việt Nam là?", opts: ["Hồ Chí Minh", "Đà Nẵng", "Hà Nội", "Huế"], ans: 2 },
-  { q: "Việt Nam có bao nhiêu tỉnh và thành phố trực thuộc trung ương?", opts: ["58", "63", "65", "60"], ans: 1 },
-  { q: "Sông nào dài nhất Việt Nam?", opts: ["Sông Hồng", "Sông Cửu Long", "Sông Mekong", "Sông Đồng Nai"], ans: 2 },
-  { q: "Di sản văn hóa thế giới nào ở Việt Nam?", opts: ["Vịnh Hạ Long", "Phố cổ Hội An", "Cố đô Huế", "Tất cả đều đúng"], ans: 3 },
-  { q: "Năm Việt Nam gia nhập ASEAN?", opts: ["1995", "1990", "2000", "1997"], ans: 0 },
-  { q: "Đảng Cộng sản Việt Nam được thành lập năm nào?", opts: ["1925", "1930", "1945", "1920"], ans: 1 },
-  { q: "Quốc khánh Việt Nam là ngày nào?", opts: ["30/4", "2/9", "19/5", "1/1"], ans: 1 },
-  { q: "Ai là vị vua cuối cùng của triều đại nhà Nguyễn?", opts: ["Bảo Đại", "Khải Định", "Minh Mạng", "Tự Đức"], ans: 0 },
-  { q: "Thành phố nào được mệnh danh là thành phố của mùa hoa phượng đỏ?", opts: ["Hà Nội", "Sài Gòn", "Hải Phòng", "Đà Nẵng"], ans: 2 },
-  { q: "Ai được mệnh danh là Đại tướng của dân tộc Việt Nam?", opts: ["Trần Hưng Đạo", "Võ Nguyên Giáp", "Lý Thường Kiệt", "Lê Lợi"], ans: 1 },
-  { q: "Việt Nam thống nhất đất nước vào năm nào?", opts: ["1954", "1975", "1973", "1976"], ans: 1 },
-  { q: "Quốc hoa của Việt Nam là?", opts: ["Hoa sen", "Hoa đào", "Hoa mai", "Hoa phượng"], ans: 0 },
-  { q: "Núi nào cao nhất Việt Nam?", opts: ["Fansipan", "Bạch Mã", "Ngọc Linh", "Pù Ta Leng"], ans: 0 },
-  { q: "Việt Nam có bao nhiêu dân tộc?", opts: ["53", "54", "55", "56"], ans: 1 },
-  { q: "Đồng tiền của Việt Nam là?", opts: ["Đồng", "Đô la", "Bạc", "Xu"], ans: 0 },
-  { q: "Thời kỳ Bắc thuộc kéo dài bao lâu?", opts: ["Hơn 500 năm", "Hơn 1000 năm", "Hơn 200 năm", "Hơn 800 năm"], ans: 1 },
-  { q: "Ai là người sáng lập ra chữ Quốc ngữ?", opts: ["Alexandre de Rhodes", "Pigneau de Behaine", "Jean Dupuis", "Paul Doumer"], ans: 0 },
-  { q: "Lễ hội nào lớn nhất ở Việt Nam?", opts: ["Tết Nguyên Đán", "Tết Trung Thu", "Lễ Giỗ Tổ", "Tết Đoan Ngọ"], ans: 0 },
-  { q: "Chiến thắng nào đánh dấu kết thúc chiến tranh Việt Nam?", opts: ["30/4/1975", "7/5/1954", "19/12/1946", "25/12/1989"], ans: 0 },
-  { q: "Ai là tác giả của bản Tuyên ngôn độc lập?", opts: ["Hồ Chí Minh", "Võ Nguyên Giáp", "Phạm Văn Đồng", "Trường Chinh"], ans: 0 },
-  { q: "Vịnh nào được UNESCO công nhận là Di sản thiên nhiên thế giới?", opts: ["Vịnh Nha Trang", "Vịnh Hạ Long", "Vịnh Cam Ranh", "Vịnh Vân Phong"], ans: 1 },
-  { q: "Năm nào Sài Gòn được đổi tên thành Thành phố Hồ Chí Minh?", opts: ["1975", "1976", "1977", "1978"], ans: 1 },
-  { q: "Đơn vị tiền tệ của Việt Nam là?", opts: ["VND", "VNĐ", "Đồng", "Cả 3 đều đúng"], ans: 3 },
-  { q: "Ai là vua đầu tiên của nhà Lý?", opts: ["Lý Thái Tổ", "Lý Thánh Tông", "Lý Nhân Tông", "Lý Cao Tông"], ans: 0 },
-  { q: "Diện tích Việt Nam là bao nhiêu?", opts: ["310,000 km²", "331,212 km²", "350,000 km²", "320,000 km²"], ans: 1 },
-  { q: "Việt Nam nằm ở múi giờ nào?", opts: ["GMT+6", "GMT+7", "GMT+8", "GMT+9"], ans: 1 },
-  { q: "Ai là nữ tướng nổi tiếng trong lịch sử Việt Nam?", opts: ["Bà Triệu", "Hai Bà Trưng", "Trần Thị Lý", "Cả 3 đều đúng"], ans: 3 },
-  { q: "Thành phố cảng lớn nhất Việt Nam?", opts: ["Đà Nẵng", "Hải Phòng", "Vũng Tàu", "TP. Hồ Chí Minh"], ans: 1 },
-  { q: "Núi Ngũ Hành Sơn nằm ở đâu?", opts: ["Đà Nẵng", "Quảng Nam", "Khánh Hòa", "Bình Định"], ans: 0 },
-  { q: "Cầu nào được biết đến là biểu tượng của Đà Nẵng?", opts: ["Cầu Rồng", "Cầu Trần Thị Lý", "Cầu Thuận Phước", "Cầu Tình Yêu"], ans: 0 },
-  { q: "Đặc sản nào nổi tiếng của Phú Quốc?", opts: ["Nước mắm", "Sim rừng", "Hạt tiêu", "Tất cả đều đúng"], ans: 3 },
-  { q: "Biển Việt Nam thuộc vùng biển nào?", opts: ["Biển Đông", "Biển Tây", "Biển Nam", "Biển Bắc"], ans: 0 },
-  { q: "Ai là nhà thơ lớn của Việt Nam?", opts: ["Nguyễn Du", "Hồ Xuân Hương", "Tố Hữu", "Xuân Diệu"], ans: 0 },
-  { q: "Truyện Kiều có bao nhiêu câu?", opts: ["3000", "3254", "2500", "4000"], ans: 1 },
-  { q: "Lăng Chủ tịch Hồ Chí Minh nằm ở đâu?", opts: ["Hà Nội", "TP. Hồ Chí Minh", "Nghệ An", "Phú Thọ"], ans: 0 },
-  { q: "Bảo tàng nào lớn nhất Việt Nam?", opts: ["Bảo tàng Lịch sử", "Bảo tàng Dân tộc học", "Bảo tàng Mỹ thuật", "Bảo tàng Hồ Chí Minh"], ans: 1 },
-  { q: "Ca khúc nào được coi là bài hát quốc ca của Việt Nam?", opts: ["Tiến quân ca", "Việt Nam quê hương tôi", "Như có Bác Hồ", "Đất nước"], ans: 0 }
-];
 
 // Firebase configuration
 const firebaseConfig = {
@@ -113,6 +77,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
   const [playerName, setPlayerName] = useState('');
   const [isInRoom, setIsInRoom] = useState(false);
   const [isHost, setIsHost] = useState(false);
+  const [remainingTime, setRemainingTime] = useState<number>(600); // 10 minutes in seconds
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     currentPlayerIndex: 0,
@@ -124,6 +89,27 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
 
   // Room reference
   const roomRef = roomCode ? ref(database, `rooms/${roomCode}`) : null;
+
+  // Game timer countdown
+  useEffect(() => {
+    if (!gameState.gameStarted || gameState.gameEndTime) return;
+
+    const interval = setInterval(() => {
+      if (gameState.gameStartTime) {
+        const elapsed = Date.now() - gameState.gameStartTime;
+        const timeLimit = gameState.timeLimit || 600000; // 10 minutes
+        const remaining = Math.max(0, Math.floor((timeLimit - elapsed) / 1000));
+        setRemainingTime(remaining);
+
+        if (remaining <= 0 && isHost) {
+          // Time's up - end game
+          endGame();
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameState.gameStarted, gameState.gameStartTime, gameState.gameEndTime, isHost]);
 
   // Listen to room changes
   useEffect(() => {
@@ -298,11 +284,6 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
       return;
     }
 
-    if (!gameState.players.every((p) => p.isReady)) {
-      alert('Tất cả người chơi phải sẵn sàng!');
-      return;
-    }
-
     if (isHost) {
       setGameState((prev) => {
         // Randomize and assign teams
@@ -313,15 +294,22 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           ...player,
           team: Math.floor(index / playersPerTeam) + 1, // Teams 1-4
           questionsAnswered: 0,
-          correctAnswers: 0
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          startTime: undefined,
+          finishTime: undefined
         }));
 
+        const now = Date.now();
         const updatedState = {
           ...prev,
           players: playersWithTeams,
           gameStarted: true,
           teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
-          currentQuestion: null
+          currentQuestion: null,
+          gameStartTime: now,
+          gameEndTime: undefined,
+          timeLimit: 600000 // 10 minutes in milliseconds
         };
         updateGameState(updatedState);
         return updatedState;
@@ -329,7 +317,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     }
   };
 
-  const generateQuestion = (playerId: string) => {
+  const generateQuestion = (playerId: string, fromOtherTeam: boolean = false) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player || (player.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER) return;
 
@@ -343,7 +331,8 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           question: randomQuestion.q,
           options: randomQuestion.opts,
           correctAnswer: randomQuestion.ans,
-          questionNumber: (player.questionsAnswered || 0) + 1
+          questionNumber: (player.questionsAnswered || 0) + 1,
+          isRetry: fromOtherTeam
         }
       };
       updateGameState(updatedState);
@@ -357,42 +346,143 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
 
     const isCorrect = answerIndex === gameState.currentQuestion.correctAnswer;
     
-    setGameState((prev) => {
-      const updatedPlayers = prev.players.map(p => {
-        if (p.id === myPlayerId) {
-          return {
-            ...p,
-            questionsAnswered: (p.questionsAnswered || 0) + 1,
-            correctAnswers: (p.correctAnswers || 0) + (isCorrect ? 1 : 0)
-          };
+    if (isCorrect) {
+      // Correct answer - update scores and move on
+      setGameState((prev) => {
+        const updatedPlayers = prev.players.map(p => {
+          if (p.id === myPlayerId) {
+            const newQuestionsAnswered = (p.questionsAnswered || 0) + 1;
+            const now = Date.now();
+            
+            return {
+              ...p,
+              questionsAnswered: newQuestionsAnswered,
+              correctAnswers: (p.correctAnswers || 0) + 1,
+              startTime: p.startTime || now, // Set start time on first correct answer
+              finishTime: newQuestionsAnswered >= QUESTIONS_PER_PLAYER ? now : p.finishTime
+            };
+          }
+          return p;
+        });
+
+        // Update team scores
+        const currentPlayer = updatedPlayers.find(p => p.id === myPlayerId);
+        const updatedTeamScores = { ...(prev.teamScores || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
+        if (currentPlayer?.team) {
+          updatedTeamScores[currentPlayer.team] = (updatedTeamScores[currentPlayer.team] || 0) + 1;
         }
-        return p;
+
+        const updatedState = {
+          ...prev,
+          players: updatedPlayers,
+          teamScores: updatedTeamScores,
+          currentQuestion: null
+        };
+        
+        updateGameState(updatedState);
+        return updatedState;
       });
+      alert('✅ Chính xác! +1 điểm cho đội của bạn');
+    } else {
+      // Wrong answer - track it and give another retry question
+      setGameState((prev) => {
+        const updatedPlayers = prev.players.map(p => {
+          if (p.id === myPlayerId) {
+            const now = Date.now();
+            return {
+              ...p,
+              wrongAnswers: (p.wrongAnswers || 0) + 1,
+              startTime: p.startTime || now // Set start time on first attempt
+            };
+          }
+          return p;
+        });
 
-      // Update team scores
-      const currentPlayer = updatedPlayers.find(p => p.id === myPlayerId);
-      const updatedTeamScores = { ...(prev.teamScores || { 1: 0, 2: 0, 3: 0, 4: 0 }) };
-      if (currentPlayer?.team && isCorrect) {
-        updatedTeamScores[currentPlayer.team] = (updatedTeamScores[currentPlayer.team] || 0) + 1;
-      }
+        const updatedState = {
+          ...prev,
+          players: updatedPlayers,
+          currentQuestion: null
+        };
+        
+        updateGameState(updatedState);
+        return updatedState;
+      });
+      
+      alert('❌ Sai rồi! Đáp án đúng là: ' + gameState.currentQuestion.options[gameState.currentQuestion.correctAnswer] + '\nBạn sẽ nhận câu hỏi khác từ nhóm khác.');
+      
+      // Give another retry question after a short delay
+      setTimeout(() => {
+        generateQuestion(myPlayerId, true);
+      }, 1500);
+    }
+  };
 
+  const endGame = () => {
+    setGameState((prev) => {
       const updatedState = {
         ...prev,
-        players: updatedPlayers,
-        teamScores: updatedTeamScores,
-        currentQuestion: null
+        gameEndTime: Date.now()
       };
-      
       updateGameState(updatedState);
       return updatedState;
     });
+  };
 
-    // Show feedback
-    if (isCorrect) {
-      alert('✅ Chính xác! +1 điểm cho đội của bạn');
-    } else {
-      alert('❌ Sai rồi! Đáp án đúng là: ' + gameState.currentQuestion.options[gameState.currentQuestion.correctAnswer]);
-    }
+  const calculateTeamRankings = () => {
+    if (!gameState.gameStartTime) return [];
+
+    const teams = [1, 2, 3, 4];
+    const teamStats = teams.map(teamNum => {
+      const teamPlayers = gameState.players.filter(p => p.team === teamNum);
+      
+      // Calculate team completion status
+      const allCompleted = teamPlayers.every(p => (p.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER);
+      const totalWrong = teamPlayers.reduce((sum, p) => sum + (p.wrongAnswers || 0), 0);
+      const avgWrong = totalWrong / (teamPlayers.length || 1);
+      
+      // Calculate average completion time (only for finished players)
+      const finishedPlayers = teamPlayers.filter(p => p.finishTime && p.startTime);
+      const avgTime = finishedPlayers.length > 0
+        ? finishedPlayers.reduce((sum, p) => sum + (p.finishTime! - p.startTime!), 0) / finishedPlayers.length
+        : Infinity;
+      
+      return {
+        team: teamNum,
+        players: teamPlayers,
+        allCompleted,
+        totalWrong,
+        avgWrong,
+        avgTime,
+        completedCount: finishedPlayers.length
+      };
+    });
+
+    // Sort teams: 1) All completed first, 2) Least average wrong, 3) Fastest average time
+    return teamStats.sort((a, b) => {
+      if (a.allCompleted !== b.allCompleted) return b.allCompleted ? 1 : -1;
+      if (a.avgWrong !== b.avgWrong) return a.avgWrong - b.avgWrong;
+      return a.avgTime - b.avgTime;
+    });
+  };
+
+  const rankPlayersInTeam = (teamPlayers: Player[]) => {
+    return [...teamPlayers].sort((a, b) => {
+      const aCompleted = (a.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
+      const bCompleted = (b.questionsAnswered || 0) >= QUESTIONS_PER_PLAYER;
+      
+      // Completed players first
+      if (aCompleted !== bCompleted) return bCompleted ? 1 : -1;
+      
+      // Least wrong answers
+      if ((a.wrongAnswers || 0) !== (b.wrongAnswers || 0)) {
+        return (a.wrongAnswers || 0) - (b.wrongAnswers || 0);
+      }
+      
+      // Fastest time
+      const aTime = (a.finishTime && a.startTime) ? (a.finishTime - a.startTime) : Infinity;
+      const bTime = (b.finishTime && b.startTime) ? (b.finishTime - b.startTime) : Infinity;
+      return aTime - bTime;
+    });
   };
 
   const rollDice = () => {
@@ -610,6 +700,11 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   <h2 className="text-2xl font-bold text-gold-400 mb-2">
                     Câu hỏi {gameState.currentQuestion.questionNumber}/{QUESTIONS_PER_PLAYER}
                   </h2>
+                  {gameState.currentQuestion.isRetry && (
+                    <div className="bg-red-500/20 border border-red-500 rounded-lg p-2 mb-3">
+                      <p className="text-red-400 text-sm font-semibold">⚠️ Câu hỏi từ nhóm khác (Cơ hội thứ 2)</p>
+                    </div>
+                  )}
                   <p className="text-lg font-semibold text-white">
                     {gameState.currentQuestion.question}
                   </p>
@@ -635,8 +730,21 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
         </AnimatePresence>
 
         {/* Game Board */}
-        {gameState.gameStarted && !gameState.winner && (
+        {gameState.gameStarted && !gameState.gameEndTime && (
           <div className="max-w-6xl mx-auto">
+            {/* Timer Display */}
+            <div className="mb-6 text-center">
+              <div className={`inline-block bg-gray-800 rounded-xl px-8 py-4 border-2 ${
+                remainingTime <= 60 ? 'border-red-500 animate-pulse' : 'border-gold-500'
+              }`}>
+                <div className="text-sm text-gray-400 mb-1">Thời gian còn lại</div>
+                <div className={`text-4xl font-bold ${
+                  remainingTime <= 60 ? 'text-red-500' : 'text-gold-400'
+                }`}>
+                  {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, '0')}
+                </div>
+              </div>
+            </div>
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Team Scores & Players Info */}
               <div className="lg:col-span-1 space-y-4">
@@ -660,18 +768,26 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                         index === gameState.currentPlayerIndex ? 'bg-gold-500/20 border-2 border-gold-500' : 'bg-gray-700'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-4 h-4 rounded-full"
-                            style={{ backgroundColor: player.color }}
-                          />
-                          <span className="font-semibold">{player.name}</span>
-                          {player.id === myPlayerId && <span className="text-xs text-gold-400">(Bạn)</span>}
-                          <span className="text-xs text-gray-400">Đội {player.team}</span>
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-4 h-4 rounded-full"
+                              style={{ backgroundColor: player.color }}
+                            />
+                            <span className="font-semibold">{player.name}</span>
+                            {player.id === myPlayerId && <span className="text-xs text-gold-400">(Bạn)</span>}
+                            <span className="text-xs text-gray-400">Đội {player.team}</span>
+                          </div>
+                          <div className="text-sm">
+                            {player.questionsAnswered || 0}/{QUESTIONS_PER_PLAYER} câu
+                          </div>
                         </div>
-                        <div className="text-sm">
-                          {player.questionsAnswered || 0}/{QUESTIONS_PER_PLAYER} câu
+                        <div className="text-xs text-gray-400 flex gap-3">
+                          <span className="text-red-400">❌ {player.wrongAnswers || 0} sai</span>
+                          {player.finishTime && player.startTime && (
+                            <span className="text-green-400">⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -742,9 +858,19 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                           <div className="flex-1">
                             <div className="flex justify-between text-sm mb-1">
                               <span>{player.name} (Đội {player.team})</span>
-                              <span className="text-gold-400">
-                                {player.correctAnswers || 0}/{player.questionsAnswered || 0}
-                              </span>
+                              <div className="flex gap-2 text-xs">
+                                <span className="text-gold-400">
+                                  ✓ {player.correctAnswers || 0}/{player.questionsAnswered || 0}
+                                </span>
+                                <span className="text-red-400">
+                                  ✗ {player.wrongAnswers || 0}
+                                </span>
+                                {player.finishTime && player.startTime && (
+                                  <span className="text-green-400">
+                                    ⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="bg-gray-600 rounded-full h-2 overflow-hidden">
                               <div
@@ -763,22 +889,79 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           </div>
         )}
 
-        {/* Winner Screen */}
-        {gameState.winner && (
+        {/* Results Screen */}
+        {gameState.gameEndTime && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 flex items-center justify-center bg-black/80 z-50"
+            className="fixed inset-0 flex items-center justify-center bg-black/90 z-50 p-4 overflow-y-auto"
           >
-            <div className="bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-12 text-center max-w-md">
-              <div className="text-6xl mb-4">🏆</div>
-              <h2 className="text-4xl font-bold text-black mb-4">Chiến thắng!</h2>
-              <p className="text-2xl text-black mb-6">{gameState.winner}</p>
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="text-center mb-8">
+                <div className="text-6xl mb-4">🏆</div>
+                <h2 className="text-4xl font-bold text-gold-400 mb-2">Kết quả trò chơi</h2>
+                <p className="text-gray-400">Thời gian: {remainingTime <= 0 ? 'Hết giờ!' : 'Hoàn thành sớm'}</p>
+              </div>
+
+              {/* Team Rankings */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-center mb-4">🏅 Xếp hạng đội</h3>
+                <div className="space-y-4">
+                  {calculateTeamRankings().map((teamStat, index) => (
+                    <div key={teamStat.team} className={`bg-gray-700 rounded-lg p-4 ${
+                      index === 0 ? 'border-2 border-gold-500' : ''
+                    }`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">{['🥇', '🥈', '🥉', '4️⃣'][index]}</span>
+                          <span className="text-xl font-bold">Đội {teamStat.team}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm text-gray-400">
+                            Hoàn thành: {teamStat.completedCount}/{teamStat.players.length}
+                          </div>
+                          <div className="text-sm text-red-400">
+                            Tổng sai: {teamStat.totalWrong}
+                          </div>
+                          {teamStat.avgTime !== Infinity && (
+                            <div className="text-sm text-green-400">
+                              TB: {Math.floor(teamStat.avgTime / 1000)}s
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Players in Team */}
+                      <div className="ml-8 space-y-2">
+                        {rankPlayersInTeam(teamStat.players).map((player, pIndex) => (
+                          <div key={player.id} className="bg-gray-600 rounded p-2 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{pIndex + 1}.</span>
+                              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: player.color }} />
+                              <span className="font-semibold">{player.name}</span>
+                            </div>
+                            <div className="flex gap-3 text-sm">
+                              <span className="text-gold-400">✓ {player.correctAnswers || 0}</span>
+                              <span className="text-red-400">✗ {player.wrongAnswers || 0}</span>
+                              {player.finishTime && player.startTime && (
+                                <span className="text-green-400">
+                                  ⏱️ {Math.floor((player.finishTime - player.startTime) / 1000)}s
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={onBack}
-                className="bg-black text-gold-400 px-8 py-3 rounded-lg font-bold"
+                className="w-full bg-gradient-to-r from-gold-500 to-gold-600 px-8 py-4 rounded-lg font-bold text-lg"
               >
                 Quay về trang chủ
               </motion.button>
