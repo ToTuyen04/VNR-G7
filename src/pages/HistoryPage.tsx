@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import HistoryChatBot from '../components/history/HistoryChatBot';
 import SectionVoiceAssistant from '../components/history/SectionVoiceAssistant';
 
 interface ImageType {
@@ -956,30 +955,6 @@ const HistoryPage = () => {
         </div>
       </div>
 
-      {/* Floating Star Icon - Bottom Right */}
-      <motion.div
-        className="fixed bottom-8 right-8 z-40"
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{ delay: 1, type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <motion.div
-          className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center shadow-2xl cursor-pointer"
-          whileHover={{ scale: 1.1, rotate: 180 }}
-          whileTap={{ scale: 0.9 }}
-          animate={{ 
-            boxShadow: [
-              '0 0 20px rgba(220, 38, 38, 0.5)',
-              '0 0 40px rgba(220, 38, 38, 0.8)',
-              '0 0 20px rgba(220, 38, 38, 0.5)'
-            ]
-          }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <span className="text-yellow-300 text-3xl">★</span>
-        </motion.div>
-      </motion.div>
-
       {/* Footer */}
       <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
         <div className="container mx-auto grid md:grid-cols-4 gap-8">
@@ -1054,9 +1029,6 @@ const HistoryPage = () => {
           </p>
         </div>
       </footer>
-
-      {/* ChatBot */}
-      <HistoryChatBot />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import HistoryPage from './pages/HistoryPage';
 import GamesPage from './pages/GamesPage';
-import AudioController from './components/common/AudioController';
+import HistoryChatBot from './components/history/HistoryChatBot';
 import './index.css';
 
 function App() {
@@ -14,7 +14,9 @@ function App() {
           <Route path="/noi-dung" element={<HistoryPage />} />
           <Route path="/games" element={<GamesPage />} />
         </Routes>
-        <AudioController />
+        
+        {/* AI Chatbot */}
+        <HistoryChatBot />
       </div>
     </Router>
   );
