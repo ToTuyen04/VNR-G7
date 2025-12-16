@@ -115,7 +115,7 @@ const HistoryPage = () => {
           content: [
             'Chính sách xã hội bốn nhóm: Kế hoạch hóa dân số, giải quyết việc làm; Công bằng và an toàn xã hội; Giáo dục, văn hóa, y tế; Bảo trợ xã hội',
             'Quốc phòng – an ninh: Tăng cường củng cố quốc phòng, giữ vững độc lập, chủ quyền, toàn vẹn lãnh thổ',
-            'Đối ngoại: Tăng cường hợp tác với Liên Xô và các nước XHCN; Bình thường hóa quan hệ với Trung Quốc; Mở rộng hợp tác quốc tế',
+            'Đối ngoại: Tăng cường hợp tác với Liên Xô và các nước Xã hội chủ nghĩa; Bình thường hóa quan hệ với Trung Quốc; Mở rộng hợp tác quốc tế',
             'Đổi mới lãnh đạo của Đảng: Đổi mới tư duy; Đổi mới công tác cán bộ; Phát huy dân chủ "Dân biết, dân bàn, dân làm, dân kiểm tra"'
           ]
         },
@@ -127,7 +127,7 @@ const HistoryPage = () => {
             'Quyết định 217-HĐBT (11/1987): Trao quyền tự chủ cho doanh nghiệp nhà nước, chuyển sang hạch toán kinh doanh',
             'Nghị quyết 10 (4/1988): Khoán sản phẩm cuối cùng đến hộ xã viên (Khoán 10), tạo bước đột phá trong nông nghiệp',
             'Luật Đầu tư nước ngoài (1988): Mở rộng thu hút vốn và công nghệ từ bên ngoài',
-            'Công nghiệp: Xóa bỏ cơ chế bao cấp, chuyển doanh nghiệp sang kinh doanh XHCN'
+            'Công nghiệp: Xóa bỏ cơ chế bao cấp, chuyển doanh nghiệp sang kinh doanh Xã hội chủ nghĩa',
           ]
         },
         {
@@ -175,7 +175,7 @@ const HistoryPage = () => {
       date: '6/1991',
       dateLabel: 'Tháng 6/1991',
       title: 'Đại hội VII của Đảng: Hoàn Chỉnh Nhận Thức Lý Luận',
-      description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước XHCN Đông Âu sụp đổ.',
+      description: 'Dù có chuyển biến tích cực, đất nước vẫn chưa thoát khỏi khủng hoảng kinh tế – xã hội; bối cảnh quốc tế có biến động phức tạp do Liên Xô và các nước Xã hội chủ nghĩa Đông Âu sụp đổ.',
       sections: [
         {
           title: 'Bối cảnh lịch sử trước Đại hội VII',
@@ -233,7 +233,7 @@ const HistoryPage = () => {
             '• Sự lãnh đạo đúng đắn của Đảng là nhân tố quyết định thắng lợi',
             '',
             'b) Những đặc trưng cơ bản của xã hội xã hội chủ nghĩa ở Việt Nam',
-            'Xã hội XHCN mà nhân dân ta xây dựng là xã hội:',
+            'Xã hội Xã hội chủ nghĩa mà nhân dân ta xây dựng là xã hội:',
             '• Do nhân dân lao động làm chủ',
             '• Có nền kinh tế phát triển cao dựa trên lực lượng sản xuất hiện đại và chế độ công hữu về tư liệu sản xuất chủ yếu',
             '• Có nền văn hóa tiên tiến, đậm đà bản sắc dân tộc',
@@ -244,9 +244,9 @@ const HistoryPage = () => {
             'c) Bảy phương hướng lớn xây dựng chủ nghĩa xã hội',
             '• Xây dựng Nhà nước xã hội chủ nghĩa của nhân dân, do nhân dân, vì nhân dân',
             '• Phát triển lực lượng sản xuất, công nghiệp hóa – hiện đại hóa gắn với nông nghiệp toàn diện là nhiệm vụ trung tâm',
-            '• Thiết lập từng bước quan hệ sản xuất XHCN với nhiều hình thức sở hữu',
-            '• Phát triển nền kinh tế hàng hóa nhiều thành phần theo định hướng XHCN',
-            '• Tiến hành cách mạng XHCN trên lĩnh vực tư tưởng – văn hóa',
+            '• Thiết lập từng bước quan hệ sản xuất Xã hội chủ nghĩa với nhiều hình thức sở hữu',
+            '• Phát triển nền kinh tế hàng hóa nhiều thành phần theo định hướng Xã hội chủ nghĩa',
+            '• Tiến hành cách mạng Xã hội chủ nghĩa trên lĩnh vực tư tưởng – văn hóa',
             '• Thực hiện chính sách đại đoàn kết dân tộc',
             '• Kết hợp chặt chẽ xây dựng và bảo vệ Tổ quốc'
           ]
@@ -366,7 +366,7 @@ const HistoryPage = () => {
             '• Tham nhũng và tệ quan liêu',
             '• Âm mưu, thủ đoạn "diễn biến hòa bình" của các thế lực thù địch',
             '',
-            '🏛️ Khẳng định chủ trương xây dựng Nhà nước pháp quyền XHCN',
+            '🏛️ Khẳng định chủ trương xây dựng Nhà nước pháp quyền Xã hội chủ nghĩa',
             'Một nội dung rất quan trọng của Hội nghị là lần đầu tiên khẳng định chủ trương xây dựng Nhà nước pháp quyền xã hội chủ nghĩa:',
             '• Nhà nước của nhân dân, do nhân dân, vì nhân dân',
             '• Do Đảng Cộng sản Việt Nam lãnh đạo',
@@ -379,7 +379,7 @@ const HistoryPage = () => {
           content: [
             'Hội nghị giữa nhiệm kỳ khóa VII (1994) có ý nghĩa quan trọng:',
             '• Giúp toàn Đảng và toàn dân nhận diện đúng các nguy cơ trong quá trình đổi mới để chủ động phòng ngừa và khắc phục.',
-            '• Khẳng định bước phát triển trong nhận thức về xây dựng Nhà nước pháp quyền XHCN, tạo cơ sở cho việc tiếp tục hoàn thiện hệ thống chính trị và quản lý xã hội bằng pháp luật.',
+            '• Khẳng định bước phát triển trong nhận thức về xây dựng Nhà nước pháp quyền Xã hội chủ nghĩa, tạo cơ sở cho việc tiếp tục hoàn thiện hệ thống chính trị và quản lý xã hội bằng pháp luật.',
             '• Tạo tiền đề để đẩy mạnh đổi mới đồng bộ và giữ vững ổn định chính trị – xã hội trong những năm tiếp theo.'
           ]
         }

@@ -43,7 +43,7 @@ const QuizGame = ({ onBack }: QuizGameProps) => {
       options: [
         'Kế hoạch hóa tập trung',
         'Kinh tế thị trường tự do',
-        'Kinh tế thị trường định hướng XHCN',
+        'Kinh tế thị trường định hướng Xã hội chủ nghĩa',
         'Kinh tế bao cấp'
       ],
       correctAnswer: 2,

@@ -45,7 +45,7 @@ const HistoryChatBot = () => {
     'đại hội vii': 'Đại hội VII (1991) tiếp tục công cuộc đổi mới, lần đầu tiên thông qua Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH. Khẳng định 5 bài học lớn của cách mạng.',
     'kinh tế thị trường': 'Đại hội VI chuyển đổi từ cơ chế tập trung quan liêu bao cấp sang nền kinh tế thị trường có định hướng xã hội chủ nghĩa, kết hợp nhiều thành phần kinh tế.',
     'xuất khẩu gạo': 'Từ năm 1989, Việt Nam chuyển từ thiếu lương thực sang xuất khẩu gạo. Đến năm 1996, Việt Nam trở thành nước xuất khẩu gạo lớn thứ 2 thế giới.',
-    'ý nghĩa': 'Ý nghĩa lịch sử: Đánh dấu bước chuyển mang tính lịch sử từ cơ chế kế hoạch hóa tập trung sang kinh tế thị trường định hướng XHCN. Cứu đất nước thoát khỏi khủng hoảng.',
+    'ý nghĩa': 'Ý nghĩa lịch sử: Đánh dấu bước chuyển mang tính lịch sử từ cơ chế kế hoạch hóa tập trung sang kinh tế thị trường định hướng Xã hội chủ nghĩa. Cứu đất nước thoát khỏi khủng hoảng.',
     'bài học': 'Bài học kinh nghiệm: Kiên định mục tiêu độc lập dân tộc gắn với CNXH; Quán triệt "lấy dân làm gốc"; Tôn trọng quy luật khách quan; Kết hợp đổi mới kinh tế và chính trị.'
   };
 
