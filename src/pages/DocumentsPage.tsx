@@ -73,9 +73,26 @@ const DocumentsPage = () => {
     : documents.filter(doc => doc.period === selectedPeriod);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-black text-white">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.25
+        }}
+      ></div>
+      
+      {/* Overlay */}
+      <div className="fixed inset-0 z-[1] bg-black/50"></div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 flex items-center justify-center">
@@ -83,16 +100,20 @@ const DocumentsPage = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
-              <p className="text-xs text-gray-400">NATIONAL UNIVERSITY</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
             </div>
           </div>
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex gap-8">
             <button onClick={() => navigate('/')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TRANG CHỦ</button>
             <button onClick={() => navigate('/noi-dung')} className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</button>
-            <a href="#" className="text-gold-400 font-bold tracking-wide">TÀI LIỆU</a>
-            <a href="#footer" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
+            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
+            <button onClick={() => navigate('/on-tap')} className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</button>
             <button onClick={() => navigate('/games')} className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</button>
+            <span className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">TÀI LIỆU</span>
           </nav>
+          <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
+            🎓 Bắt đầu học
+          </button>
         </div>
       </header>
 
@@ -314,8 +335,7 @@ const DocumentsPage = () => {
             </p>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer>      </div>    </div>
   );
 };
 

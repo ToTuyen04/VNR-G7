@@ -56,7 +56,24 @@ const GamesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="relative min-h-screen overflow-x-hidden bg-black">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.25
+        }}
+      ></div>
+      
+      {/* Overlay */}
+      <div className="fixed inset-0 z-[1] bg-black/50"></div>
+      
+      {/* Content wrapper */}
+      <div className="relative z-10">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -71,9 +88,9 @@ const GamesPage = () => {
           </div>
           <nav className="hidden md:flex gap-8">
             <a href="/" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRANG CHỦ</a>
-            <a href="#history-section" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
-            <a href="#timeline" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
-            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
+            <a href="/noi-dung" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
+            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
+            <a href="/on-tap" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">GAME</a>
             <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
           </nav>
@@ -117,6 +134,7 @@ const GamesPage = () => {
             </motion.div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
