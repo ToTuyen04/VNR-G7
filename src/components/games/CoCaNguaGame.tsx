@@ -42,6 +42,8 @@ interface GameState {
   teamWrongAnswers?: { [key: number]: number }; // Wrong answers per team
   gameStartTime?: number | null; // Timestamp when game started
   gameEndTime?: number | null; // Timestamp when game ended
+  lobbyCountdownActive?: boolean; // Whether lobby countdown is active
+  lobbyCountdownStartTime?: number | null; // When lobby countdown started
 }
 
 interface CoCaNguaGameProps {
@@ -58,6 +60,7 @@ const PLAYER_COLORS = [
 const QUESTIONS_PER_TEAM = 10;
 const QUESTION_TIME_LIMIT = 22; // 22 seconds per question
 const PIECES_PER_PLAYER = 4;
+const LOBBY_COUNTDOWN_TIME = 10; // 10 seconds lobby countdown before game starts
 
 // Firebase configuration
 const firebaseConfig = {
@@ -80,6 +83,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
   const [isInRoom, setIsInRoom] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [questionTimeLeft, setQuestionTimeLeft] = useState<number>(QUESTION_TIME_LIMIT);
+  const [lobbyCountdown, setLobbyCountdown] = useState<number>(LOBBY_COUNTDOWN_TIME);
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     currentPlayerIndex: 0,
@@ -93,12 +97,32 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     teamQuestionsAnswered: { 1: 0, 2: 0, 3: 0, 4: 0 },
     teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
     teamCorrectAnswers: { 1: 0, 2: 0, 3: 0, 4: 0 },
-    teamWrongAnswers: { 1: 0, 2: 0, 3: 0, 4: 0 }
+    teamWrongAnswers: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    lobbyCountdownActive: false,
+    lobbyCountdownStartTime: null
   });
 
 
   // Room reference
   const roomRef = roomCode ? ref(database, `rooms/${roomCode}`) : null;
+
+  // Lobby countdown timer - 10 seconds before game starts
+  useEffect(() => {
+    if (!gameState.lobbyCountdownActive || !gameState.lobbyCountdownStartTime) return;
+
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - gameState.lobbyCountdownStartTime!) / 1000);
+      const remaining = Math.max(0, LOBBY_COUNTDOWN_TIME - elapsed);
+      setLobbyCountdown(remaining);
+
+      // Countdown finished - host starts the actual game
+      if (remaining <= 0 && isHost) {
+        actuallyStartGame();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameState.lobbyCountdownActive, gameState.lobbyCountdownStartTime, isHost]);
 
   // Question timer - 22 seconds countdown
   useEffect(() => {
@@ -274,6 +298,11 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
         return;
       }
 
+      if (currentState.lobbyCountdownActive) {
+        alert('Game sắp bắt đầu! Không thể tham gia lúc này.');
+        return;
+      }
+
       const newPlayer: Player = {
         id: playerId,
         name: playerName,
@@ -306,7 +335,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     }
 
     if (isHost) {
-      // Randomize and assign teams
+      // First, randomize and assign teams
       const shuffledPlayers = [...gameState.players].sort(() => Math.random() - 0.5);
       const playersPerTeam = Math.ceil(shuffledPlayers.length / 4);
       
@@ -317,37 +346,56 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
         wrongVotes: 0
       }));
 
-      // Get active teams (teams with players)
-      const activeTeams = [...new Set(playersWithTeams.map(p => p.team))].sort();
-      const firstTeam = activeTeams[0] || 1;
-
+      // Then start lobby countdown with teams already assigned
       const now = Date.now();
-      
-      // Generate first question for first team
-      const randomQuestion = QUESTION_POOL[Math.floor(Math.random() * QUESTION_POOL.length)];
-      
       const updatedState: GameState = {
         ...gameState,
         players: playersWithTeams,
-        gameStarted: true,
-        teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
-        teamQuestionsAnswered: { 1: 0, 2: 0, 3: 0, 4: 0 },
-        currentTeamIndex: firstTeam,
-        currentQuestion: {
-          team: firstTeam,
-          question: randomQuestion.q,
-          options: randomQuestion.opts,
-          correctAnswer: randomQuestion.ans,
-          questionNumber: 1,
-          startTime: now,
-          votes: {}
-        },
-        gameStartTime: now,
-        gameEndTime: null
+        lobbyCountdownActive: true,
+        lobbyCountdownStartTime: now
       };
       updateGameState(updatedState);
       setGameState(updatedState);
+      setLobbyCountdown(LOBBY_COUNTDOWN_TIME);
     }
+  };
+
+  // Actually start the game after countdown finishes
+  const actuallyStartGame = () => {
+    if (!isHost) return;
+
+    // Teams are already assigned, just start the game
+    // Get active teams (teams with players)
+    const activeTeams = [...new Set(gameState.players.map(p => p.team))].filter(t => t !== undefined).sort() as number[];
+    const firstTeam = activeTeams[0] || 1;
+
+    const now = Date.now();
+    
+    // Generate first question for first team
+    const randomQuestion = QUESTION_POOL[Math.floor(Math.random() * QUESTION_POOL.length)];
+    
+    const updatedState: GameState = {
+      ...gameState,
+      gameStarted: true,
+      lobbyCountdownActive: false,
+      lobbyCountdownStartTime: null,
+      teamScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+      teamQuestionsAnswered: { 1: 0, 2: 0, 3: 0, 4: 0 },
+      currentTeamIndex: firstTeam,
+      currentQuestion: {
+        team: firstTeam,
+        question: randomQuestion.q,
+        options: randomQuestion.opts,
+        correctAnswer: randomQuestion.ans,
+        questionNumber: 1,
+        startTime: now,
+        votes: {}
+      },
+      gameStartTime: now,
+      gameEndTime: null
+    };
+    updateGameState(updatedState);
+    setGameState(updatedState);
   };
 
   // Submit a vote for the current question
@@ -759,9 +807,37 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                 </div>
               </div>
 
+              {/* Lobby Countdown Display */}
+              {gameState.lobbyCountdownActive && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mb-8 text-center"
+                >
+                  <div className="bg-gradient-to-br from-gold-600/30 to-yellow-600/20 rounded-2xl p-8 border-2 border-gold-500/50">
+                    <div className="mb-4">
+                      <span className="text-5xl">⏳</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gold-400 mb-2">Đang tìm đồng đội...</h3>
+                    <p className="text-gray-300 mb-4">Trò chơi sẽ bắt đầu trong</p>
+                    <motion.div 
+                      key={lobbyCountdown}
+                      initial={{ scale: 1.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="text-7xl font-bold text-gold-400"
+                    >
+                      {lobbyCountdown}
+                    </motion.div>
+                    <p className="text-sm text-gray-400 mt-4">
+                      Hãy chuẩn bị sẵn sàng! 🎮
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Start Button */}
               <div className="flex gap-4">
-                {isHost && (
+                {isHost && !gameState.lobbyCountdownActive && (
                   <motion.button
                     whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(234, 179, 8, 0.4)' }}
                     whileTap={{ scale: 0.98 }}
@@ -773,10 +849,22 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                     Bắt đầu trò chơi
                   </motion.button>
                 )}
-                {!isHost && (
+                {isHost && gameState.lobbyCountdownActive && (
+                  <div className="flex-1 bg-gradient-to-r from-gold-500/50 via-yellow-500/50 to-gold-600/50 py-4 rounded-xl font-bold text-lg text-black shadow-lg transition-all flex items-center justify-center gap-3 animate-pulse">
+                    <span className="text-xl">🎮</span>
+                    Đang bắt đầu...
+                  </div>
+                )}
+                {!isHost && !gameState.lobbyCountdownActive && (
                   <div className="flex-1 bg-gray-700/70 border border-gray-600 py-4 rounded-xl font-semibold text-center flex items-center justify-center gap-2">
                     <span className="animate-pulse">⏳</span>
                     Đang chờ host bắt đầu...
+                  </div>
+                )}
+                {!isHost && gameState.lobbyCountdownActive && (
+                  <div className="flex-1 bg-gradient-to-r from-green-600/30 to-green-700/30 border border-green-500/50 py-4 rounded-xl font-bold text-center flex items-center justify-center gap-2 text-green-400">
+                    <span className="animate-bounce">🎮</span>
+                    Chuẩn bị! Game sắp bắt đầu...
                   </div>
                 )}
               </div>
