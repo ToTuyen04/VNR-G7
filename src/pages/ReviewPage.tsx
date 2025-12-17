@@ -10,10 +10,10 @@ const ReviewPage = () => {
 
   // Group questions by quiz (10 questions per quiz)
   const quizGroups = [
-    { id: 1, name: 'Quiz 1: Đại hội VI (1986)', questions: QUESTION_POOL.slice(0, 10) },
-    { id: 2, name: 'Quiz 2: Giai đoạn 1986-1991', questions: QUESTION_POOL.slice(10, 20) },
-    { id: 3, name: 'Quiz 3: Đại hội VII (1991)', questions: QUESTION_POOL.slice(20, 30) },
-    { id: 4, name: 'Quiz 4: Hội nghị giữa nhiệm kỳ VII (1994)', questions: QUESTION_POOL.slice(30, 40) },
+    { id: 1, name: 'Đại hội VI (1986)', questions: QUESTION_POOL.slice(0, 10) },
+    { id: 2, name: 'Giai đoạn 1986-1991', questions: QUESTION_POOL.slice(10, 20) },
+    { id: 3, name: 'Đại hội VII (1991)', questions: QUESTION_POOL.slice(20, 30) },
+    { id: 4, name: 'Hội nghị giữa nhiệm kỳ VII (1994)', questions: QUESTION_POOL.slice(30, 40) },
   ];
 
   const toggleAnswer = (index: number) => {
@@ -83,7 +83,7 @@ const ReviewPage = () => {
           <nav className="hidden md:flex gap-8">
             <Link to="/" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRANG CHỦ</Link>
             <Link to="/noi-dung" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</Link>
-            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
+            <Link to="/trien-lam" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</Link>
             <Link to="/on-tap" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">ÔN TẬP</Link>
             <Link to="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</Link>
             <Link to="/tai-lieu" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</Link>
@@ -142,33 +142,31 @@ const ReviewPage = () => {
         </div>
 
         {/* Quiz Group Tabs */}
-        {!searchTerm && (
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <button
+            onClick={() => setSelectedQuiz(null)}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              selectedQuiz === null
+                ? 'bg-red-600 text-white ring-2 ring-red-400'
+                : 'bg-gray-800 text-white hover:bg-gray-700'
+            }`}
+          >
+            📋 Tất cả
+          </button>
+          {quizGroups.map((group, idx) => (
             <button
-              onClick={() => setSelectedQuiz(null)}
+              key={group.id}
+              onClick={() => setSelectedQuiz(idx)}
               className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                selectedQuiz === null
-                  ? 'bg-gold-500 text-black'
+                selectedQuiz === idx
+                  ? 'bg-red-600 text-white ring-2 ring-red-400'
                   : 'bg-gray-800 text-white hover:bg-gray-700'
               }`}
             >
-              📋 Tất cả ({QUESTION_POOL.length} câu)
+              {group.name}
             </button>
-            {quizGroups.map((group, idx) => (
-              <button
-                key={group.id}
-                onClick={() => setSelectedQuiz(idx)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  selectedQuiz === idx
-                    ? 'bg-gold-500 text-black'
-                    : 'bg-gray-800 text-white hover:bg-gray-700'
-                }`}
-              >
-                {group.name} ({group.questions.length} câu)
-              </button>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
 
         {/* Questions List */}
         <div className="max-w-4xl mx-auto space-y-4">

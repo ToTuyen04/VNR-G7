@@ -29,7 +29,7 @@ const GamesPage = () => {
         <div className="min-h-screen bg-black">
           <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-              <div className="flex items-center gap-2">
+              <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <div className="w-10 h-10 flex items-center justify-center">
                   <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
                 </div>
@@ -37,7 +37,7 @@ const GamesPage = () => {
                   <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
                   <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
                 </div>
-              </div>
+              </a>
               <motion.button
                 className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all"
                 whileHover={{ scale: 1.05 }}
@@ -77,7 +77,7 @@ const GamesPage = () => {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800/30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 flex items-center justify-center">
               <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
@@ -85,11 +85,11 @@ const GamesPage = () => {
               <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
               <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
             </div>
-          </div>
+          </a>
           <nav className="hidden md:flex gap-8">
             <a href="/" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRANG CHỦ</a>
             <a href="/noi-dung" className="text-white hover:text-gold-400 transition-colors tracking-wide">NỘI DUNG</a>
-            <a href="#" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
+            <a href="/trien-lam" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="/on-tap" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-gold-400 font-semibold border-b-2 border-gold-400 pb-1 tracking-wide">GAME</a>
             <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>

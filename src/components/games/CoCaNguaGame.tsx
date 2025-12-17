@@ -553,62 +553,82 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="max-w-md mx-auto mt-20"
+              className="max-w-lg mx-auto mt-16"
             >
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border-2 border-gold-500/30 shadow-2xl">
-                <h2 className="text-3xl font-bold text-center mb-6 text-gradient">
-                  �️ Góp phần xây dựng đất nước
-                </h2>
-                
-                <div className="bg-blue-900/50 border border-blue-500 rounded-lg p-3 mb-4 text-sm text-center">
-                  🎮 Chơi nhiều người online
+              <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-lg rounded-3xl p-10 border border-gold-500/30 shadow-2xl">
+                {/* Header with Icon */}
+                <div className="text-center mb-8">
+                  <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-red-500 to-gold-500 rounded-full flex items-center justify-center shadow-lg">
+                    <span className="text-4xl">🏛️</span>
+                  </div>
+                  <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-red-500">
+                    Góp phần xây dựng đất nước
+                  </h2>
+                  <p className="text-gray-400 mt-2">Trò chơi đội nhóm trực tuyến</p>
                 </div>
-
-                <input
-                  type="text"
-                  placeholder="Nhập tên của bạn"
-                  className="w-full bg-gray-700 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-gold-500"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                />
-
-                <div className="flex gap-3 mb-4">
+                
+                {/* Player Name Input */}
+                <div className="mb-6">
+                  <label className="block text-sm text-gray-400 mb-2">👤 Tên người chơi</label>
                   <input
                     type="text"
-                    placeholder="Mã phòng (4 số)"
-                    className="flex-1 bg-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gold-500 text-center text-2xl font-mono"
-                    value={roomCode}
-                    onChange={(e) => setRoomCode(e.target.value)}
-                    maxLength={4}
+                    placeholder="Nhập tên của bạn..."
+                    className="w-full bg-gray-700/70 border border-gray-600 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all text-lg"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)}
                   />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={joinRoom}
-                    className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold"
-                  >
-                    Tham gia
-                  </motion.button>
                 </div>
 
-                <div className="text-center text-gray-400 my-4">hoặc</div>
+                {/* Join Room Section */}
+                <div className="mb-6">
+                  <label className="block text-sm text-gray-400 mb-2">🔑 Tham gia phòng có sẵn</label>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      placeholder="Nhập mã phòng"
+                      className="flex-1 bg-gray-700/70 border border-gray-600 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl font-mono tracking-widest"
+                      value={roomCode}
+                      onChange={(e) => setRoomCode(e.target.value)}
+                      maxLength={4}
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)' }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={joinRoom}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition-all"
+                    >
+                      Tham gia
+                    </motion.button>
+                  </div>
+                </div>
 
+                {/* Divider */}
+                <div className="flex items-center gap-4 my-8">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+                  <span className="text-gray-500 text-sm">hoặc</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+                </div>
+
+                {/* Create Room Button */}
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(234, 179, 8, 0.4)' }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={createRoom}
-                  className="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 py-3 rounded-lg font-bold"
+                  className="w-full bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 hover:from-gold-400 hover:via-yellow-400 hover:to-gold-500 py-4 rounded-xl font-bold text-lg text-black shadow-lg transition-all flex items-center justify-center gap-3"
                 >
+                  <span className="text-xl">➕</span>
                   Tạo phòng mới
                 </motion.button>
 
+                {/* Back Button */}
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={onBack}
-                  className="w-full mt-4 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-semibold"
+                  className="w-full mt-4 bg-gray-700/70 hover:bg-gray-600/70 border border-gray-600 py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
                 >
-                  ← Quay lại
+                  <span>←</span>
+                  Quay lại
                 </motion.button>
               </div>
             </motion.div>
@@ -620,83 +640,161 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl mx-auto mt-10"
+            className="max-w-4xl mx-auto mt-8"
           >
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border-2 border-gold-500/30">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold mb-2">Phòng chờ</h2>
+            <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-lg rounded-3xl p-8 border border-gold-500/30 shadow-2xl">
+              {/* Header */}
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-3xl">⏳</span>
+                </div>
+                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">Phòng chờ</h2>
+                
+                {/* Room Code Display */}
                 {roomCode && (
-                  <div className="bg-gray-700 rounded-lg p-4 mb-2">
-                    <p className="text-xs text-gray-400 mb-1">Mã Phòng:</p>
-                    <div className="text-gold-400 text-2xl font-mono">{roomCode}</div>
+                  <div className="mt-6 bg-gradient-to-r from-gray-700/80 to-gray-800/80 rounded-2xl p-6 max-w-sm mx-auto border border-gray-600">
+                    <p className="text-xs text-gray-400 mb-2 uppercase tracking-wider">Mã Phòng</p>
+                    <div className="text-gold-400 text-4xl font-mono font-bold tracking-[0.3em]">{roomCode}</div>
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(59, 130, 246, 0.5)' }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         navigator.clipboard.writeText(roomCode);
                         alert('Đã sao chép mã phòng!');
                       }}
-                      className="mt-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm"
+                      className="mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg transition-all flex items-center gap-2 mx-auto"
                     >
-                      📋 Sao chép mã
+                      <span>📋</span> Sao chép mã
                     </motion.button>
                   </div>
                 )}
-                <p className="text-gray-400 text-sm mt-2">
-                  {isHost ? 'Chia sẻ mã này với bạn bè để họ tham gia' : 'Đang chờ host bắt đầu game...'}
+                <p className="text-gray-400 text-sm mt-4">
+                  {isHost ? '👑 Bạn là Host • Chia sẻ mã phòng với bạn bè để họ tham gia' : '⏳ Đang chờ host bắt đầu game...'}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {gameState.players.map((player) => (
-                  <motion.div
-                    key={player.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-gray-700 rounded-lg p-4 text-center"
-                    style={{ borderTop: `4px solid ${player.color}` }}
-                  >
-                    <div className="text-2xl mb-2">👤</div>
-                    <div className="font-semibold truncate">{player.name}</div>
-                    <div className="text-xs text-green-400 mt-1">
-                      ✓ Đã tham gia
+              {/* Teams Display */}
+              <div className="mb-8">
+                <h3 className="text-center text-gray-400 text-sm uppercase tracking-wider mb-4">Người chơi theo đội</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {/* Team 1 - Công nhân */}
+                  <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-xl p-4 border border-red-500/30">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-red-500/30">
+                      <span className="text-lg">🔴</span>
+                      <span className="font-bold text-red-400">Công nhân</span>
                     </div>
-                  </motion.div>
-                ))}
-                
-                {Array(Math.min(40 - gameState.players.length, 8)).fill(null).map((_, i) => (
-                  <div
-                    key={`empty-${i}`}
-                    className="bg-gray-800/50 rounded-lg p-4 text-center border-2 border-dashed border-gray-600"
-                  >
-                    <div className="text-2xl mb-2 opacity-30">👤</div>
-                    <div className="text-gray-500 text-sm">Đang chờ...</div>
+                    <div className="space-y-2">
+                      {gameState.players.filter(p => p.team === 1).map(player => (
+                        <div key={player.id} className="bg-gray-700/50 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                          <span>👤</span>
+                          <span className="truncate">{player.name}</span>
+                          {player.id === myPlayerId && <span className="text-gold-400">★</span>}
+                        </div>
+                      ))}
+                      {gameState.players.filter(p => p.team === 1).length === 0 && (
+                        <div className="text-gray-500 text-sm text-center py-2">Chưa có ai</div>
+                      )}
+                    </div>
                   </div>
-                ))}
+
+                  {/* Team 2 - Nông dân */}
+                  <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 rounded-xl p-4 border border-blue-500/30">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-blue-500/30">
+                      <span className="text-lg">🔵</span>
+                      <span className="font-bold text-blue-400">Nông dân</span>
+                    </div>
+                    <div className="space-y-2">
+                      {gameState.players.filter(p => p.team === 2).map(player => (
+                        <div key={player.id} className="bg-gray-700/50 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                          <span>👤</span>
+                          <span className="truncate">{player.name}</span>
+                          {player.id === myPlayerId && <span className="text-gold-400">★</span>}
+                        </div>
+                      ))}
+                      {gameState.players.filter(p => p.team === 2).length === 0 && (
+                        <div className="text-gray-500 text-sm text-center py-2">Chưa có ai</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Team 3 - Trí thức */}
+                  <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 rounded-xl p-4 border border-yellow-500/30">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-yellow-500/30">
+                      <span className="text-lg">🟡</span>
+                      <span className="font-bold text-yellow-400">Trí thức</span>
+                    </div>
+                    <div className="space-y-2">
+                      {gameState.players.filter(p => p.team === 3).map(player => (
+                        <div key={player.id} className="bg-gray-700/50 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                          <span>👤</span>
+                          <span className="truncate">{player.name}</span>
+                          {player.id === myPlayerId && <span className="text-gold-400">★</span>}
+                        </div>
+                      ))}
+                      {gameState.players.filter(p => p.team === 3).length === 0 && (
+                        <div className="text-gray-500 text-sm text-center py-2">Chưa có ai</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Team 4 - Tư sản */}
+                  <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 rounded-xl p-4 border border-green-500/30">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-green-500/30">
+                      <span className="text-lg">🟢</span>
+                      <span className="font-bold text-green-400">Tư sản</span>
+                    </div>
+                    <div className="space-y-2">
+                      {gameState.players.filter(p => p.team === 4).map(player => (
+                        <div key={player.id} className="bg-gray-700/50 rounded-lg px-3 py-2 text-sm flex items-center gap-2">
+                          <span>👤</span>
+                          <span className="truncate">{player.name}</span>
+                          {player.id === myPlayerId && <span className="text-gold-400">★</span>}
+                        </div>
+                      ))}
+                      {gameState.players.filter(p => p.team === 4).length === 0 && (
+                        <div className="text-gray-500 text-sm text-center py-2">Chưa có ai</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
+              {/* Start Button */}
               <div className="flex gap-4">
                 {isHost && (
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(234, 179, 8, 0.4)' }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={startGame}
                     disabled={gameState.players.length < 2}
-                    className="flex-1 bg-gradient-to-r from-gold-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-3 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 disabled:from-gray-600 disabled:to-gray-700 py-4 rounded-xl font-bold text-lg text-black disabled:text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all flex items-center justify-center gap-3"
                   >
+                    <span className="text-xl">🚀</span>
                     Bắt đầu trò chơi
                   </motion.button>
                 )}
                 {!isHost && (
-                  <div className="flex-1 bg-gray-700 py-3 rounded-lg font-semibold text-center">
+                  <div className="flex-1 bg-gray-700/70 border border-gray-600 py-4 rounded-xl font-semibold text-center flex items-center justify-center gap-2">
+                    <span className="animate-pulse">⏳</span>
                     Đang chờ host bắt đầu...
                   </div>
                 )}
               </div>
 
-              <p className="text-center text-gray-400 text-sm mt-4">
-                {gameState.players.length}/40 người chơi • Cần tối thiểu 2 người
-              </p>
+              {/* Player Count */}
+              <div className="text-center mt-6">
+                <div className="inline-flex items-center gap-3 bg-gray-700/50 rounded-full px-6 py-2 border border-gray-600">
+                  <span className="text-2xl">👥</span>
+                  <span className="text-lg">
+                    <span className="font-bold text-gold-400">{gameState.players.length}</span>
+                    <span className="text-gray-400">/40 người chơi</span>
+                  </span>
+                  <span className="text-gray-500">•</span>
+                  <span className={`text-sm ${gameState.players.length >= 2 ? 'text-green-400' : 'text-red-400'}`}>
+                    {gameState.players.length >= 2 ? '✓ Sẵn sàng' : 'Cần tối thiểu 2 người'}
+                  </span>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -821,7 +919,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   return team1Players.length > 0 && (
                     <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-red-500 ${isCurrentTeam ? 'ring-2 ring-red-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-red-400">🔴 Đội 1 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <h3 className="font-bold text-red-400">🔴 Công nhân {isCurrentTeam && '← Đang trả lời'}</h3>
                         <span className="text-gold-400 font-bold">{gameState.teamScores?.[1] || 0} điểm</span>
                       </div>
                       <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM}</div>
@@ -851,7 +949,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   return team3Players.length > 0 && (
                     <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-yellow-500 ${isCurrentTeam ? 'ring-2 ring-yellow-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-yellow-400">🟡 Đội 3 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <h3 className="font-bold text-yellow-400">🟡 Trí thức {isCurrentTeam && '← Đang trả lời'}</h3>
                         <span className="text-gold-400 font-bold">{gameState.teamScores?.[3] || 0} điểm</span>
                       </div>
                       <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM}</div>
@@ -899,29 +997,29 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                         <rect x="170" y="170" width="60" height="60" fill="#fbbf24" opacity="0.5" stroke="#fbbf24" strokeWidth="2" rx="4"/>
                         
                         {/* Team scores in corners */}
-                        <text x="90" y="70" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">Đội 1</text>
+                        <text x="90" y="70" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">Công nhân</text>
                         <text x="90" y="95" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[1] || 0}</text>
                         <text x="90" y="115" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[1] || 0}</text>
                         <text x="90" y="135" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[1] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="310" y="70" textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">Đội 2</text>
+                        <text x="310" y="70" textAnchor="middle" fill="#3b82f6" fontSize="14" fontWeight="bold">Nông dân</text>
                         <text x="310" y="95" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[2] || 0}</text>
                         <text x="310" y="115" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[2] || 0}</text>
                         <text x="310" y="135" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="90" y="280" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">Đội 3</text>
+                        <text x="90" y="280" textAnchor="middle" fill="#f59e0b" fontSize="14" fontWeight="bold">Trí thức</text>
                         <text x="90" y="305" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[3] || 0}</text>
                         <text x="90" y="325" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[3] || 0}</text>
                         <text x="90" y="345" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[3] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
-                        <text x="310" y="280" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">Đội 4</text>
+                        <text x="310" y="280" textAnchor="middle" fill="#10b981" fontSize="14" fontWeight="bold">Tư sản</text>
                         <text x="310" y="305" textAnchor="middle" fill="#22c55e" fontSize="14" fontWeight="bold">✓ {gameState.teamCorrectAnswers?.[4] || 0}</text>
                         <text x="310" y="325" textAnchor="middle" fill="#ef4444" fontSize="14" fontWeight="bold">✗ {gameState.teamWrongAnswers?.[4] || 0}</text>
                         <text x="310" y="345" textAnchor="middle" fill="#9ca3af" fontSize="11">Câu: {gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM}</text>
                         
                         {/* Center - Current Team Turn */}
                         <text x="200" y="190" textAnchor="middle" fill="#fbbf24" fontSize="11" fontWeight="bold">
-                          {gameState.currentQuestion ? `Đội ${gameState.currentQuestion.team}` : 'Chờ...'}
+                          {gameState.currentQuestion ? ['Công nhân', 'Nông dân', 'Trí thức', 'Tư sản'][gameState.currentQuestion.team - 1] : 'Chờ...'}
                         </text>
                         <text x="200" y="210" textAnchor="middle" fill="#9ca3af" fontSize="10">
                           {gameState.currentQuestion ? `Câu ${gameState.currentQuestion.questionNumber}` : ''}
@@ -959,7 +1057,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   return team2Players.length > 0 && (
                     <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-blue-500 ${isCurrentTeam ? 'ring-2 ring-blue-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-blue-400">🔵 Đội 2 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <h3 className="font-bold text-blue-400">🔵 Nông dân {isCurrentTeam && '← Đang trả lời'}</h3>
                         <span className="text-gold-400 font-bold">{gameState.teamScores?.[2] || 0} điểm</span>
                       </div>
                       <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[2] || 0}/{QUESTIONS_PER_TEAM}</div>
@@ -989,7 +1087,7 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
                   return team4Players.length > 0 && (
                     <div className={`bg-gray-800 rounded-xl p-4 border-l-4 border-green-500 ${isCurrentTeam ? 'ring-2 ring-green-500' : ''}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-bold text-green-400">🟢 Đội 4 {isCurrentTeam && '← Đang trả lời'}</h3>
+                        <h3 className="font-bold text-green-400">🟢 Tư sản {isCurrentTeam && '← Đang trả lời'}</h3>
                         <span className="text-gold-400 font-bold">{gameState.teamScores?.[4] || 0} điểm</span>
                       </div>
                       <div className="text-xs text-gray-400 mb-2">Câu hỏi: {gameState.teamQuestionsAnswered?.[4] || 0}/{QUESTIONS_PER_TEAM}</div>

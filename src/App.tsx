@@ -4,6 +4,7 @@ import HistoryPage from './pages/HistoryPage';
 import GamesPage from './pages/GamesPage';
 import DocumentsPage from './pages/DocumentsPage';
 import ReviewPage from './pages/ReviewPage';
+import ExhibitionPage from './pages/ExhibitionPage';
 import HistoryChatBot from './components/history/HistoryChatBot';
 import './index.css';
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/games" element={<GamesPage />} />
           <Route path="/tai-lieu" element={<DocumentsPage />} />
           <Route path="/on-tap" element={<ReviewPage />} />
+          <Route path="/trien-lam" element={<ExhibitionPage />} />
         </Routes>
         
         {/* AI Chatbot */}
