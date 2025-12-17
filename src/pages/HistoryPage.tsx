@@ -40,6 +40,12 @@ const HistoryPage = () => {
         {
           title: 'Bối cảnh lịch sử',
           icon: '📊',
+          images: [
+            {
+              src: '/img/Người dân xếp hàng mua đồ thời bao cấp. Ảnh tư liệu.png',
+              caption: ''
+            }
+          ],
           content: [
             'Sau thắng lợi của cuộc kháng chiến chống Mỹ, đất nước thống nhất (1975), Việt Nam bước vào thời kỳ quá độ lên chủ nghĩa xã hội trong điều kiện vô cùng khó khăn. Từ năm 1975 đến giữa những năm 1980, mô hình kinh tế kế hoạch hóa tập trung, quan liêu, bao cấp bộc lộ nhiều hạn chế nghiêm trọng:',
             'Nền kinh tế rơi vào khủng hoảng kéo dài, sản xuất trì trệ, hiệu quả thấp',
@@ -53,12 +59,6 @@ const HistoryPage = () => {
             'Liên Xô và các nước xã hội chủ nghĩa tiến hành cải tổ',
             'Xu thế mở cửa, hợp tác và hội nhập kinh tế quốc tế ngày càng rõ nét',
             '👉 Thực tiễn đó đặt ra yêu cầu cấp bách phải đổi mới tư duy, trước hết là tư duy kinh tế, nếu không đất nước sẽ tiếp tục lâm vào khủng hoảng sâu sắc hơn.'
-          ],
-          images: [
-            {
-              src: '/img/Người dân xếp hàng mua đồ thời bao cấp. Ảnh tư liệu.png',
-              caption: 'Người dân xếp hàng mua đồ thời bao cấp - Minh chứng cho tình trạng khó khăn kinh tế trước Đại hội VI năm 1986'
-            }
           ]
         },
         {
@@ -725,20 +725,9 @@ const HistoryPage = () => {
                                     transition={{ duration: 0.3 }}
                                     className="mt-2 p-4 bg-gray-900/50 rounded-lg overflow-hidden"
                                   >
-                                    <div className="space-y-3">
-                                      {section.content.map((item, i) => (
-                                        <div key={i} className="flex gap-3">
-                                          <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
-                                          <p className="text-gray-300 leading-relaxed text-base font-vietnam">
-                                            {item}
-                                          </p>
-                                        </div>
-                                      ))}
-                                    </div>
-
                                     {/* Section Images */}
                                     {(section as SectionType).images && (section as SectionType).images!.length > 0 && (
-                                      <div className="relative grid grid-cols-2 gap-4 mt-6">
+                                      <div className="relative grid grid-cols-2 gap-4 mb-6">
                                         {(section as SectionType).images!.map((img: ImageType, i: number) => (
                                           <motion.div
                                             key={i}
@@ -752,11 +741,22 @@ const HistoryPage = () => {
                                                 className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 transition-opacity" 
                                               />
                                             </div>
-                                            <p className="text-xs text-gray-500 mt-2 text-center">{img.caption}</p>
+                                            {img.caption && <p className="text-xs text-gray-500 mt-2 text-center">{img.caption}</p>}
                                           </motion.div>
                                         ))}
                                       </div>
                                     )}
+
+                                    <div className="space-y-3">
+                                      {section.content.map((item, i) => (
+                                        <div key={i} className="flex gap-3">
+                                          <div className="mt-2 w-2 h-2 rounded-full bg-red-600 flex-shrink-0"></div>
+                                          <p className="text-gray-300 leading-relaxed text-base font-vietnam">
+                                            {item}
+                                          </p>
+                                        </div>
+                                      ))}
+                                    </div>
                                   </motion.div>
                                 )}
                               </div>
@@ -993,7 +993,7 @@ const HistoryPage = () => {
             <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
             <ul className="space-y-2 text-sm">
               <li className="text-gray-400">
-                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader & Designer
               </li>
               <li className="text-gray-400">
                 <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher

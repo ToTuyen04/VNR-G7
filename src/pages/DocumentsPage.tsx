@@ -295,45 +295,77 @@ const DocumentsPage = () => {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-b from-gray-900 to-black border-t border-gray-800 py-12" id="footer">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-10 h-10 object-contain" />
-                <h3 className="text-xl font-bold">VNR202</h3>
+      <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
+        <div className="container mx-auto grid md:grid-cols-4 gap-8">
+          {/* About Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
               </div>
-              <p className="text-gray-400 text-sm">
-                Khám phá lịch sử Đổi mới Việt Nam qua những tư liệu quý giá.
-              </p>
+              <div>
+                <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
+                <p className="text-xs text-gray-500">VNR202 - HISTORY</p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-bold mb-4 text-gold-400">Liên kết</h4>
-              <ul className="space-y-2">
-                <li><button onClick={() => navigate('/')} className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trang chủ</button></li>
-                <li><button onClick={() => navigate('/noi-dung')} className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Nội dung</button></li>
-                <li><a href="#" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Kho tài liệu</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-gold-400">Tài nguyên</h4>
-              <ul className="space-y-2">
-                <li><a href="https://nvsk.vnanet.vn" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Văn kiện Đại hội</a></li>
-                <li><button onClick={() => navigate('/games')} className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trò chơi</button></li>
-                <li><a href="#" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Hướng dẫn</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4 text-gold-400">Liên hệ</h4>
-              <p className="text-gray-400 text-sm mb-2">Email: vnr202@fpt.edu.vn</p>
-              <p className="text-gray-400 text-sm">© 2024 VNR202. All rights reserved.</p>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-500 text-sm italic">
-              "{'"'}Không có gì quý hơn độc lập, tự do{'"'}" - Hồ Chí Minh
+            <p className="text-gray-400 text-sm">
+              Dự án số hóa lịch sử giai đoạn 1986-1996. Khơi dậy niềm tự hào dân tộc về công cuộc Đổi mới vĩ đại.
             </p>
           </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Điều hướng</h4>
+            <ul className="space-y-2">
+              <li><a href="/" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trang chủ</a></li>
+              <li><a href="/noi-dung" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Nội dung lịch sử</a></li>
+              <li><a href="#timeline" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Triển lãm số</a></li>
+              <li><a href="/games" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trò chơi mật mã</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Kho tài liệu</a></li>
+            </ul>
+          </div>
+
+          {/* Team */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
+            <ul className="space-y-2 text-sm">
+              <li className="text-gray-400">
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân -  Leader & Designer
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">3</span> Nguyễn Quý Hưng - Game Developer
+              </li>
+              <li className="text-gray-400">
+                <span className="text-white">4</span> Tô Minh Tuyền - Web Developer
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-white font-bold mb-4">Thông tin môn học</h4>
+            <div className="text-sm text-gray-400 space-y-2">
+              <p>
+                <span className="text-gold-400">🏫</span> Đại học FPT (FPT University)<br/>
+                <span className="text-gray-500">Mentor: Mrs. Dương Thị Thúy Thơ</span>
+              </p>
+              <p className="italic text-gray-500 border-l-2 border-gold-500 pl-3">
+                "Dân ta một lòng theo Đảng,<br/>
+                Để cho non nước huy hoàng, vinh quang."<br/>
+                <span className="text-gold-400">— Hồ Chí Minh</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto mt-8 pt-8 border-t border-gray-800 text-center">
+          <p className="text-gray-500 text-sm">
+            © 2025 VNR202 Project. Designed for education purpose.
+            <span className="ml-4">Made with ❤️ by Group 7</span>
+          </p>
         </div>
       </footer>      </div>    </div>
   );

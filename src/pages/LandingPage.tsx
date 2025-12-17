@@ -57,7 +57,7 @@ const LandingPage = () => {
             <a href="/trien-lam" className="text-white hover:text-gold-400 transition-colors tracking-wide">TRIỂN LÃM</a>
             <a href="/on-tap" className="text-white hover:text-gold-400 transition-colors tracking-wide">ÔN TẬP</a>
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
-            <button onClick={() => navigate('/tai-lieu')} className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</button>
+            <a href="/tai-lieu" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
           </nav>
           <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
             🎓 Bắt đầu học
@@ -456,7 +456,7 @@ const LandingPage = () => {
             <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
             <ul className="space-y-2 text-sm">
               <li className="text-gray-400">
-                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân -  Leader & Designer
               </li>
               <li className="text-gray-400">
                 <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher
