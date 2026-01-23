@@ -104,7 +104,6 @@ const PLAYER_COLORS = [
   '#7C2D12',
 ]
 const MAX_PLAYERS = 30 // Maximum 30 players
-const MAX_TEAMS = 6 // 6 teams
 const MAX_PLAYERS_PER_TEAM = 5 // Maximum 5 players per team
 const QUESTIONS_PER_TEAM = 10
 const INDEPENDENT_QUESTION_TIME = 15 // 15 seconds for independent questions
@@ -643,19 +642,11 @@ const CoCaNguaGame = ({ onBack }: CoCaNguaGameProps) => {
     const votes = gameState.currentQuestion.votes || {}
     const correctAnswer = gameState.currentQuestion.correctAnswer
 
-    // Get participating players based on question type
-    const participatingPlayers =
-      questionType === 'alliance' && alliancePartner
-        ? gameState.players.filter(
-            (p) => p.team === currentTeam || p.team === alliancePartner
-          )
-        : gameState.players.filter((p) => p.team === currentTeam)
-
     // Count correct and wrong votes
     let correctVotes = 0
     let totalVotes = 0
 
-    Object.entries(votes).forEach(([playerId, vote]) => {
+    Object.entries(votes).forEach(([_playerId, vote]) => {
       totalVotes++
       if (vote === correctAnswer) {
         correctVotes++
