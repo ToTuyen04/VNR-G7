@@ -14,7 +14,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@types/howler": "^2.2.12",
     "autoprefixer": "^10.4.22",
-    "firebase": "^12.6.0",
+    "firebase": "^12.8.0",
     "framer-motion": "^12.23.26",
     "howler": "^2.2.4",
     "peerjs": "^1.5.5",
