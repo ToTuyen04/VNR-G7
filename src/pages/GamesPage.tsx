@@ -8,7 +8,7 @@ const GamesPage = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = 'VNR202 - Game';
+    document.title = 'MLN131 - Game';
   }, []);
 
   const games = [
@@ -34,8 +34,8 @@ const GamesPage = () => {
                   <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
-                  <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+                  <h1 className="text-xl font-bold text-white tracking-wide">MLN131</h1>
+                  <p className="text-xs text-gray-500 uppercase tracking-wider">nhóm 5 - FPT University</p>
                 </div>
               </a>
               <motion.button
@@ -61,7 +61,7 @@ const GamesPage = () => {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundImage: 'url("/img/anhnen.webp")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -82,8 +82,8 @@ const GamesPage = () => {
               <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
-              <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+              <h1 className="text-xl font-bold text-white tracking-wide">MLN131</h1>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">nhóm 5 - FPT University</p>
             </div>
           </a>
           <nav className="hidden md:flex gap-8">

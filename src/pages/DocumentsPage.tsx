@@ -18,7 +18,7 @@ const DocumentsPage = () => {
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(null);
 
   useEffect(() => {
-    document.title = 'VNR202 - Tài liệu';
+    document.title = 'MLN131 - Tài liệu';
   }, []);
 
   const documents: DocumentItem[] = [
@@ -78,11 +78,11 @@ const DocumentsPage = () => {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundImage: 'url("/img/anhnen.webp")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.25
+          opacity: 0.75
         }}
       ></div>
       
@@ -99,8 +99,8 @@ const DocumentsPage = () => {
               <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
-              <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+              <h1 className="text-xl font-bold text-white tracking-wide">MLN131</h1>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">nhóm 5 - FPT University</p>
             </div>
           </div>
           <nav className="hidden md:flex gap-8">
@@ -305,7 +305,7 @@ const DocumentsPage = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
-                <p className="text-xs text-gray-500">VNR202 - HISTORY</p>
+                <p className="text-xs text-gray-500">MLN131 - HISTORY</p>
               </div>
             </div>
             <p className="text-gray-400 text-sm">
@@ -363,7 +363,7 @@ const DocumentsPage = () => {
 
         <div className="container mx-auto mt-8 pt-8 border-t border-gray-800 text-center">
           <p className="text-gray-500 text-sm">
-            © 2025 VNR202 Project. Designed for education purpose.
+            © 2025 MLN131 Project. Designed for education purpose.
             <span className="ml-4">Made with ❤️ by Group 7</span>
           </p>
         </div>

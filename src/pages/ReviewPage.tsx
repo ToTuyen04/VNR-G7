@@ -55,11 +55,11 @@ const ReviewPage = () => {
       <div 
         className="fixed inset-0 z-0"
         style={{
-          backgroundImage: 'url("/img/daihoidang.webp")',
+          backgroundImage: 'url("/img/anhnen.webp")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.25
+          opacity: 0.75
         }}
       ></div>
       
@@ -76,8 +76,8 @@ const ReviewPage = () => {
               <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-wide">VNR202</h1>
-              <p className="text-xs text-gray-500 uppercase tracking-wider">Nhóm 7 - FPT University</p>
+              <h1 className="text-xl font-bold text-white tracking-wide">MLN131</h1>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">nhóm 5 - FPT University</p>
             </div>
           </Link>
           <nav className="hidden md:flex gap-8">
@@ -289,7 +289,7 @@ const ReviewPage = () => {
       {/* Footer */}
       <footer className="bg-black/80 border-t border-gold-500/20 py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400">© 2024 VNR202 - Nhóm 7 - FPT University</p>
+          <p className="text-gray-400">© 2024 MLN131 - nhóm 5 - FPT University</p>
         </div>
       </footer>
       </div>

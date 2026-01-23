@@ -1,4 +1,4 @@
-# VNR202 - Nhóm 7 | Đảng Lãnh Đạo Đấu Tranh Giải Phóng Dân Tộc
+# MLN131 - nhóm 5 | Đảng Lãnh Đạo Đấu Tranh Giải Phóng Dân Tộc
 
 Interactive learning platform về Cách mạng Tháng Tám 1945 với game Cờ Cá Ngựa multiplayer.
 
