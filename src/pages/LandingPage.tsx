@@ -7,7 +7,7 @@ const LandingPage = () => {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    document.title = 'VNR202 - Trang chủ';
+    document.title = 'VNR202 - Cơ cấu xã hội - Giai cấp';
   }, []);
 
   useEffect(() => {
@@ -15,10 +15,65 @@ const LandingPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const scrollToHistory = () => {
-    const historySection = document.getElementById('history-section');
-    historySection?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const mainChapters = [
+    {
+      id: 'chapter1',
+      number: 'I',
+      title: 'Cơ cấu xã hội - Giai cấp trong thời kỳ quá độ lên CNXH',
+      icon: '🏛️',
+      color: 'red',
+      borderColor: 'border-red-500',
+      hoverShadow: 'hover:shadow-red-500/20',
+      bgGradient: 'from-red-900/30 to-transparent',
+      description: 'Khái niệm, vị trí và sự biến đổi có tính quy luật của cơ cấu xã hội - giai cấp',
+      highlights: [
+        'Khái niệm cơ cấu xã hội và cơ cấu xã hội - giai cấp',
+        'Vị trí quan trọng hàng đầu của cơ cấu xã hội - giai cấp',
+        'Sự biến đổi gắn liền với cơ cấu kinh tế'
+      ]
+    },
+    {
+      id: 'chapter2',
+      number: 'II',
+      title: 'Liên minh giai cấp, tầng lớp trong thời kỳ quá độ lên CNXH',
+      icon: '🤝',
+      color: 'blue',
+      borderColor: 'border-blue-500',
+      hoverShadow: 'hover:shadow-blue-500/20',
+      bgGradient: 'from-blue-900/30 to-transparent',
+      description: 'Tính tất yếu khách quan của liên minh giai cấp về chính trị và kinh tế',
+      highlights: [
+        'Liên minh công nhân - nông dân - lao động khác',
+        'Tính tất yếu về chính trị: Đoàn kết toàn dân',
+        'Tính tất yếu về kinh tế: CNH, HĐH đất nước'
+      ]
+    },
+    {
+      id: 'chapter3',
+      number: 'III',
+      title: 'Cơ cấu xã hội - Giai cấp và Liên minh tại Việt Nam',
+      icon: '🇻🇳',
+      color: 'yellow',
+      borderColor: 'border-yellow-500',
+      hoverShadow: 'hover:shadow-yellow-500/20',
+      bgGradient: 'from-yellow-900/30 to-transparent',
+      description: 'Thực tiễn cơ cấu xã hội và liên minh giai cấp ở Việt Nam thời kỳ đổi mới',
+      highlights: [
+        'Các giai cấp, tầng lớp tại Việt Nam',
+        'Nội dung liên minh: Kinh tế, Chính trị, Văn hóa - Xã hội',
+        '5 phương hướng xây dựng và tăng cường liên minh'
+      ]
+    }
+  ];
+
+  const socialClasses = [
+    { icon: '👷', name: 'Giai cấp công nhân', role: 'Lãnh đạo cách mạng' },
+    { icon: '🌾', name: 'Giai cấp nông dân', role: 'Vị trí chiến lược CNH-HĐH' },
+    { icon: '🎓', name: 'Đội ngũ trí thức', role: 'Lực lượng sáng tạo' },
+    { icon: '💼', name: 'Đội ngũ doanh nhân', role: 'Phát triển kinh tế' },
+    { icon: '👩', name: 'Phụ nữ', role: 'Bình đẳng giới' },
+    { icon: '👨‍🎓', name: 'Thanh niên', role: 'Rường cột nước nhà' }
+  ];
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-black">
@@ -30,12 +85,12 @@ const LandingPage = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.35
+          opacity: 0.25
         }}
       ></div>
       
       {/* Overlay */}
-      <div className="fixed inset-0 z-[1] bg-black/40"></div>
+      <div className="fixed inset-0 z-[1] bg-black/50"></div>
       
       {/* Content wrapper */}
       <div className="relative z-10">
@@ -59,7 +114,10 @@ const LandingPage = () => {
             <a href="/games" className="text-white hover:text-gold-400 transition-colors tracking-wide">GAME</a>
             <a href="/tai-lieu" className="text-white hover:text-gold-400 transition-colors tracking-wide">TÀI LIỆU</a>
           </nav>
-          <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all">
+          <button 
+            onClick={() => navigate('/noi-dung')}
+            className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 rounded-full font-bold hover:from-gold-600 hover:to-gold-700 transition-all"
+          >
             🎓 Bắt đầu học
           </button>
         </div>
@@ -92,10 +150,10 @@ const LandingPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-20 px-4 max-w-5xl mx-auto">
+      <div className="relative z-20 px-4 max-w-6xl mx-auto">
         <div className="flex justify-center items-center">
           {/* Center Content */}
-          <div className="text-center max-w-4xl">
+          <div className="text-center max-w-5xl">
             {showContent && (
               <>
                 <motion.div
@@ -105,7 +163,7 @@ const LandingPage = () => {
                   className="mb-6"
                 >
                   <div className="inline-block border border-gold-500 rounded-full px-6 py-2 mb-8">
-                    <span className="text-gold-400 text-sm tracking-widest">CHƯƠNG 4 - CÔNG CUỘC ĐỔI MỚI</span>
+                    <span className="text-gold-400 text-sm tracking-widest">CHỦ NGHĨA XÃ HỘI KHOA HỌC</span>
                   </div>
                 </motion.div>
 
@@ -115,10 +173,9 @@ const LandingPage = () => {
                   transition={{ duration: 1 }}
                 >
                   <h1 className="font-cinzel font-black mb-4 leading-tight">
-                    <div className="text-white text-3xl md:text-5xl mb-4">CÔNG CUỘC</div>
-                    <div className="text-red-600 text-6xl md:text-8xl my-6">ĐỔI MỚI</div>
-                    <div className="text-red-600 text-6xl md:text-8xl mb-6">ĐẤT NƯỚC</div>
-                    <div className="text-gradient text-3xl md:text-5xl mt-4">1986-1996</div>
+                    <div className="text-white text-3xl md:text-5xl mb-4">CƠ CẤU XÃ HỘI</div>
+                    <div className="text-red-600 text-5xl md:text-7xl my-6">GIAI CẤP</div>
+                    <div className="text-gradient text-2xl md:text-4xl mt-4">Trong thời kỳ quá độ lên CNXH</div>
                   </h1>
                 </motion.div>
 
@@ -129,53 +186,35 @@ const LandingPage = () => {
                   className="mt-6"
                 >
                   <p className="text-gray-400 text-lg mb-2">
-                    Giai đoạn <span className="text-white font-bold">1986 - 1996</span>. Từ Đại hội VI đến 10 năm đổi mới vĩ đại của dân tộc.
+                    Liên minh giai cấp, tầng lớp và ứng dụng thực tiễn tại <span className="text-white font-bold">Việt Nam</span>
                   </p>
-                  <p className="text-gray-500 text-sm">
-                    Khám phá hành trình đổi mới đất nước từ khủng hoảng đến phát triển, mở ra kỷ nguyên mới của nền kinh tế thị trường định hướng xã hội chủ nghĩa.
+                  <p className="text-gray-500 text-sm max-w-3xl mx-auto">
+                    "Các giai cấp, tầng lớp liên kết chặt chẽ dưới sự lãnh đạo của Đảng để thực hiện mục tiêu chung là Dân giàu, nước mạnh, dân chủ, công bằng, văn minh"
                   </p>
                 </motion.div>
 
+                {/* Social Classes Icons */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
-                  className="mt-8 grid grid-cols-2 gap-4 max-w-3xl mx-auto"
+                  transition={{ delay: 0.7, duration: 0.5 }}
+                  className="mt-10 flex flex-wrap justify-center gap-4"
                 >
-                  <button
-                    onClick={scrollToHistory}
-                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
-                  >
-                    <div className="text-red-500 text-3xl">🏛️</div>
-                    <div className="font-bold text-lg">Đại hội VI (1986)</div>
-                  </button>
-                  <button
-                    onClick={() => {
-                      const section = document.getElementById('dai-hoi-vii');
-                      section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }}
-                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
-                  >
-                    <div className="text-red-500 text-3xl">🎯</div>
-                    <div className="font-bold text-lg">Đại hội VII (1991)</div>
-                  </button>
-                  <button
-                    onClick={() => {
-                      const section = document.getElementById('ket-qua-doi-moi');
-                      section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }}
-                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
-                  >
-                    <div className="text-red-500 text-3xl">📊</div>
-                    <div className="font-bold text-lg">Kết quả Đổi mới</div>
-                  </button>
-                  <button
-                    onClick={() => navigate('/games')}
-                    className="bg-gray-900/80 border border-gray-800 hover:border-red-500 text-white px-6 py-4 rounded-xl text-left transition-all group flex items-center gap-4"
-                  >
-                    <div className="text-red-500 text-3xl">🎮</div>
-                    <div className="font-bold text-lg">Game Lịch sử</div>
-                  </button>
+                  {socialClasses.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.8 + index * 0.1 }}
+                      className="bg-gray-900/60 border border-gray-700 hover:border-gold-500 px-4 py-3 rounded-lg flex items-center gap-3 transition-all hover:scale-105"
+                    >
+                      <span className="text-2xl">{item.icon}</span>
+                      <div className="text-left">
+                        <div className="text-white text-sm font-semibold">{item.name}</div>
+                        <div className="text-gray-500 text-xs">{item.role}</div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </motion.div>
               </>
             )}
@@ -192,217 +231,94 @@ const LandingPage = () => {
       </div>
       </div>
 
-      {/* History Timeline Section */}
-      <div id="history-section" className="min-h-screen bg-black/70 py-20">
+      {/* Main Chapters Section */}
+      <div id="chapters-section" className="min-h-screen bg-black/70 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-block border border-red-500 rounded-full px-6 py-2 mb-6">
-              <span className="text-red-400 text-sm tracking-widest">📖 HÀNH TRÌNH ĐỔI MỚI</span>
+              <span className="text-red-400 text-sm tracking-widest">📖 NỘI DUNG CHÍNH</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-cinzel font-black mb-4">
-              <span className="text-white">10 NĂM </span>
-              <span className="text-gradient">ĐỔI MỚI</span>
+            <h2 className="text-4xl md:text-6xl font-cinzel font-black mb-4">
+              <span className="text-white">BA CHƯƠNG </span>
+              <span className="text-gradient">TRỌNG TÂM</span>
             </h2>
             <p className="text-gray-400 max-w-3xl mx-auto">
-              Những mốc son chói lọi trong công cuộc Đổi mới của Đảng và dân tộc Việt Nam (1986-1996).
+              Tìm hiểu về cơ cấu xã hội - giai cấp, liên minh giai cấp tầng lớp và ứng dụng thực tiễn tại Việt Nam trong thời kỳ quá độ lên chủ nghĩa xã hội.
             </p>
           </div>
 
-          {/* Timeline */}
-          <div className="relative max-w-4xl mx-auto" id="timeline">
-            {/* Vertical Line connecting all dots */}
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[5px] md:-translate-x-1/2 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-
-            {/* Timeline Items */}
-            {/* 1. Đại hội VI của Đảng (1986) */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2 pr-8 text-right">
-                <div className="bg-gray-900 border-2 border-gray-700 hover:border-red-500 hover:scale-105 hover:shadow-xl hover:shadow-red-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-red-900/30 text-red-400 px-3 py-1 rounded text-sm mb-3">Tháng 12/1986</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">🏛️ Đại hội VI của Đảng</h3>
-                  <p className="text-gray-400 mb-3">Đường lối đổi mới toàn diện - bước ngoặt lịch sử của dân tộc.</p>
-                  
-                  {/* Image */}
-                  <div className="mb-4">
-                    <img 
-                      src="/img/daihoi6.jpg" 
-                      alt="Đại hội VI của Đảng" 
-                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
-                    />
-                  </div>
-                  
-                  <ul className="text-gray-400 text-sm space-y-2">
-                    <li>• Kinh tế là trung tâm, xây dựng Đảng là then chốt</li>
-                    <li>• Chuyển sang kinh tế thị trường có định hướng Xã hội chủ nghĩa</li>
-                    <li>• Đổi mới tư duy, thực hiện chủ trương "dân biết, dân bàn, dân làm, dân kiểm tra"</li>
-                  </ul>
+          {/* Chapters Grid */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+            {mainChapters.map((chapter, index) => (
+              <motion.div
+                key={chapter.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className={`bg-gradient-to-br ${chapter.bgGradient} bg-gray-900/80 border-2 border-gray-700 hover:${chapter.borderColor} rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl ${chapter.hoverShadow} cursor-pointer group`}
+                onClick={() => navigate(`/noi-dung?chapter=${chapter.id}`)}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="text-5xl group-hover:scale-110 transition-transform">{chapter.icon}</div>
+                  <div className={`text-4xl font-black text-${chapter.color}-500`}>{chapter.number}</div>
                 </div>
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2"></div>
-            </motion.div>
-
-            {/* 2. Nghị quyết 10 */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2"></div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-blue-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2 pl-8">
-                <div className="bg-gray-900 border-2 border-gray-700 hover:border-blue-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-blue-900/30 text-blue-400 px-3 py-1 rounded text-sm mb-3">Tháng 4/1988</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">🌾 Nghị quyết 10 - Đổi mới nông nghiệp</h3>
-                  <p className="text-gray-400 mb-3">Giao đất, giao rừng cho nông dân. Việt Nam từ thiếu đói thành nước xuất khẩu gạo lớn thứ 2 thế giới.</p>
-                  
-                  {/* Image */}
-                  <div className="mb-3">
-                    <img 
-                      src="/img/dmnongnghiep.jpg" 
-                      alt="Nghị quyết 10 - Đổi mới nông nghiệp" 
-                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
-                    />
-                  </div>
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-gold-400 transition-colors">
+                  {chapter.title}
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">{chapter.description}</p>
+                <ul className="space-y-2">
+                  {chapter.highlights.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
+                      <span className={`text-${chapter.color}-400 mt-1`}>•</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <span className="text-gold-400 text-sm font-semibold group-hover:underline">
+                    Xem chi tiết →
+                  </span>
                 </div>
-              </div>
-            </motion.div>
-
-            {/* 3. Đại hội VII của Đảng (1991) */}
-            <div id="dai-hoi-vii" className="scroll-mt-20">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2 pr-8 text-right">
-                <div className="bg-gray-900 border-2 border-gray-700 hover:border-green-500 hover:scale-105 hover:shadow-xl hover:shadow-green-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-green-900/30 text-green-400 px-3 py-1 rounded text-sm mb-3">Tháng 6/1991</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">🎯 Đại hội VII của Đảng</h3>
-                  <p className="text-gray-400 mb-3">Tiếp tục đẩy mạnh công cuộc đổi mới trong bối cảnh quốc tế biến động.</p>
-                  
-                  {/* Image */}
-                  <div className="mb-4">
-                    <img 
-                      src="/img/dh7.png" 
-                      alt="Đại hội VII của Đảng" 
-                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
-                    />
-                  </div>
-                  
-                  <ul className="text-gray-400 text-sm space-y-2">
-                    <li>• Khẳng định tiếp tục con đường Xã hội chủ nghĩa</li>
-                    <li>• Phát triển kinh tế nhiều thành phần</li>
-                    <li>• Mở rộng quan hệ đối ngoại, đa phương hóa, đa dạng hóa</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-green-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2"></div>
-            </motion.div>
-            </div>
-
-            {/* 4. Hội nghị giữa nhiệm kỳ VII (1994) */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2"></div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-purple-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2 pl-8">
-                <div className="bg-gray-900 border-2 border-gray-700 hover:border-purple-500 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-purple-900/30 text-purple-400 px-3 py-1 rounded text-sm mb-3">Tháng 1/1994</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">📊 Hội nghị giữa nhiệm kỳ khóa VII</h3>
-                  <p className="text-gray-400 mb-3">Đánh giá và điều chỉnh chiến lược phát triển.</p>
-                  <ul className="text-gray-400 text-sm space-y-2">
-                    <li>• Hoàn thiện thể chế kinh tế thị trường</li>
-                    <li>• Tăng cường hội nhập kinh tế quốc tế</li>
-                    <li>• Đẩy mạnh công nghiệp hóa, hiện đại hóa</li>
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* 5. Kết quả đổi mới 1986-1996 */}
-            <motion.div
-              id="ket-qua-doi-moi"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2 pr-8 text-right">
-                <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-2 border-blue-500 hover:border-blue-400 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-blue-700 text-white px-3 py-1 rounded text-sm mb-3">1986-1996</div>
-                  <h3 className="text-2xl font-bold text-blue-300 mb-2">📈 Kết quả đổi mới giai đoạn 1986-1996</h3>
-                  
-                  {/* Image */}
-                  <div className="mb-4">
-                    <img 
-                      src="/img/kqdm.jpg" 
-                      alt="Kết quả đổi mới giai đoạn 1986-1996" 
-                      className="w-full h-48 object-cover rounded-lg border-2 border-gray-700"
-                    />
-                  </div>
-                  
-                  <ul className="text-gray-300 text-sm space-y-2">
-                    <li>• GDP tăng trưởng bình quân 7-8%/năm</li>
-                    <li>• Từ nước thiếu lương thực → xuất khẩu gạo lớn thứ 2 thế giới</li>
-                    <li>• Lạm phát giảm từ 400% (1988) xuống dưới 10% (1995)</li>
-                    <li>• Gia nhập ASEAN (1995), bình thường hóa quan hệ với Mỹ (1995)</li>
-                    <li>• Đời sống nhân dân được cải thiện rõ rệt</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-blue-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2"></div>
-            </motion.div>
-
-            {/* 6. Ý nghĩa và bài học kinh nghiệm */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="relative mb-12 flex items-center"
-            >
-              <div className="w-1/2"></div>
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-yellow-500 rounded-full border-4 border-black z-10"></div>
-              <div className="w-1/2 pl-8">
-                <div className="bg-gradient-to-br from-red-900/40 to-red-800/20 border-2 border-red-600 hover:border-gold-500 hover:scale-105 hover:shadow-xl hover:shadow-gold-500/20 p-6 rounded-lg transition-all duration-300">
-                  <div className="inline-block bg-red-700 text-white px-3 py-1 rounded text-sm mb-3">Ý nghĩa & Bài học</div>
-                  <h3 className="text-2xl font-bold text-gradient mb-3">💡 Ý nghĩa và bài học kinh nghiệm</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <h4 className="text-gold-400 font-semibold mb-1">Ý nghĩa:</h4>
-                      <ul className="text-gray-300 text-sm space-y-1">
-                        <li>• Cứu đất nước thoát khỏi khủng hoảng kinh tế - xã hội</li>
-                        <li>• Khẳng định sức sống của chủ nghĩa xã hội</li>
-                        <li>• Mở ra con đường phát triển mới cho đất nước</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="text-gold-400 font-semibold mb-1">Bài học:</h4>
-                      <ul className="text-gray-300 text-sm space-y-1">
-                        <li>• Đổi mới phải toàn diện, đồng bộ và có trọng tâm</li>
-                        <li>• Kết hợp sức mạnh dân tộc với sức mạnh thời đại</li>
-                        <li>• Giữ vững định hướng Xã hội chủ nghĩa, không dao động trước khó khăn</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            ))}
           </div>
 
+          {/* Key Concepts */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-5xl mx-auto"
+          >
+            <div className="bg-gradient-to-r from-red-900/30 via-yellow-900/20 to-red-900/30 border-2 border-gold-500/50 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-gold-400 text-center mb-8">📌 Các nội dung liên minh quan trọng</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-red-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">💰</span>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Nội dung Kinh tế</h4>
+                  <p className="text-gray-400 text-sm">Kết hợp lợi ích kinh tế, đẩy mạnh CNH-HĐH, mô hình 4 nhà</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🏛️</span>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Nội dung Chính trị</h4>
+                  <p className="text-gray-400 text-sm">Giữ vững vai trò lãnh đạo của Đảng, bảo vệ chế độ XHCN</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🎭</span>
+                  </div>
+                  <h4 className="text-white font-bold mb-2">Nội dung Văn hóa - XH</h4>
+                  <p className="text-gray-400 text-sm">Xây dựng văn hóa tiên tiến, xóa đói giảm nghèo, an sinh xã hội</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -420,6 +336,72 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* 5 Phương hướng Section */}
+      <div className="py-20 bg-gradient-to-b from-black via-blue-950/10 to-black">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-block border border-blue-500 rounded-full px-6 py-2 mb-6">
+              <span className="text-blue-400 text-sm tracking-widest">🎯 PHƯƠNG HƯỚNG</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-cinzel font-black mb-4">
+              <span className="text-white">5 PHƯƠNG HƯỚNG </span>
+              <span className="text-blue-400">CƠ BẢN</span>
+            </h2>
+            <p className="text-gray-400 max-w-3xl mx-auto">
+              Xây dựng cơ cấu xã hội - giai cấp và tăng cường liên minh trong thời kỳ quá độ lên CNXH ở Việt Nam
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {[
+              { num: 1, title: 'Đẩy mạnh CNH, HĐH', desc: 'Giải quyết mối quan hệ tăng trưởng kinh tế với tiến bộ, công bằng xã hội', icon: '🏭' },
+              { num: 2, title: 'Hệ thống chính sách XH', desc: 'Xây dựng chính sách tổng thể cho từng giai cấp, tầng lớp', icon: '📋' },
+              { num: 3, title: 'Đồng thuận & Đoàn kết', desc: 'Phát huy tinh thần thống nhất giữa các lực lượng trong khối liên minh', icon: '🤝' },
+              { num: 4, title: 'Hoàn thiện thể chế KTTT', desc: 'Đẩy mạnh khoa học công nghệ, Cách mạng công nghiệp 4.0', icon: '⚙️' },
+              { num: 5, title: 'Đổi mới Đảng, NN, MTTQ', desc: 'Tăng cường khối liên minh và đại đoàn kết toàn dân', icon: '🏛️' }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-gray-900/60 border border-gray-700 hover:border-blue-500 rounded-xl p-6 transition-all group hover:scale-105"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-900/50 rounded-full flex items-center justify-center text-2xl">
+                    {item.icon}
+                  </div>
+                  <div className="text-3xl font-black text-blue-400">0{item.num}</div>
+                </div>
+                <h4 className="text-white font-bold mb-2 group-hover:text-blue-400 transition-colors">{item.title}</h4>
+                <p className="text-gray-400 text-sm">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Quote Section */}
+      <div className="py-16 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto bg-gradient-to-r from-red-900/40 via-yellow-900/20 to-red-900/40 border-2 border-gold-500/50 rounded-2xl p-8 md:p-12 text-center"
+          >
+            <div className="text-6xl mb-6">🎯</div>
+            <p className="text-xl md:text-2xl text-white leading-relaxed italic mb-6">
+              "Các giai cấp, tầng lớp liên kết chặt chẽ dưới sự lãnh đạo của Đảng để thực hiện mục tiêu chung là"
+            </p>
+            <p className="text-2xl md:text-3xl font-bold text-gold-400">
+              "Dân giàu, nước mạnh, dân chủ, công bằng, văn minh"
+            </p>
+            <div className="w-20 h-1 bg-gradient-to-r from-transparent via-gold-500 to-transparent mx-auto mt-8"></div>
+          </motion.div>
+        </div>
+      </div>
+
       {/* Footer */}
       <footer id="footer" className="bg-black border-t border-gray-800 py-12 px-4 relative z-10">
         <div className="container mx-auto grid md:grid-cols-4 gap-8">
@@ -430,12 +412,12 @@ const LandingPage = () => {
                 <img src="/img/VIETNAM_MAP.jpg" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Công cuộc Đổi mới</h3>
-                <p className="text-xs text-gray-500">VNR202 - HISTORY</p>
+                <h3 className="text-xl font-bold text-white">Cơ cấu XH - Giai cấp</h3>
+                <p className="text-xs text-gray-500">VNR202 - CNXHKH</p>
               </div>
             </div>
             <p className="text-gray-400 text-sm">
-              Dự án số hóa lịch sử giai đoạn 1986-1996. Khơi dậy niềm tự hào dân tộc về công cuộc Đổi mới vĩ đại.
+              Dự án số hóa nội dung Chủ nghĩa xã hội khoa học về cơ cấu xã hội - giai cấp và liên minh giai cấp, tầng lớp.
             </p>
           </div>
 
@@ -444,10 +426,10 @@ const LandingPage = () => {
             <h4 className="text-white font-bold mb-4">Điều hướng</h4>
             <ul className="space-y-2">
               <li><a href="/" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trang chủ</a></li>
-              <li><a href="/noi-dung" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Nội dung lịch sử</a></li>
-              <li><a href="#timeline" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Triển lãm số</a></li>
-              <li><a href="/games" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trò chơi mật mã</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Kho tài liệu</a></li>
+              <li><a href="/noi-dung" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Nội dung chi tiết</a></li>
+              <li><a href="/trien-lam" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Triển lãm số</a></li>
+              <li><a href="/games" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Trò chơi ôn tập</a></li>
+              <li><a href="/tai-lieu" className="text-gray-400 hover:text-gold-400 transition-colors text-sm">Kho tài liệu</a></li>
             </ul>
           </div>
 
@@ -456,7 +438,7 @@ const LandingPage = () => {
             <h4 className="text-white font-bold mb-4">Nhóm thực hiện</h4>
             <ul className="space-y-2 text-sm">
               <li className="text-gray-400">
-                <span className="text-white">1</span> Nguyễn Lê Kim Ngân -  Leader & Designer
+                <span className="text-white">1</span> Nguyễn Lê Kim Ngân - Leader & Designer
               </li>
               <li className="text-gray-400">
                 <span className="text-white">2</span> Trần Kim Nhã - Contentor & Researcher
@@ -479,8 +461,8 @@ const LandingPage = () => {
                 <span className="text-gray-500">Mentor: Mrs. Dương Thị Thúy Thơ</span>
               </p>
               <p className="italic text-gray-500 border-l-2 border-gold-500 pl-3">
-                "Dân ta một lòng theo Đảng,<br/>
-                Để cho non nước huy hoàng, vinh quang."<br/>
+                "Dân ta phải biết sử ta,<br/>
+                Cho tường gốc tích nước nhà Việt Nam."<br/>
                 <span className="text-gold-400">— Hồ Chí Minh</span>
               </p>
             </div>
